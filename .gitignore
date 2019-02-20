@@ -1,0 +1,3 @@
+data/db/*
+.git
+./**/node_modules
