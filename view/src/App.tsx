@@ -1,24 +1,41 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import ApolloClient, { gql } from "apollo-boost";
+import { ApolloProvider, Query } from "react-apollo";
+
+const client = new ApolloClient({
+  uri: '/api'
+});
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>Hello Social Network Starter</p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
+      <ApolloProvider client={client}>
+        <div className="App">
+          <Query
+            query={gql`
+              {
+                user(email: "cbrim1@nymag.com") {
+                  email
+                  first_name
+                  last_name
+                  gender
+                  createdAt
+                }
+              }
+            `}
           >
-            Learn React
-          </a>
-        </header>
-      </div>
+            {({ loading, error, data }) => {
+              if (loading) return <p>Loading...</p>;
+              if (error) return <p>Error :(</p>;
+
+              const { first_name, last_name, email } = data.user;
+                return (<p>Hello {first_name} {last_name}. Your email is: {email}</p>)
+            }}
+          </Query>
+        </div>
+      </ApolloProvider>
     );
   }
 }
