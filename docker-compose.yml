@@ -49,8 +49,8 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      MONGODB_ADMINUSERNAME: root
+      MONGODB_ADMINPASSWORD: example
 
     depends_on:
       - mongo
