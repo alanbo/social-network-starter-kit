@@ -1,46 +1,54 @@
 const { ApolloServer, gql } = require('apollo-server');
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+const fs = require('fs');
+const R = require('ramda');
+const simpleProjection = require('./utils/simple-projection');
 
-// This is a (sample) collection of books we'll be able to query
-// the GraphQL server for.  A more complete example might fetch
-// from an existing data source like a REST API or database.
-const books = [
-  {
-    title: 'Harry Potter and the Chamber of Secrets',
-    author: 'J.K. Rowling',
-  },
-  {
-    title: 'Jurassic Park',
-    author: 'Michael Crichton',
-  },
-  {
-    title: 'social network starter',
-    author: 'alanbo'
-  }
-];
+const schema = fs.readFileSync('./schema.graphql').toString('utf-8');
+const { MONGODB_ADMINUSERNAME, MONGODB_ADMINPASSWORD } = process.env;
+
+// Connection URL
+const url = `mongodb://${ MONGODB_ADMINUSERNAME }:${ MONGODB_ADMINPASSWORD }@mongo:27017`;
+
+// Database Name
+const dbName = 'social';
+
+// Create a new MongoClient
+const client = new MongoClient(url);
+let db;
+
+// Use connect method to connect to the Server
+client.connect(function(err) {
+  assert.equal(null, err);
+  console.log("Connected successfully to MongoDB server");
+
+  db = client.db(dbName);
+  // db.collection('users').findOne({}).then(console.log);
+});
+
+process.on('exit', (code) => {
+  client.close();
+  console.log(`About to exit with code: ${code}`);
+});
 
 // Type definitions define the "shape" of your data and specify
 // which ways the data can be fetched from the GraphQL server.
-const typeDefs = gql`
-  # Comments in GraphQL are defined with the hash (#) symbol.
-
-  # This "Book" type can be used in other type declarations.
-  type Book {
-    title: String
-    author: String
-  }
-
-  # The "Query" type is the root of all GraphQL queries.
-  # (A "Mutation" type will be covered later on.)
-  type Query {
-    books: [Book]
-  }
-`;
+const typeDefs = gql(schema);
 
 // Resolvers define the technique for fetching the types in the
 // schema.  We'll retrieve books from the "books" array above.
 const resolvers = {
   Query: {
-    books: () => books,
+    user: (obj, args, context, info) => {
+      const { email } = args;
+
+      return db
+        .collection('users')
+        .findOne({ email }, simpleProjection(info))
+        // large integer is not Int in grqphql, needs to be converted to string
+        .then(user => Object.assign(user, { createdAt: user.createdAt.toString() }));
+    }
   },
 };
 
