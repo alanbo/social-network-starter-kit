@@ -10,8 +10,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
       MONGO_INITDB_DATABASE: social
     volumes:
-      - ./data/mock:/mock
-      - ./data/init:/init
+      - ./data/mock:/docker-entrypoint-initdb.d
 
   mongo-express:
     image: mongo-express
