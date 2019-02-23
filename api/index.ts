@@ -1,15 +1,15 @@
-const { ApolloServer, gql } = require('apollo-server');
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-const fs = require('fs');
-const R = require('ramda');
-const simpleProjection = require('./utils/simple-projection');
+import { ApolloServer, gql } from 'apollo-server';
+import { MongoClient } from 'mongodb';
+import * as assert from 'assert';
+import { readFileSync } from 'fs';
+import R from 'ramda';
+import simpleProjection from './utils/simple-projection';
 
-const schema = fs.readFileSync('./schema.graphql').toString('utf-8');
+const schema = readFileSync('./schema.graphql').toString('utf-8');
 const { MONGODB_ADMINUSERNAME, MONGODB_ADMINPASSWORD } = process.env;
 
 // Connection URL
-const url = `mongodb://${ MONGODB_ADMINUSERNAME }:${ MONGODB_ADMINPASSWORD }@mongo:27017`;
+const url = `mongodb://${MONGODB_ADMINUSERNAME}:${MONGODB_ADMINPASSWORD}@mongo:27017`;
 
 // Database Name
 const dbName = 'social';
@@ -19,7 +19,7 @@ const client = new MongoClient(url);
 let db;
 
 // Use connect method to connect to the Server
-client.connect(function(err) {
+client.connect(function (err) {
   assert.equal(null, err);
   console.log("Connected successfully to MongoDB server");
 
