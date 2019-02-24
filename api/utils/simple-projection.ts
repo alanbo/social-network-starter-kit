@@ -11,7 +11,7 @@ export default function (info) {
     'selections'
   ]);
 
-  const projection = R.pipe(
+  return R.pipe(
     R.view(sel_path),
     R.map(selection => ({ [selection.name.value]: 1 })),
     R.mergeAll
