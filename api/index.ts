@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { ApolloServer, gql, IResolvers } from 'apollo-server-express';
 import { MongoClient } from 'mongodb';
 import * as assert from 'assert';
