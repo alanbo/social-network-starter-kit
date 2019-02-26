@@ -1,14 +1,15 @@
 import "reflect-metadata";
-import { ApolloServer, gql, IResolvers } from 'apollo-server-express';
-import { MongoClient } from 'mongodb';
-import * as assert from 'assert';
-import { readFileSync } from 'fs';
+import { ApolloServer } from 'apollo-server-express';
+import { buildSchema } from 'type-graphql';
+import { MongoClient, Collection } from 'mongodb';
 import * as express from 'express';
-import R from 'ramda';
-import simpleProjection from './utils/simple-projection';
 import * as session from 'express-session';
+import { UserResolver } from './resolvers/user';
 
-const schema = readFileSync('./schema.graphql').toString('utf-8');
+export interface Context {
+  session: Express.Session,
+  users_col: Collection<any>
+}
 const { MONGODB_ADMINUSERNAME, MONGODB_ADMINPASSWORD } = process.env;
 
 // Connection URL
@@ -17,120 +18,70 @@ const url = `mongodb://${MONGODB_ADMINUSERNAME}:${MONGODB_ADMINPASSWORD}@mongo:2
 // Database Name
 const dbName = 'social';
 
-// Create a new MongoClient
-const client = new MongoClient(url);
-let db;
+async function bootstrap() {
 
-// Use connect method to connect to the Server
-client.connect(function (err) {
-  assert.equal(null, err);
-  console.log("Connected successfully to MongoDB server");
+  // Create a new MongoClient
+  const client = new MongoClient(url);
 
-  db = client.db(dbName);
-  // db.collection('users').findOne({}).then(console.log);
-});
+  // Use connect method to connect to the Server
+  try {
+    await client.connect();
+    console.log("Connected successfully to MongoDB server");
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
 
-process.on('exit', (code) => {
-  client.close();
-  console.log(`About to exit with code: ${code}`);
-});
+  const db = client.db(dbName);
 
-// Type definitions define the "shape" of your data and specify
-// which ways the data can be fetched from the GraphQL server.
-const typeDefs = gql(schema);
+  process.on('exit', (code) => {
+    client.close();
+    console.log(`About to exit with code: ${code}`);
+  });
 
-// Resolvers define the technique for fetching the types in the
-// schema.  We'll retrieve books from the "books" array above.
-const resolvers = {
-  Query: {
-    user: (obj, args, context, info) => {
-      const { email } = args;
-      const session = context.session as Express.Session;
+  const schema = await buildSchema({
+    resolvers: [UserResolver],
+  });
 
-      console.log('user is: ', session.user);
-
-      return db
-        .collection('users')
-        .findOne({ email }, simpleProjection(info))
-        // large integer is not Int in grqphql, needs to be converted to string
-        .then(user => Object.assign(user, { createdAt: user.createdAt.toString() }));
-    }
-  },
-
-  Mutation: {
-    login: async (_, args, context) => {
-      const { email, password } = args;
-      const session = context.session as Express.Session;
-
-      try {
-        const user = await db
-          .collection('users')
-          .findOne({ email, password });
-
-        session.user = user;
-
-        return user;
-      } catch (e) {
-        return e;
+  const server = new ApolloServer({
+    schema,
+    playground: {
+      endpoint: '/api/',
+      settings: {
+        'request.credentials': 'same-origin'
       }
     },
-    logout: (_, __, context) => {
-      const session = context.session as Express.Session;
+    context: ({ req, res }) => {
+      // add the user to the context
+      const context: Context = {
+        session: req.session,
+        users_col: db.collection('users')
+      }
 
-      return (new Promise((resolve, reject) => {
-        session.destroy(err => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(true);
-          }
-        });
-      }));
-    }
+      return context;
+    },
+  });
+
+  // Additional middleware can be mounted at this point to run before Apollo.
+  var app = express()
+  var sess = {
+    secret: process.env.AUTH_SECRET,
+    cookie: { secure: false }
   }
+
+  if (app.get('env') === 'production') {
+    app.set('trust proxy', 1) // trust first proxy
+    sess.cookie.secure = true // serve secure cookies
+  }
+
+
+  app.use(session(sess));
+
+  server.applyMiddleware({ app, path: '/' });
+
+  app.listen({ port: 4000 }, () =>
+    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+  );
 };
 
-// In the most basic sense, the ApolloServer can be started
-// by passing type definitions (typeDefs) and the resolvers
-// responsible for fetching the data for those types.
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  playground: {
-    endpoint: '/api/',
-    settings: {
-      'request.credentials': 'same-origin'
-    }
-  },
-  context: ({ req, res }) => {
-    // add the user to the context
-    return { session: req.session };
-  },
-});
-
-// This `listen` method launches a web-server.  Existing apps
-// can utilize middleware options, which we'll discuss later.
-// server.listen().then(({ url }) => {
-//   console.log(`🚀  Server ready at ${url}`);
-// });
-
-// Additional middleware can be mounted at this point to run before Apollo.
-var app = express()
-var sess = {
-  secret: process.env.AUTH_SECRET,
-  cookie: { secure: false }
-}
-
-if (app.get('env') === 'production') {
-  app.set('trust proxy', 1) // trust first proxy
-  sess.cookie.secure = true // serve secure cookies
-}
-
-
-app.use(session(sess));
-
-server.applyMiddleware({ app, path: '/' });
-
-app.listen({ port: 4000 }, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-);   
+bootstrap();

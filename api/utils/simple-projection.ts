@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-export default function (info) {
+export default function (info): { [prop: string]: 1 } {
   // path to deeply nested property of graphql tree
   const sel_path = R.lensPath([
     'operation',
