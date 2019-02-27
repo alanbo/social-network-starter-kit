@@ -1,5 +1,5 @@
 import { ObjectType, InputType, Field, ID } from 'type-graphql';
-import { Length, IsEmail, IsPhoneNumber, IsIn } from "class-validator";
+import { Length, IsEmail, IsPhoneNumber, IsIn, Matches } from "class-validator";
 
 @InputType()
 export class UserInput {
@@ -22,12 +22,16 @@ export class UserInput {
   @Field()
   @IsIn(['male', 'female', 'other'])
   gender: string;
+
+  @Field()
+  @Matches(/^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/)
+  password: string;
 }
 
 @ObjectType()
 export class User {
   @Field(type => ID)
-  id: string;
+  _id: string;
 
   @Field()
   first_name: string;

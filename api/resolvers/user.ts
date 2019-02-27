@@ -1,3 +1,4 @@
+import * as uuid from 'uuid/v4';
 import { Resolver, Mutation, Arg, Ctx, Info, Query } from 'type-graphql';
 import { UserInput, User } from '../schema/user';
 import { Context } from '../index';
@@ -21,11 +22,23 @@ export class UserResolver {
   }
 
   @Mutation(returns => User)
-  addUser(
+  async addUser(
     @Arg("data") args: UserInput,
     @Ctx() context: Context,
-  ): any {
-    console.log(args);
+  ): Promise<User> {
+    const { users_col } = context;
+
+    const id = uuid();
+
+    // TO DO - SHOULDN"T STORE PLAIN TEXT PASSWORD
+    const to_insert = { ...args, createdAt: new Date(), _id: uuid() };
+
+    try {
+      await users_col.insertOne(to_insert);
+      return to_insert;
+    } catch (e) {
+      return e;
+    }
   }
 
   @Mutation(returns => User)
