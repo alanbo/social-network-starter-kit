@@ -26,16 +26,18 @@ export class UserResolver {
     @Arg("data") args: UserInput,
     @Ctx() context: Context,
   ): Promise<User> {
-    const { users_col } = context;
-
-    const id = uuid();
+    const { session, users_col } = context;
 
     // TO DO - SHOULDN"T STORE PLAIN TEXT PASSWORD
     const to_insert = { ...args, createdAt: new Date(), _id: uuid() };
 
     try {
       await users_col.insertOne(to_insert);
+
+      session.user = to_insert;
+
       return to_insert;
+
     } catch (e) {
       return e;
     }
