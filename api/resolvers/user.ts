@@ -1,24 +1,37 @@
 import * as uuid from 'uuid/v4';
+import * as bcrypt from 'bcrypt';
 import { Resolver, Mutation, Arg, Ctx, Info, Query } from 'type-graphql';
 import { UserInput, User } from '../schema/user';
 import { Context } from '../index';
 import simpleProjection from '../utils/simple-projection';
 
+export interface UserMongo extends UserInput {
+  createdAt: Date,
+  _id: string
+}
 
 @Resolver()
 export class UserResolver {
   @Query(returns => User)
-  user(
+  async user(
     @Arg('email') email: string,
     @Ctx() context: Context,
     @Info() info
-  ): Promise<User> {
-    const { users_col } = context;
+  ): Promise<User | Error> {
+    const { users_col, session } = context;
 
-    return users_col
-      .findOne({ email }, simpleProjection(info))
-      // large integer is not Int in grqphql, needs to be converted to string
-      .then(user => Object.assign(user, { createdAt: new Date(user.createdAt) }));
+    // Checking other users than the one that is logged in is not allowed.
+    // TO DO: allow checking users that have friends connection.
+    if (!session.user) {
+      return new Error('User not logged in');
+    } else if (email !== session.user.email) {
+      return new Error('Not autorized to view this user');
+    }
+
+    const user = users_col
+      .findOne({ email }, simpleProjection(info));
+
+    return user;
   }
 
   @Mutation(returns => User)
@@ -27,12 +40,11 @@ export class UserResolver {
     @Ctx() context: Context,
   ): Promise<User> {
     const { session, users_col } = context;
-
-    // TO DO - SHOULDN"T STORE PLAIN TEXT PASSWORD
     const to_insert = { ...args, createdAt: new Date(), _id: uuid() };
 
     try {
-      await users_col.insertOne(to_insert);
+      const hashed_password = await bcrypt.hash(args.password, 10);
+      await users_col.insertOne(Object.assign(to_insert, { password: hashed_password }));
 
       session.user = to_insert;
 
@@ -53,11 +65,18 @@ export class UserResolver {
 
     try {
       const user = await users_col
-        .findOne({ email, password });
+        .findOne({ email });
 
-      session.user = user;
+      const match = await bcrypt.compare(password, user.password);
 
-      return user;
+      delete user.password;
+
+      if (match) {
+        session.user = user;
+        return <User>user;
+      } else {
+        return new Error('The password doesn\'t match');
+      }
     } catch (e) {
       return e;
     }

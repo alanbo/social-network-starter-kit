@@ -4,11 +4,16 @@ import { buildSchema } from 'type-graphql';
 import { MongoClient, Collection } from 'mongodb';
 import * as express from 'express';
 import * as session from 'express-session';
-import { UserResolver } from './resolvers/user';
+import { UserResolver, UserMongo } from './resolvers/user';
+import { User } from './schema/user';
+
+interface UserSession extends Express.Session {
+  user: User
+}
 
 export interface Context {
-  session: Express.Session,
-  users_col: Collection<any>
+  session: UserSession,
+  users_col: Collection<UserMongo>
 }
 const { MONGODB_ADMINUSERNAME, MONGODB_ADMINPASSWORD } = process.env;
 
