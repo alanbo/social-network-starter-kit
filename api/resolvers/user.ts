@@ -1,5 +1,5 @@
-import * as uuid from 'uuid/v4';
-import * as bcrypt from 'bcrypt';
+import uuid from 'uuid/v4';
+import bcrypt from 'bcrypt';
 import { Resolver, Mutation, Arg, Ctx, Info, Query } from 'type-graphql';
 import { UserInput, User } from '../schema/user';
 import { Context } from '../index';

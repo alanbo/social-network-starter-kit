@@ -2,13 +2,13 @@ import "reflect-metadata";
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { MongoClient, Collection } from 'mongodb';
-import * as express from 'express';
-import * as session from 'express-session';
+import express from 'express';
+import session from 'express-session';
 import { UserResolver, UserMongo } from './resolvers/user';
 import { User } from './schema/user';
 
 interface UserSession extends Express.Session {
-  user: User
+  user?: User
 }
 
 export interface Context {
@@ -57,7 +57,7 @@ async function bootstrap() {
       }
     },
     context: ({ req, res }) => {
-      // add the user to the context
+      // add the user collection to the context
       const context: Context = {
         session: req.session,
         users_col: db.collection('users')
