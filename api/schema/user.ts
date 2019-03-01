@@ -29,6 +29,34 @@ export class UserInput {
 }
 
 @ObjectType()
+class UserBasic {
+  @Field(type => ID)
+  _id: string;
+
+  @Field()
+  first_name: string;
+
+  @Field()
+  last_name: string;
+}
+
+@ObjectType()
+export class Group {
+  @Field(type => ID)
+  _id: string;
+
+  @Field()
+  name: string;
+
+  @Field(type => [UserBasic])
+  users: UserBasic[];
+
+  @Field()
+  description: string
+}
+
+
+@ObjectType()
 export class User {
   @Field(type => ID)
   _id: string;
@@ -50,4 +78,10 @@ export class User {
 
   @Field()
   createdAt: Date;
+
+  @Field(type => [UserBasic], { nullable: true })
+  friends?: UserBasic[];
+
+  @Field(type => [Group], { nullable: true })
+  groups?: Group[];
 }
