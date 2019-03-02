@@ -19,7 +19,7 @@ import simpleProjection from '../utils/simple-projection';
 export interface UserMongo extends UserInput {
   createdAt: Date,
   _id: string,
-  password: string
+  password: string,
 }
 
 @Resolver(of => User)
@@ -41,7 +41,12 @@ export class UserResolver {
     }
 
     const user = users_col
-      .findOne({ email }, simpleProjection(info));
+      .findOne({ email }, simpleProjection(info))
+      .then(u => {
+        u.createdAt = new Date(u.createdAt);
+
+        return u;
+      });
 
     return user;
   }
@@ -81,9 +86,13 @@ export class UserResolver {
       const user = await users_col
         .findOne({ email });
 
+      console.log(user);
+
       const match = await bcrypt.compare(password, user && user.password);
 
       delete user.password;
+
+      user.createdAt = new Date(user.createdAt);
 
       if (match) {
         session.user = user;
@@ -114,23 +123,23 @@ export class UserResolver {
     }));
   }
 
-  @FieldResolver()
-  groups(
-    @Root() groups: Group,
-    @Ctx() context: Context
-  ) {
-    return context.users_col.find({
-      _id: { '$in': groups }
-    });
-  }
+  // @FieldResolver()
+  // groups(
+  //   @Root() user: User,
+  //   @Ctx() context: Context
+  // ) {
+  //   return context.users_col.find({
+  //     _id: { '$in': user.groups }
+  //   }).toArray();
+  // }
 
   @FieldResolver()
   friends(
-    @Root() friends: Group,
+    @Root() user: User,
     @Ctx() context: Context
   ) {
     return context.users_col.find({
-      _id: { '$in': friends }
-    });
+      _id: { '$in': user.friends }
+    }).toArray();
   }
 }

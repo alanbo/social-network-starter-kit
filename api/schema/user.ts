@@ -34,6 +34,9 @@ class UserBasic {
   _id: string;
 
   @Field()
+  email: string;
+
+  @Field()
   first_name: string;
 
   @Field()
