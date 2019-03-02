@@ -21,6 +21,8 @@ async function createUsers() {
 
   fs.writeFileSync(`${__dirname}/users-login-data.json`, JSON.stringify(users, null, '  '));
 
+  console.log('Creating users: ');
+
   users = users.map(async (user, ix) => {
     const friends = (ix < USER_NUM / 2 ? users.slice(ix + 1, ix + 10) : users.slice(ix + 1, ix + 10)).map(user => user._id);
 
@@ -38,15 +40,54 @@ async function createUsers() {
 
     return new_user;
   });
-  users = JSON.stringify(await Promise.all(users), null, ' ');
+
+  users = await Promise.all(users);
+
+  const usersJSON = JSON.stringify(users, null, ' ');
 
   const file_output = `
 db.users.insertMany(
-  ${users},
+  ${usersJSON},
   { ordered: false }
 );`;
 
   fs.writeFileSync(`${__dirname}/mongo/users-social.js`, file_output);
+  console.log('User file have been saved');
+
+  const posts = [];
+
+  console.log('Creating posts: ');
+
+  users.forEach(user => {
+    for (let i = 0; i < 10; i++) {
+      process.stdout.write('.');
+
+      const post = {
+        _id: uuid(),
+        user: user._id,
+        message: faker.lorem.paragraphs(),
+        createdAt: +(faker.date.past()),
+        tags: faker.lorem.words().split(' ')
+      };
+
+      if (i % 2 === 0) {
+        post.visible_to = user.friends
+          .slice(0, Math.round(Math.random() * user.friends.length));
+      }
+
+      posts.push(post);
+    }
+  });
+
+  const file_output_posts = `
+db.users.insertMany(
+  ${JSON.stringify(posts, null, ' ')},
+  { ordered: false }
+);`;
+
+  fs.writeFileSync(`${__dirname}/mongo/posts-social.js`, file_output_posts);
+  console.log('Posts file have been saved');
+
 }
 
 
