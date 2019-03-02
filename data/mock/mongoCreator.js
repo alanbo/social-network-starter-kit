@@ -5,6 +5,7 @@ const faker = require('faker');
 const uuid = require('uuid/v4');
 
 const USER_NUM = 1000;
+const POSTS_NUM = 10;
 const GENDER = ['male', 'female', 'other'];
 
 async function createUsers() {
@@ -59,7 +60,7 @@ db.users.insertMany(
   console.log('Creating posts: ');
 
   users.forEach(user => {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < POSTS_NUM; i++) {
       process.stdout.write('.');
 
       const post = {
@@ -80,7 +81,7 @@ db.users.insertMany(
   });
 
   const file_output_posts = `
-db.users.insertMany(
+db.posts.insertMany(
   ${JSON.stringify(posts, null, ' ')},
   { ordered: false }
 );`;
