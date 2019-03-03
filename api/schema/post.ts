@@ -16,11 +16,11 @@ export class Post {
   @Field()
   createdAt: Date;
 
-  @Field({ nullable: true })
+  @Field(type => [String], { nullable: true })
   tags: string[];
 
-  @Field(type => UserBasic, { nullable: true })
-  visibleTo: UserBasic;
+  @Field(type => [UserBasic], { nullable: true })
+  visible_to: UserBasic[];
 }
 
 @InputType()
@@ -35,11 +35,11 @@ export class PostInput {
 
   @ArrayUnique()
   @MaxLength(15, { each: true })
-  @Field()
+  @Field(type => [String])
   tags: string[];
 
   @ArrayUnique()
   @IsUUID("4", { each: true })
-  @Field(type => [ID])
-  visibleTo: string[];
+  @Field(type => [ID], { nullable: true })
+  visible_to: string[];
 }

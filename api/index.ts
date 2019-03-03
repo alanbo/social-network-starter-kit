@@ -5,6 +5,7 @@ import { MongoClient, Collection } from 'mongodb';
 import express from 'express';
 import session from 'express-session';
 import { UserResolver, UserMongo } from './resolvers/user';
+import { PostResolver, PostMongo } from './resolvers/post';
 import { User } from './schema/user';
 
 interface UserSession extends Express.Session {
@@ -13,8 +14,10 @@ interface UserSession extends Express.Session {
 
 export interface Context {
   session: UserSession,
-  users_col: Collection<UserMongo>
+  users_col: Collection<UserMongo>,
+  posts_col: Collection<PostMongo>
 }
+
 const { MONGODB_ADMINUSERNAME, MONGODB_ADMINPASSWORD } = process.env;
 
 // Connection URL
@@ -45,7 +48,7 @@ async function bootstrap() {
   });
 
   const schema = await buildSchema({
-    resolvers: [UserResolver],
+    resolvers: [UserResolver, PostResolver],
     dateScalarMode: 'timestamp'
   });
 
@@ -61,7 +64,8 @@ async function bootstrap() {
       // add the user collection to the context
       const context: Context = {
         session: req.session,
-        users_col: db.collection('users')
+        users_col: db.collection('users'),
+        posts_col: db.collection('posts')
       }
 
       return context;

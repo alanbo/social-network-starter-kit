@@ -74,6 +74,8 @@ db.users.insertMany(
       if (i % 2 === 0) {
         post.visible_to = user.friends
           .slice(0, Math.round(Math.random() * user.friends.length));
+      } else {
+        post.visible_to = user.friends;
       }
 
       posts.push(post);
@@ -91,3 +93,4 @@ db.posts.insertMany(
 
 }
 
+createUsers();
