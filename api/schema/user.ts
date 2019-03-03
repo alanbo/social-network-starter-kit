@@ -29,7 +29,7 @@ export class UserInput {
 }
 
 @ObjectType()
-class UserBasic {
+export class UserBasic {
   @Field(type => ID)
   _id: string;
 
