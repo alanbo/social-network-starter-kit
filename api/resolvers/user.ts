@@ -123,15 +123,15 @@ export class UserResolver {
     }));
   }
 
-  // @FieldResolver()
-  // groups(
-  //   @Root() user: User,
-  //   @Ctx() context: Context
-  // ) {
-  //   return context.users_col.find({
-  //     _id: { '$in': user.groups }
-  //   }).toArray();
-  // }
+  @FieldResolver()
+  posts(
+    @Root() user: User,
+    @Ctx() context: Context
+  ) {
+    return context.posts_col.find({
+      user: user._id
+    }).toArray();
+  }
 
   @FieldResolver()
   friends(

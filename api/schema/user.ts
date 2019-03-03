@@ -1,5 +1,6 @@
 import { ObjectType, InputType, Field, ID } from 'type-graphql';
 import { Length, IsEmail, IsPhoneNumber, IsIn, Matches } from "class-validator";
+import { Post } from './post';
 
 @InputType()
 export class UserInput {
@@ -85,6 +86,6 @@ export class User {
   @Field(type => [UserBasic], { nullable: true })
   friends?: UserBasic[];
 
-  @Field(type => [Group], { nullable: true })
-  groups?: Group[];
+  @Field(type => [Post], { nullable: true })
+  posts?: Post[];
 }
