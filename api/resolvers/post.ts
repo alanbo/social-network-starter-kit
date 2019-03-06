@@ -1,5 +1,4 @@
-import uuid from 'uuid/v4';
-import bcrypt from 'bcrypt';
+import { GraphQLResolveInfo } from 'graphql';
 
 import {
   Resolver,
@@ -33,7 +32,7 @@ export class PostResolver {
   @Query(returns => [Post], { nullable: true })
   async posts(
     @Ctx() context: Context,
-    @Info() info,
+    @Info() info: GraphQLResolveInfo,
     @Arg('tags', type => [String], { nullable: true }) tags?: string[],
     @Arg('search', type => String, { nullable: true }) search?: string,
   ): Promise<PostMongo[] | Error> {
@@ -65,7 +64,7 @@ export class PostResolver {
   user(
     @Root() post: Post,
     @Ctx() context: Context,
-    @Info() info
+    @Info() info: GraphQLResolveInfo
   ): Promise<UserMongo> {
     return context.users_col.findOne({
       _id: post.user

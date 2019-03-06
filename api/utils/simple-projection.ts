@@ -1,6 +1,7 @@
 import * as R from 'ramda';
+import { GraphQLResolveInfo } from 'graphql';
 
-export default function (info): { [prop: string]: 1 } {
+export default function (info: GraphQLResolveInfo): { [prop: string]: 1 } {
   // path to deeply nested property of graphql tree
   const sel_path = R.lensPath([
     'operation',
@@ -13,7 +14,7 @@ export default function (info): { [prop: string]: 1 } {
 
   return R.pipe(
     R.view(sel_path),
-    R.map(selection => ({ [selection.name.value]: 1 })),
+    R.map(selection => ({ [(selection as any).name.value]: 1 })),
     R.mergeAll
-  )(info);
+  )(info) as { [prop: string]: 1 };
 }

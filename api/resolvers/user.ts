@@ -1,5 +1,6 @@
 import uuid from 'uuid/v4';
 import bcrypt from 'bcrypt';
+import { GraphQLResolveInfo } from 'graphql';
 
 import {
   Resolver,
@@ -29,7 +30,7 @@ export class UserResolver {
   async user(
     @Arg('email') email: string,
     @Ctx() context: Context,
-    @Info() info
+    @Info() info: GraphQLResolveInfo
   ): Promise<User | Error> {
     const { users_col, session } = context;
 
