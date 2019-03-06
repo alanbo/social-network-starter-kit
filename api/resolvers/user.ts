@@ -22,6 +22,7 @@ export interface UserMongo extends UserInput {
   password: string,
 }
 
+
 @Resolver(of => User)
 export class UserResolver {
   @Query(returns => User)
@@ -85,8 +86,6 @@ export class UserResolver {
     try {
       const user = await users_col
         .findOne({ email });
-
-      console.log(user);
 
       const match = await bcrypt.compare(password, user && user.password);
 

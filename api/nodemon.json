@@ -6,5 +6,6 @@
   "ignore": [
     "./**/*.spec.ts"
   ],
-  "exec": "ts-node --type-check ./index.ts"
+  "exec": "npx kill-port 9229; node --inspect=0.0.0.0 --nolazy -r ts-node/register ./index.ts",
+  "delay": "80"
 }

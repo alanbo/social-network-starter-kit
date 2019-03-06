@@ -55,6 +55,9 @@ services:
     depends_on:
       - mongo
       - redis
+    
+    ports:
+      - "9229:9229"
 
   view:
     build:
