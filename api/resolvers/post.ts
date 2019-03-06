@@ -60,6 +60,12 @@ export class PostResolver {
     return context.posts_col.find(query, simpleProjection(info)).toArray();
   };
 
+  // TO DO:
+  // Delete post.
+  // Create/Update post.
+  // Add comment.
+  // Remove comment. 
+
   @FieldResolver()
   user(
     @Root() post: Post,

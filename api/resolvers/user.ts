@@ -79,6 +79,14 @@ export class UserResolver {
     }
   }
 
+  // TO DO:
+  // Update User
+  // Update Password
+  // Request friend
+  // Accept friend
+  // Remove friend
+  // Search user
+
   @Mutation(returns => User)
   async login(
     @Arg('password') password: string,
