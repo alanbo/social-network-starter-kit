@@ -34,7 +34,7 @@ async function createUsers() {
       last_name: faker.name.lastName(),
       friends,
       phone_number: faker.phone.phoneNumber(),
-      gender: GENDER[Math.round(Math.random() * GENDER.length)]
+      gender: GENDER[Math.floor(Math.random() * GENDER.length)]
     });
 
     process.stdout.write('.');
