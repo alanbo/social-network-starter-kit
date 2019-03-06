@@ -45,7 +45,9 @@ export class UserResolver {
     const user = users_col
       .findOne({ email }, simpleProjection(info))
       .then(u => {
-        u.createdAt = new Date(u.createdAt);
+        if (u) {
+          u.createdAt = new Date(u.createdAt);
+        }
 
         return u;
       });
