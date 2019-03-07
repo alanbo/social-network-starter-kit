@@ -29,6 +29,8 @@ async function createUsers() {
     // For the second half ot the users add the previous 10 users as friends.
     const friends = (ix < USER_NUM / 2 ? users.slice(ix + 1, ix + 10) : users.slice(ix - 10, ix - 1)).map(user => user._id);
 
+    // TO DO: friends relationship needs to be mutual. Add the user id to the friend's friend list. 
+
     // Same as above but for the next 5 users that are not already friends. 
     const friend_requests = (ix < USER_NUM / 2 ? users.slice(ix + 11, ix + 16) : users.slice(ix - 16, ix - 11)).map(user => user._id);
 

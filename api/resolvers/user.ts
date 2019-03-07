@@ -84,10 +84,66 @@ export class UserResolver {
   // TO DO:
   // Update User
   // Update Password
-  // Request friend
-  // Accept friend
   // Remove friend
 
+
+  @Mutation(returns => Boolean)
+  async refuseFriendRequest(
+    @Arg('id') id: string,
+    @Ctx() context: Context,
+  ): Promise<Boolean | Error> {
+    const { session, users_col } = context;
+
+    if (!session.user) {
+      return new Error('The user needs to be logged in');
+    }
+
+    try {
+      await users_col.updateOne(
+        { _id: session.user._id },
+        { $pull: { friend_requests: id as any } }
+      );
+    } catch (e) {
+      return e;
+    }
+
+    return true;
+  }
+
+  @Mutation(returns => Boolean)
+  async removeFriend(
+    @Arg('id') id: string,
+    @Ctx() context: Context,
+  ): Promise<Boolean | Error> {
+    const { session, users_col } = context;
+
+    if (!session.user) {
+      return new Error('The user needs to be logged in');
+    }
+
+    try {
+      await users_col.updateOne(
+        { _id: session.user._id },
+        { $pull: { friends: id as any } }
+      )
+    } catch (e) {
+      return e;
+    }
+
+    // TO DO: there should be a transaction or some implementation of transaction logic.
+    // if the first operation succeeds and the second fails there would be incosistency of data. 
+
+    try {
+      await users_col.updateOne(
+        { _id: id },
+        { $pull: { requested_friends: session.user._id as any } }
+      );
+    } catch (e) {
+      return e;
+    }
+
+    return true;
+  }
 
   @Mutation(returns => Boolean)
   async acceptFriendRequest(
