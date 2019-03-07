@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
-import { MongoClient, Collection } from 'mongodb';
+import { MongoClient, Collection, Db } from 'mongodb';
 import express from 'express';
 import session from 'express-session';
 import { UserResolver, UserMongo } from './resolvers/user';
@@ -9,13 +9,14 @@ import { PostResolver, PostMongo } from './resolvers/post';
 import { User } from './schema/user';
 
 interface UserSession extends Express.Session {
-  user?: User
+  // TO DO: user object needs to be trimmed. Too much data in UserMongo. 
+  user?: UserMongo
 }
 
 export interface Context {
   session: UserSession,
   users_col: Collection<UserMongo>,
-  posts_col: Collection<PostMongo>
+  posts_col: Collection<PostMongo>,
 }
 
 const { MONGODB_ADMINUSERNAME, MONGODB_ADMINPASSWORD } = process.env;

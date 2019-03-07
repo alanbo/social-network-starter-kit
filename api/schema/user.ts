@@ -86,6 +86,9 @@ export class User {
   @Field(type => [UserBasic], { nullable: true })
   friends?: UserBasic[];
 
+  @Field(type => [UserBasic], { nullable: true })
+  friend_requests?: UserBasic[];
+
   @Field(type => [Post], { nullable: true })
   posts?: Post[];
 }

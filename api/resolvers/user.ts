@@ -10,7 +10,7 @@ import {
   Info,
   Query,
   Root,
-  FieldResolver
+  FieldResolver,
 } from 'type-graphql';
 
 import { UserInput, User, Group, UserBasic } from '../schema/user';
@@ -21,6 +21,8 @@ export interface UserMongo extends UserInput {
   createdAt: Date,
   _id: string,
   password: string,
+  friend_requests?: string[],
+  friends?: string[]
 }
 
 
@@ -31,7 +33,7 @@ export class UserResolver {
     @Arg('email') email: string,
     @Ctx() context: Context,
     @Info() info: GraphQLResolveInfo
-  ): Promise<User | Error> {
+  ): Promise<UserMongo | Error> {
     const { users_col, session } = context;
 
     // Checking other users than the one that is logged in is not allowed.
@@ -86,6 +88,53 @@ export class UserResolver {
   // Accept friend
   // Remove friend
 
+
+  @Mutation(returns => Boolean)
+  async acceptFriendRequest(
+    @Arg('id') id: string,
+    @Ctx() context: Context,
+  ): Promise<Boolean | Error> {
+    const { session, users_col } = context;
+
+    if (!session.user) {
+      return new Error('The user needs to be logged in');
+    }
+
+    const { friend_requests } = await users_col.findOne(
+      { _id: session.user._id },
+      { projection: { friend_requests: 1 } }
+    );
+
+    // Makes suer user can't update if id doesn't exist in friend_requests.
+    // It is crucial, otherwise users would be able to add any person.
+    if (!friend_requests || !friend_requests.includes(id)) {
+      return false;
+    }
+
+    try {
+      await users_col.updateOne(
+        { _id: session.user._id },
+        { $addToSet: { friends: id }, $pull: { friend_requests: id as any } }
+      )
+    } catch (e) {
+      return e;
+    }
+
+    // TO DO: there should be a transaction or some implementation of transaction logic.
+    // if the first operation succeeds and the second fails there would be incosistency of data. 
+
+    try {
+      await users_col.updateOne(
+        { _id: id },
+        { $addToSet: { friends: id }, $pull: { requested_friends: session.user._id as any } }
+      );
+    } catch (e) {
+      return e;
+    }
+
+    return true;
+  }
+
   @Query(returns => [UserBasic])
   async searchUser(
     @Arg('search') search: string,
@@ -120,7 +169,7 @@ export class UserResolver {
     @Arg('password') password: string,
     @Arg('email') email: string,
     @Ctx() context: Context,
-  ): Promise<User | Error> {
+  ): Promise<UserMongo | Error> {
     const { session, users_col } = context;
 
     try {
@@ -179,6 +228,16 @@ export class UserResolver {
   ) {
     return context.users_col.find({
       _id: { '$in': user.friends }
+    }).toArray();
+  }
+
+  @FieldResolver()
+  friend_requests(
+    @Root() user: User,
+    @Ctx() context: Context
+  ) {
+    return context.users_col.find({
+      _id: { '$in': user.friend_requests }
     }).toArray();
   }
 }
