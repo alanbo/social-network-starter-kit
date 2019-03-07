@@ -25,7 +25,12 @@ async function createUsers() {
   console.log('Creating users: ');
 
   users = users.map(async (user, ix) => {
-    const friends = (ix < USER_NUM / 2 ? users.slice(ix + 1, ix + 10) : users.slice(ix + 1, ix + 10)).map(user => user._id);
+    // For the first half of the users add the next 10 users as friends.
+    // For the second half ot the users add the previous 10 users as friends.
+    const friends = (ix < USER_NUM / 2 ? users.slice(ix + 1, ix + 10) : users.slice(ix - 10, ix - 1)).map(user => user._id);
+
+    // Same as above but for the next 5 users that are not already friends. 
+    const friend_requests = (ix < USER_NUM / 2 ? users.slice(ix + 11, ix + 16) : users.slice(ix - 16, ix - 11)).map(user => user._id);
 
     const new_user = Object.assign(user, {
       password: await bcrypt.hash(user.password, 10),
@@ -33,6 +38,7 @@ async function createUsers() {
       first_name: faker.name.firstName(),
       last_name: faker.name.lastName(),
       friends,
+      friend_requests,
       phone_number: faker.phone.phoneNumber(),
       gender: GENDER[Math.floor(Math.random() * GENDER.length)]
     });
