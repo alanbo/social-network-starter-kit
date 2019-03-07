@@ -13,7 +13,7 @@ import {
   FieldResolver
 } from 'type-graphql';
 
-import { UserInput, User, Group } from '../schema/user';
+import { UserInput, User, Group, UserBasic } from '../schema/user';
 import { Context } from '../index';
 import simpleProjection from '../utils/simple-projection';
 
@@ -85,7 +85,35 @@ export class UserResolver {
   // Request friend
   // Accept friend
   // Remove friend
-  // Search user
+
+  @Query(returns => [UserBasic])
+  async searchUser(
+    @Arg('search') search: string,
+    @Ctx() context: Context,
+  ): Promise<UserBasic[] | Error> | null {
+    const { users_col, session } = context;
+
+    if (!session.user) {
+      return new Error('The user needs to be logged in');
+    }
+
+    // TO DO: consider regex search. Text index only allows for searching full words.
+    // May be not performant enough. 
+    const query = { $text: { $search: search } };
+
+    const projection = {
+      first_name: 1,
+      last_name: 1,
+      _id: 1,
+      // TO DO:
+      // Reconsider displaying email. In general should be hidden from non-friends.
+      email: 1
+    }
+
+    const users = await users_col.find(query, { projection }).toArray();
+
+    return users;
+  }
 
   @Mutation(returns => User)
   async login(
