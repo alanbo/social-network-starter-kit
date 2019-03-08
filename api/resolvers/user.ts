@@ -13,7 +13,7 @@ import {
   FieldResolver,
 } from 'type-graphql';
 
-import { UserInput, User, UpdatePasswordInput, UserBasic } from '../schema/user';
+import { UserInput, User, UpdatePasswordInput, UserBasic, UserInputWithPassword } from '../schema/user';
 import { Context } from '../index';
 import simpleProjection from '../utils/simple-projection';
 
@@ -60,7 +60,7 @@ export class UserResolver {
 
   @Mutation(returns => User)
   async addUser(
-    @Arg("data") args: UserInput,
+    @Arg("data") args: UserInputWithPassword,
     @Ctx() context: Context,
   ): Promise<User> {
     const { session, users_col } = context;
@@ -83,7 +83,6 @@ export class UserResolver {
 
   // TO DO:
   // Update User
-  // Update Password
   @Mutation(returns => Boolean)
   async updatePassword(
     @Arg("data") data: UpdatePasswordInput,
@@ -312,6 +311,10 @@ export class UserResolver {
     @Root() user: User,
     @Ctx() context: Context
   ) {
+    if (!user.friends) {
+      return null;
+    }
+
     return context.users_col.find({
       _id: { '$in': user.friends }
     }).toArray();
@@ -322,6 +325,10 @@ export class UserResolver {
     @Root() user: User,
     @Ctx() context: Context
   ) {
+    if (!user.friend_requests) {
+      return null;
+    }
+
     return context.users_col.find({
       _id: { '$in': user.friend_requests }
     }).toArray();
