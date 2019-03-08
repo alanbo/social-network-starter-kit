@@ -13,7 +13,7 @@ import {
   FieldResolver,
 } from 'type-graphql';
 
-import { UserInput, User, UpdatePasswordInput, UserBasic, UserInputWithPassword } from '../schema/user';
+import { UserInput, User, UpdatePasswordInput, UserBasic, UserInputOpt } from '../schema/user';
 import { Context } from '../index';
 import simpleProjection from '../utils/simple-projection';
 
@@ -60,7 +60,7 @@ export class UserResolver {
 
   @Mutation(returns => User)
   async addUser(
-    @Arg("data") args: UserInputWithPassword,
+    @Arg("data") args: UserInput,
     @Ctx() context: Context,
   ): Promise<User> {
     const { session, users_col } = context;
@@ -81,8 +81,29 @@ export class UserResolver {
     }
   }
 
-  // TO DO:
-  // Update User
+  @Mutation(returns => User)
+  async updateUser(
+    @Arg("data") data: UserInputOpt,
+    @Ctx() context: Context,
+    @Info() info: GraphQLResolveInfo
+  ): Promise<UserMongo | Error> {
+    const { session, users_col } = context;
+
+    try {
+      const result = users_col
+        .findOneAndUpdate(
+          { _id: session.user._id },
+          { $set: data },
+          { returnOriginal: false, projection: simpleProjection(info) }
+        )
+        .then(result => result.value);
+
+      return result;
+    } catch (e) {
+      return e;
+    }
+  }
+
   @Mutation(returns => Boolean)
   async updatePassword(
     @Arg("data") data: UpdatePasswordInput,

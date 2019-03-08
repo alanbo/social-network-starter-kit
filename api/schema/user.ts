@@ -42,6 +42,29 @@ export class UserInput {
   password: string;
 }
 
+@InputType()
+export class UserInputOpt {
+  @Field({ nullable: true })
+  @Length(2, 10)
+  first_name: string;
+
+  @Field({ nullable: true })
+  @Length(2, 15)
+  last_name: string;
+
+  @Field({ nullable: true })
+  @IsEmail()
+  email: string;
+
+  @Field({ nullable: true })
+  @IsPhoneNumber(null)
+  phone_number: string
+
+  @Field({ nullable: true })
+  @IsIn(['male', 'female', 'other'])
+  gender: string;
+}
+
 @ObjectType()
 export class UserBasic {
   @Field(type => ID)
