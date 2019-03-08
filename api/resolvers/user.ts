@@ -13,7 +13,7 @@ import {
   FieldResolver,
 } from 'type-graphql';
 
-import { UserInput, User, Group, UserBasic } from '../schema/user';
+import { UserInput, User, UpdatePasswordInput, UserBasic } from '../schema/user';
 import { Context } from '../index';
 import simpleProjection from '../utils/simple-projection';
 
@@ -84,7 +84,36 @@ export class UserResolver {
   // TO DO:
   // Update User
   // Update Password
-  // Remove friend
+  @Mutation(returns => Boolean)
+  async updatePassword(
+    @Arg("data") data: UpdatePasswordInput,
+    @Ctx() context: Context,
+  ): Promise<Boolean | Error> {
+    const { session, users_col } = context;
+    const { old_password, new_password } = data;
+
+    if (!session.user) {
+      return new Error('The user needs to be logged in');
+    }
+    try {
+      const user = await users_col
+        .findOne({ _id: session.user._id }, { projection: { password: 1 } });
+
+      const match = await bcrypt.compare(old_password, user.password);
+
+      if (!match) {
+        return false;
+      }
+
+      const hashed_password = await bcrypt.hash(new_password, 10);
+
+      await users_col.updateOne({ _id: session.user._id }, { $set: { password: hashed_password } });
+
+      return true;
+    } catch (e) {
+      return e;
+    }
+  }
 
 
   @Mutation(returns => Boolean)
@@ -120,6 +149,7 @@ export class UserResolver {
     if (!session.user) {
       return new Error('The user needs to be logged in');
     }
+    // e
 
     try {
       await users_col.updateOne(

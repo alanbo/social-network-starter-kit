@@ -2,6 +2,19 @@ import { ObjectType, InputType, Field, ID } from 'type-graphql';
 import { Length, IsEmail, IsPhoneNumber, IsIn, Matches } from "class-validator";
 import { Post } from './post';
 
+const PASSWD_REGEX = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/;
+
+@InputType()
+export class UpdatePasswordInput {
+  @Field()
+  @Matches(PASSWD_REGEX)
+  new_password: string;
+
+  @Field()
+  @Matches(PASSWD_REGEX)
+  old_password: string;
+}
+
 @InputType()
 export class UserInput {
   @Field()
@@ -25,7 +38,7 @@ export class UserInput {
   gender: string;
 
   @Field()
-  @Matches(/^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/)
+  @Matches(PASSWD_REGEX)
   password: string;
 }
 
