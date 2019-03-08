@@ -60,8 +60,26 @@ export class PostResolver {
     return context.posts_col.find(query, simpleProjection(info)).toArray();
   };
 
+  @Mutation(returns => Post)
+  async deletePost(
+    @Ctx() context: Context,
+    @Info() info: GraphQLResolveInfo,
+    @Arg('id', type => String) id: string,
+  ): Promise<PostMongo[] | Error> {
+
+    const { session, users_col } = context;
+
+    if (!session.user) {
+      return new Error('User must be logged in');
+    }
+
+    users_col.findOneAndDelete(
+      { _id: id, user: session.user._id },
+      { projection: simpleProjection(info) }
+    )
+  }
+
   // TO DO:
-  // Delete post.
   // Create/Update post.
   // Add comment.
   // Remove comment. 
