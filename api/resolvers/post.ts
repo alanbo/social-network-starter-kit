@@ -92,13 +92,23 @@ export class PostResolver {
     @Info() info: GraphQLResolveInfo,
     @Arg('data', type => PostInput) data: PostInput,
   ): Promise<PostMongo | Error> {
-    const { session, posts_col } = context;
+    const { session, posts_col, users_col } = context;
 
     if (!session.user) {
       return new Error('User must be logged in');
     }
 
     const to_insert = { ...data, createdAt: new Date(), _id: uuid(), user: session.user._id };
+
+    // if visible_to is not specified add all friends. 
+    if (!to_insert.visible_to) {
+      const { friends } = await users_col.findOne(
+        { _id: session.user._id },
+        { projection: { friends: 1, _id: 0 } }
+      );
+
+      to_insert.visible_to = friends;
+    }
 
     try {
       await posts_col.insertOne(to_insert);
