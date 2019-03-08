@@ -28,7 +28,7 @@ export interface UserMongo extends UserInput {
 
 @Resolver(of => User)
 export class UserResolver {
-  @Query(returns => User)
+  @Query(returns => User, { nullable: true })
   async user(
     @Arg('email') email: string,
     @Ctx() context: Context,
