@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
+import uuid from 'uuid/v4';
 
 import {
   Resolver,
@@ -11,10 +12,12 @@ import {
   FieldResolver,
 } from 'type-graphql';
 
-import { PostInput, Post } from '../schema/post';
+import { PostInput, Post, PostInputUpdate } from '../schema/post';
 import { Context } from '../index';
 import simpleProjection from '../utils/simple-projection';
 import { UserMongo } from './user';
+
+import { UpdateQuery } from 'mongodb';
 
 export interface PostMongo extends PostInput {
   createdAt: Date,
@@ -65,22 +68,104 @@ export class PostResolver {
     @Ctx() context: Context,
     @Info() info: GraphQLResolveInfo,
     @Arg('id', type => String) id: string,
-  ): Promise<PostMongo[] | Error> {
+  ): Promise<PostMongo | Error> {
 
-    const { session, users_col } = context;
+    const { session, posts_col } = context;
 
     if (!session.user) {
       return new Error('User must be logged in');
     }
 
-    users_col.findOneAndDelete(
-      { _id: id, user: session.user._id },
-      { projection: simpleProjection(info) }
-    )
+    try {
+      return posts_col.findOneAndDelete(
+        { _id: id, user: session.user._id },
+        { projection: simpleProjection(info) }
+      ).then((result => result.value));
+    } catch (e) {
+      return e;
+    }
   }
 
+  @Mutation(returns => Post)
+  async addPost(
+    @Ctx() context: Context,
+    @Info() info: GraphQLResolveInfo,
+    @Arg('data', type => PostInput) data: PostInput,
+  ): Promise<PostMongo | Error> {
+    const { session, posts_col } = context;
+
+    if (!session.user) {
+      return new Error('User must be logged in');
+    }
+
+    const to_insert = { ...data, createdAt: new Date(), _id: uuid(), user: session.user._id };
+
+    try {
+      await posts_col.insertOne(to_insert);
+    } catch (e) {
+      return e;
+    }
+
+    return to_insert;
+  }
+
+  @Mutation(returns => Post)
+  async updatePost(
+    @Ctx() context: Context,
+    @Info() info: GraphQLResolveInfo,
+    @Arg('data', type => PostInputUpdate) data: PostInputUpdate,
+  ): Promise<PostMongo | Error> {
+    const { session, posts_col } = context;
+
+    if (!session.user) {
+      return new Error('User must be logged in');
+    }
+
+    const update_expr: UpdateQuery<PostMongo> = {};
+
+    if (data.message) {
+      update_expr.$set = { message: data.message };
+    }
+
+    // TO DO: Cannot use multiple update expressions on the same field.
+    // Mongo db will throw error if deletes/adds/replaces overlap.
+    // Think through if that is acceptable. 
+
+    if (data.tags_replace) {
+      update_expr.$set = { tags: data.tags_replace };
+    }
+
+    if (data.visible_to_replace) {
+      update_expr.$set = { visible_to: data.visible_to_replace };
+    }
+
+    if (data.tags_add) {
+      update_expr.$addToSet = { tags: { $each: data.tags_add } };
+    }
+
+    if (data.tags_delete) {
+      update_expr.$pull = { tags: { $in: data.tags_delete } };
+    }
+
+    if (data.visible_to_add) {
+      update_expr.$addToSet = { visible_to: { $each: data.visible_to_add } };
+    }
+
+    if (data.visible_to_delete) {
+      update_expr.$pull = { visible_to: { $in: data.visible_to_delete } };
+    }
+
+    try {
+      return posts_col.findOneAndUpdate(
+        { _id: data._id, user: session.user._id },
+        update_expr,
+        { projection: simpleProjection(info), returnOriginal: false }
+      ).then(result => result.value);
+    } catch (e) {
+      return e;
+    }
+  }
   // TO DO:
-  // Create/Update post.
   // Add comment.
   // Remove comment. 
 

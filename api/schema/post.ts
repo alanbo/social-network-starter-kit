@@ -25,10 +25,6 @@ export class Post {
 
 @InputType()
 export class PostInput {
-  @IsUUID("4")
-  @Field(type => ID)
-  user: UserBasic;
-
   @Length(5, 500)
   @Field()
   message: string;
@@ -42,4 +38,45 @@ export class PostInput {
   @IsUUID("4", { each: true })
   @Field(type => [ID], { nullable: true })
   visible_to: string[];
+}
+
+@InputType()
+export class PostInputUpdate {
+  @IsUUID("4")
+  @Field()
+  _id: string
+
+  @Length(5, 500)
+  @Field({ nullable: true })
+  message: string;
+
+  @ArrayUnique()
+  @MaxLength(15, { each: true })
+  @Field(type => [String], { nullable: true })
+  tags_add: string[];
+
+  @ArrayUnique()
+  @MaxLength(15, { each: true })
+  @Field(type => [String], { nullable: true })
+  tags_replace: string[];
+
+  @ArrayUnique()
+  @MaxLength(15, { each: true })
+  @Field(type => [String], { nullable: true })
+  tags_delete: string[];
+
+  @ArrayUnique()
+  @IsUUID("4", { each: true })
+  @Field(type => [ID], { nullable: true })
+  visible_to_add: string[];
+
+  @ArrayUnique()
+  @IsUUID("4", { each: true })
+  @Field(type => [ID], { nullable: true })
+  visible_to_delete: string[];
+
+  @ArrayUnique()
+  @IsUUID("4", { each: true })
+  @Field(type => [ID], { nullable: true })
+  visible_to_replace: string[];
 }
