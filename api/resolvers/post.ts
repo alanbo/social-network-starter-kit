@@ -12,7 +12,7 @@ import {
   FieldResolver,
 } from 'type-graphql';
 
-import { PostInput, Post, PostInputUpdate } from '../schema/post';
+import { PostInput, Post, PostInputUpdate, Comment } from '../schema/post';
 import { Context } from '../index';
 import simpleProjection from '../utils/simple-projection';
 import { UserMongo } from './user';
@@ -22,6 +22,7 @@ import { UpdateQuery } from 'mongodb';
 export interface PostMongo extends PostInput {
   createdAt: Date,
   _id: string,
+  comments?: Comment[]
 }
 
 interface PostsQuery {
@@ -175,9 +176,75 @@ export class PostResolver {
       return e;
     }
   }
-  // TO DO:
-  // Add comment.
-  // Remove comment. 
+
+  @Mutation(returns => Post)
+  async addComment(
+    @Ctx() context: Context,
+    @Info() info: GraphQLResolveInfo,
+    @Arg('post_id', type => String) post_id: string,
+    @Arg('message', type => String) message: string,
+  ): Promise<PostMongo | Error> {
+    const { session, posts_col } = context;
+
+    if (!session.user) {
+      return new Error('User must be logged in');
+    }
+
+    const { _id, first_name, last_name, email } = session.user;
+
+    const comment: Comment = {
+      _id: uuid(),
+      message,
+      user: {
+        _id,
+        first_name,
+        last_name,
+        email
+      }
+    }
+
+    return posts_col
+      .findOneAndUpdate(
+        { _id: post_id, $or: [{ user: _id }, { visible_to: _id }] },
+        { $push: { comments: comment } },
+        { projection: simpleProjection(info), returnOriginal: false }
+      )
+      .then(result => result.value);
+
+  }
+
+  @Mutation(returns => Post)
+  async removeComment(
+    @Ctx() context: Context,
+    @Info() info: GraphQLResolveInfo,
+    @Arg('post_id', type => String) post_id: string,
+    @Arg('comment_id', type => String) comment_id: string,
+    @Arg('post_owner', type => Boolean, { nullable: true }) post_owner = false
+  ): Promise<PostMongo | Error> {
+    const { session, posts_col } = context;
+
+    if (!session.user) {
+      return new Error('User must be logged in');
+    }
+
+    const { _id } = session.user;
+
+    // Post owner can delete any comment.
+    let update_expr: UpdateQuery<PostMongo> = { $pull: { comments: { _id: comment_id } } };
+
+    // Only author of the comment can delete it it not post owner.
+    if (!post_owner) {
+      update_expr = { $pull: { comments: { _id: comment_id, 'user._id': _id } } };
+    }
+
+    return posts_col
+      .findOneAndUpdate(
+        { _id: post_id, $or: [{ user: _id }, { visible_to: _id }] },
+        update_expr,
+        { projection: simpleProjection(info), returnOriginal: false }
+      )
+      .then(result => result.value);
+  }
 
   @FieldResolver()
   user(
