@@ -30,10 +30,14 @@
     "type-graphql": "^0.16.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.11",
     "@types/ramda": "^0.25.51",
     "@types/uuid": "^3.4.4",
+    "apollo-server-testing": "^2.4.8",
     "jest": "^24.1.0",
+    "jest-environment-node": "^24.3.1",
     "kill-port": "^1.3.2",
+    "mongodb-memory-server": "^4.0.1",
     "ts-jest": "^24.0.0",
     "ts-node": "^8.0.2",
     "typescript": "^3.3.3333"
@@ -42,12 +46,15 @@
     "transform": {
       ".(ts|tsx)": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "testRegex": "(\\.(test|spec))\\.(ts|tsx|js)$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
       "js",
       "json"
-    ]
+    ],
+    "globalSetup": "./jest/setup.js",
+    "globalTeardown": "./jest/teardown.js",
+    "testEnvironment": "./jest/mongo-environment.js"
   }
 }

@@ -11,6 +11,7 @@
     "esModuleInterop": true,
     "outDir": "./dist",
     "sourceMap": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "allowJs": true
   }
 }
