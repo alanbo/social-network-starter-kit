@@ -1,6 +1,6 @@
 export const USER = `
-{
-  user(email: "cbrim1@nymag.com") {
+query GetUser($email: String!) {
+  user(email: $email) {
     email
     first_name
     last_name
