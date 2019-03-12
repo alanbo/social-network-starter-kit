@@ -10,7 +10,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
       MONGO_INITDB_DATABASE: social
     volumes:
-      - ./data/mock:/docker-entrypoint-initdb.d
+      - ./data/mock/mongo:/docker-entrypoint-initdb.d
 
   mongo-express:
     image: mongo-express
@@ -50,10 +50,14 @@ services:
       REDIS_PORT: 6379
       MONGODB_ADMINUSERNAME: root
       MONGODB_ADMINPASSWORD: example
+      AUTH_SECRET: 2323$$%%SS522dkssk
 
     depends_on:
       - mongo
       - redis
+    
+    ports:
+      - "9229:9229"
 
   view:
     build:
