@@ -29,4 +29,15 @@ describe('"user" resolver: ', () => {
 
     expect(res.data.user).toBeNull();
   });
+
+  it('Wont\'t allow other logged in user to query the user', async () => {
+    const logged_user = USER_DATA[1];
+    const queried_user = USER_DATA[0];
+
+    const res = await tester
+      .login(logged_user)
+      .query({ query: USER, variables: { email: queried_user.email } });
+
+    expect(res.data.user).toBeNull();
+  });
 });
