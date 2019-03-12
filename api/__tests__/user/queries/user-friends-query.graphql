@@ -1,0 +1,13 @@
+query GetUser($email: String!) {
+  user(email: $email) {
+    _id
+    email
+
+    friends {
+      _id
+      first_name
+      last_name
+      email
+    }
+  }
+}

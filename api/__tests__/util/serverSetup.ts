@@ -5,7 +5,6 @@ import { PostResolver, PostMongo } from '../../resolvers/post';
 import { buildSchema } from 'type-graphql';
 import { MongoClient, Collection } from 'mongodb';
 import { Db } from 'mongodb';
-import { } from 'graphql';
 
 interface Context {
   session?: { user?: any },
