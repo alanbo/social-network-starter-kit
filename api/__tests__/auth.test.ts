@@ -25,7 +25,22 @@ describe('Authentication, login and logout resolvers', () => {
       }
     });
 
-    expect(res.data.login._id).toEqual(user_login_data._id);
+    const session_user = user_login_data as any;
+    session_user.createdAt = new Date(user_login_data.createdAt);
+    delete user_login_data.password;
+
     expect(tester.setUserSpy).toHaveBeenCalledTimes(1);
+    expect(tester.setUserSpy).toHaveBeenCalledWith(session_user);
+    expect(res.data.login._id).toEqual(user_login_data._id);
+  });
+
+  it('successfully logs out', async () => {
+    const LOGOUT = `
+      mutation {
+        logout
+      }`;
+
+    const res = await tester.mutate({ mutation: LOGOUT });
+    expect(tester.destroySessionSpy).toHaveBeenCalledTimes(1);
   });
 });

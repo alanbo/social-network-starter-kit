@@ -7,14 +7,14 @@ import { MongoClient, Collection } from 'mongodb';
 import { Db } from 'mongodb';
 
 interface Context {
-  session?: { user?: any, __user?: any },
+  session?: { user?: any, __user?: any, destroy: (callback: Function) => void },
   users_col: Collection<UserMongo>,
   posts_col: Collection<PostMongo>
 
 }
 
 interface QueryMutation {
-  (opts: { query?: string, mutation?: string, variables: { [ix: string]: any } }): Promise<any>
+  (opts: { query?: string, mutation?: string, variables?: { [ix: string]: any } }): Promise<any>
 }
 
 class ApolloMongoTester {
@@ -24,6 +24,7 @@ class ApolloMongoTester {
 
   public getUserSpy: jest.SpyInstance<any, []>;
   public setUserSpy: jest.SpyInstance<void, any[]>;
+  public destroySessionSpy: jest.SpyInstance<void, [Function]>;
 
   query: QueryMutation;
   mutate: QueryMutation;
@@ -87,6 +88,10 @@ class ApolloMongoTester {
         context.session = {
           __user: user,
 
+          destroy(callback) {
+            callback();
+          },
+
           get user() {
             return this.__user;
           },
@@ -98,6 +103,7 @@ class ApolloMongoTester {
 
         this.getUserSpy = jest.spyOn(context.session, 'user', 'get');
         this.setUserSpy = jest.spyOn(context.session, 'user', 'set');
+        this.destroySessionSpy = jest.spyOn(context.session, 'destroy');
 
         return context;
       },
