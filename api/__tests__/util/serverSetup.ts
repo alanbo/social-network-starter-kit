@@ -5,22 +5,26 @@ import { PostResolver, PostMongo } from '../../resolvers/post';
 import { buildSchema } from 'type-graphql';
 import { MongoClient, Collection } from 'mongodb';
 import { Db } from 'mongodb';
-import { } from 'graphql';
 
 interface Context {
-  session?: { user?: any },
+  session?: { user?: any, __user?: any, destroy: (callback: Function) => void },
   users_col: Collection<UserMongo>,
   posts_col: Collection<PostMongo>
+
 }
 
 interface QueryMutation {
-  (opts: { query: string, variables: { [ix: string]: any } }): Promise<any>
+  (opts: { query?: string, mutation?: string, variables?: { [ix: string]: any } }): Promise<any>
 }
 
 class ApolloMongoTester {
   private db: Db;
   private connection: Promise<MongoClient>;
-  protected user: { [ix: string]: any }
+  protected user: { [ix: string]: any };
+
+  public getUserSpy: jest.SpyInstance<any, []>;
+  public setUserSpy: jest.SpyInstance<void, any[]>;
+  public destroySessionSpy: jest.SpyInstance<void, [Function]>;
 
   query: QueryMutation;
   mutate: QueryMutation;
@@ -79,11 +83,27 @@ class ApolloMongoTester {
           posts_col: this.db.collection('posts')
         }
 
-        if (this.user) {
-          context.session = {
-            user: this.user
+        const user = this.user;
+
+        context.session = {
+          __user: user,
+
+          destroy(callback) {
+            callback();
+          },
+
+          get user() {
+            return this.__user;
+          },
+
+          set user(val) {
+            this.__user = val;
           }
         }
+
+        this.getUserSpy = jest.spyOn(context.session, 'user', 'get');
+        this.setUserSpy = jest.spyOn(context.session, 'user', 'set');
+        this.destroySessionSpy = jest.spyOn(context.session, 'destroy');
 
         return context;
       },

@@ -38,10 +38,11 @@ export class UserResolver {
 
     // Checking other users than the one that is logged in is not allowed.
     // TO DO: allow checking users that have friends connection.
+    // with restriction to a subset of fields.
     if (!session.user) {
       return new Error('User not logged in');
     } else if (email !== session.user.email) {
-      // return new Error('Not autorized to view this user');
+      return new Error('Not autorized to view this user');
     }
 
     const user = users_col
