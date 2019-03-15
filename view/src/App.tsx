@@ -5,9 +5,10 @@ import ApolloClient, { gql } from "apollo-boost";
 import { ApolloProvider, Query } from "react-apollo";
 import NavigationFrame from './components/NavigationFrame';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { USER, LOGIN } from './graphql/user-queries';
 
 const client = new ApolloClient({
-  uri: '/api'
+  uri: '/api/'
 });
 
 class App extends Component {
@@ -21,10 +22,25 @@ class App extends Component {
       <Router>
         <ApolloProvider client={client}>
           <div className="App">
-            <NavigationFrame signOut={this.signOut}>
-              {/* <Main /> */}
-              Hello
-            </NavigationFrame>
+            <Query query={USER}>
+              {({ loading, error, data }) => {
+                if (loading) return 'Loading...';
+                if (error) {
+                  if (error.message = 'NOT_LOGGED_IN') {
+                    return <p>You need to log in</p>;
+                  }
+                };
+
+                console.log(data);
+
+                return (
+                  <NavigationFrame signOut={this.signOut}>
+                    {/* <Main /> */}
+                    Hello {data && data.user.first_name}
+                  </NavigationFrame>
+                );
+              }}
+            </Query>
           </div>
         </ApolloProvider>
       </Router>
