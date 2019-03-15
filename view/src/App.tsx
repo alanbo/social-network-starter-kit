@@ -3,8 +3,8 @@ import './App.css';
 import ApolloClient from "apollo-boost";
 import { ApolloProvider, Query } from "react-apollo";
 import NavigationFrame from './components/NavigationFrame';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { USER, LOGIN } from './graphql/user-queries';
+import { BrowserRouter as Router, Redirect } from 'react-router-dom';
+import { USER, LOGIN, LOGOUT } from './graphql/user-queries';
 import Main from './Main';
 
 const client = new ApolloClient({
@@ -13,8 +13,16 @@ const client = new ApolloClient({
 
 class App extends Component {
 
-  signOut() {
-    console.log('Signing Out');
+  async signOut() {
+    const logout = await client.mutate({ mutation: LOGOUT });
+
+    if (logout.data) {
+      try {
+        await client.resetStore();
+      } catch (e) {
+        console.log(e);
+      }
+    }
   }
 
   render() {

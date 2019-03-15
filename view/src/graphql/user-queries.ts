@@ -41,4 +41,9 @@ export const USER = gql`
   ${user_fragment}
 `;
 
+export const LOGOUT = gql`
+  mutation Logout {
+    logout
+  }
+`;
 
