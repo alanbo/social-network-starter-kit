@@ -8,8 +8,13 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import styles from './styles';
+import styles, { NavigationFrameStyles } from './styles';
 import MenuList, { DataItem } from './MenuList';
+import UserQuery from '../../apollo-wrappers/UserQuery';
+import Avatar from '@material-ui/core/Avatar';
+import Grid from '@material-ui/core/Grid';
+import { Query } from "react-apollo";
+import { USER } from '../../graphql/user-queries';
 
 const fg_list: Array<DataItem> = [
   {
@@ -34,19 +39,7 @@ const fg_list: Array<DataItem> = [
   }
 ];
 
-interface Props {
-  classes: {
-    root: string,
-    appBar: string,
-    appBarShift: string,
-    menuButton: string,
-    hide: string,
-    flex: string,
-    drawerPaper: string,
-    drawerPaperClose: string,
-    toolbar: string,
-    content: string,
-  },
+interface Props extends NavigationFrameStyles {
   signOut: () => any,
   children: React.ReactNode
 }
@@ -86,7 +79,28 @@ class NavigationFrame extends React.Component<Props, State> {
             >
               <MenuIcon />
             </IconButton>
+
+            {/* TO DO: replace with ApolloConsumer */}
+            <Query query={USER}>
+              {({ data, error }) => {
+                if (!data || !data.user || error) {
+                  return null;
+                }
+
+                console.log('data', data);
+
+                const full_name = `${data.user.first_name} ${data.user.last_name}`;
+
+                return (
+                  <Grid container justify="flex-end" alignItems="center">
+                    {full_name}
+                    <Avatar alt={`${full_name} Profile Photo`} src="https://picsum.photos/300/300" className={classes.avatar} />
+                  </Grid>
+                );
+              }}
+            </Query>
           </Toolbar>
+
         </AppBar>
         <Drawer
           variant="permanent"

@@ -1,8 +1,8 @@
-import { createStyles } from '@material-ui/core/styles';
+import { createStyles, WithStyles } from '@material-ui/core/styles';
 
 const drawerWidth = 240;
 
-const styles = theme => createStyles({
+const styles = (theme: any) => createStyles({
   root: {
     flexGrow: 1,
     zIndex: 1,
@@ -69,6 +69,12 @@ const styles = theme => createStyles({
   flex: {
     flex: 1,
   },
+  avatar: {
+    marginRight: '20px',
+    marginLeft: '20px',
+  }
 });
 
 export default styles;
+
+export interface NavigationFrameStyles extends WithStyles<typeof styles> { }
