@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Redirect } from 'react-router-dom';
 import { USER, LOGIN, LOGOUT } from './graphql/user-queries';
 import Main from './Main';
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   uri: '/api/'
 });
 

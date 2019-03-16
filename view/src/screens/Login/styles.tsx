@@ -17,9 +17,15 @@ const styles = () => createStyles({
 
   login_form_wrapper: {
     maxWidth: '500px',
-    width: '300px'
-  }
+    width: '300px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end'
+  },
 
+  button: {
+
+  }
 });
 
 export default styles;
