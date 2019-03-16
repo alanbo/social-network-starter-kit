@@ -103,7 +103,6 @@ class NavigationFrame extends React.Component<Props, State> {
           <MenuList signOut={this.props.signOut} fragments_list={fg_list} />
         </Drawer>
         <main className={classes.content}>
-          <div className={classes.toolbar} />
           {this.props.children}
         </main>
       </div>
