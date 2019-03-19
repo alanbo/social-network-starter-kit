@@ -7,40 +7,16 @@ import Dashboard from '../screens/Dashboard';
 import Profile from '../screens/Profile';
 import Bookmarks from '../screens/Bookmarks';
 import Login from '../screens/Login';
-import { getUser } from '../redux/actions/userActions';
 
-interface Props {
-  getUser: () => void,
-  user: any
-}
 
-class Main extends Component<Props> {
-  componentWillMount() {
-    this.props.getUser();
-  }
+const main = () => (
+  <Switch>
+    <Route exact path='/' component={Dashboard} />
+    <Route path='/profile' component={Profile} />
+    <Route path='/bookmarks' component={Bookmarks} />
+    <Route path='/settings' component={Settings} />
+    <Route path='/login' component={Login} />
+  </Switch>
+);
 
-  render() {
-    if (!this.props.user._id) {
-      return <Login />
-
-    }
-
-    return (
-      <Switch>
-        <Route exact path='/' component={Dashboard} />
-        <Route path='/profile' component={Profile} />
-        <Route path='/bookmarks' component={Bookmarks} />
-        <Route path='/settings' component={Settings} />
-        <Route path='/login' component={Login} />
-      </Switch>
-    );
-  }
-}
-
-function mapStateToProps(state: any) {
-  return {
-    user: state.user
-  }
-}
-
-export default connect(mapStateToProps, { getUser })(Main);
+export default main;

@@ -1,4 +1,4 @@
-import { client } from '../../App';
+import { client } from '../../index';
 import { Dispatch } from 'redux';
 import { USER, LOGIN, LOGOUT } from '../../graphql/user-queries';
 

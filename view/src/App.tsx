@@ -1,29 +1,14 @@
 import React, { Component } from 'react';
+import { withRouter, RouteComponentProps } from 'react-router';
+
 import './App.css';
-import ApolloClient from "apollo-boost";
 import NavigationFrame from './components/NavigationFrame';
-import { BrowserRouter as Router } from 'react-router-dom';
 import Main from './Main';
-import { Provider } from 'react-redux'
-import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import thunk from 'redux-thunk';
-import root_reducer from './redux/reducers';
+import { client } from './index';
 
-const middleware = [
-  thunk
-];
+interface Props extends RouteComponentProps<any> { }
 
-const store = createStore(root_reducer, composeWithDevTools(
-  applyMiddleware(...middleware),
-  // other store enhancers if any
-));
-
-export const client = new ApolloClient({
-  uri: '/api/'
-});
-
-class App extends Component {
+class App extends Component<Props> {
 
   async signOut() {
 
@@ -36,17 +21,13 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
-        <Provider store={store}>
-          <div className="App">
-            <NavigationFrame signOut={this.signOut}>
-              <Main />
-            </NavigationFrame>
-          </div>
-        </Provider>
-      </Router>
+      <div className="App">
+        <NavigationFrame signOut={this.signOut}>
+          <Main />
+        </NavigationFrame>
+      </div>
     );
   }
 }
 
-export default App;
+export default withRouter(App);
