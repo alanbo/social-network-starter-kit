@@ -4,17 +4,15 @@ import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import styles, { NavigationFrameStyles } from './styles';
 import MenuList, { DataItem } from './MenuList';
-import UserQuery from '../../apollo-wrappers/UserQuery';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
-import { Query } from "react-apollo";
-import { USER } from '../../graphql/user-queries';
+import { connect } from 'react-redux';
+import { logoutUser } from '../../redux/actions/userActions';
 
 const fg_list: Array<DataItem> = [
   {
@@ -41,7 +39,9 @@ const fg_list: Array<DataItem> = [
 
 interface Props extends NavigationFrameStyles {
   signOut: () => any,
-  children: React.ReactNode
+  children: React.ReactNode,
+  logoutUser: Function,
+  user: any
 }
 
 interface State {
@@ -53,6 +53,11 @@ class NavigationFrame extends React.Component<Props, State> {
     open: false,
   };
 
+  signOut() {
+    this.props.logoutUser();
+    this.props.signOut();
+  }
+
   handleDrawerOpen = () => {
     this.setState({ open: true });
   };
@@ -62,7 +67,7 @@ class NavigationFrame extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, user } = this.props;
 
     return (
       <div className={classes.root}>
@@ -80,25 +85,14 @@ class NavigationFrame extends React.Component<Props, State> {
               <MenuIcon />
             </IconButton>
 
-            {/* TO DO: replace with ApolloConsumer */}
-            <Query query={USER}>
-              {({ data, error }) => {
-                if (!data || !data.user || error) {
-                  return null;
-                }
-
-                console.log('data', data);
-
-                const full_name = `${data.user.first_name} ${data.user.last_name}`;
-
-                return (
-                  <Grid container justify="flex-end" alignItems="center">
-                    {full_name}
-                    <Avatar alt={`${full_name} Profile Photo`} src="https://picsum.photos/300/300" className={classes.avatar} />
-                  </Grid>
-                );
-              }}
-            </Query>
+            {
+              user._id && (
+                <Grid container justify="flex-end" alignItems="center">
+                  {`${user.first_name} ${user.last_name}`}
+                  <Avatar alt={'Profile Photo'} src="https://picsum.photos/300/300" className={classes.avatar} />
+                </Grid>
+              )
+            }
           </Toolbar>
 
         </AppBar>
@@ -114,7 +108,7 @@ class NavigationFrame extends React.Component<Props, State> {
               <ChevronLeftIcon />
             </IconButton>
           </div>
-          <MenuList signOut={this.props.signOut} fragments_list={fg_list} />
+          <MenuList signOut={this.signOut.bind(this)} fragments_list={fg_list} />
         </Drawer>
         <main className={classes.content}>
           {this.props.children}
@@ -124,4 +118,10 @@ class NavigationFrame extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(NavigationFrame);
+function mapStateToProps(state: any) {
+  return {
+    user: state.user
+  }
+}
+
+export default connect(mapStateToProps, { logoutUser })(withStyles(styles)(NavigationFrame));

@@ -11,12 +11,12 @@ import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import styles, { LoginStyles } from './styles';
-import { client } from '../../App';
-import { LOGIN } from '../../graphql/user-queries';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { loginUser } from '../../redux/actions/userActions';
 
 interface Props extends LoginStyles, RouteComponentProps<any> {
-
+  loginUser: (email: string, password: string) => void
 }
 
 interface State {
@@ -48,22 +48,7 @@ class Login extends Component<Props, State> {
   };
 
   async handleSubmit() {
-    const variables = {
-      password: this.state.password,
-      email: this.state.user_name
-    }
-
-    try {
-      await client.mutate({
-        mutation: LOGIN, variables
-      });
-
-      this.props.history.push('/');
-    } catch (e) {
-      // TO DO: add better error handling,
-      // differentiate between wrong credentials and other errors
-      this.setState({ error: true });
-    }
+    this.props.loginUser(this.state.user_name, this.state.password);
   }
 
   render() {
@@ -116,4 +101,4 @@ class Login extends Component<Props, State> {
   }
 };
 
-export default withStyles(styles)(Login);
+export default connect(null, { loginUser })(withRouter(withStyles(styles)(Login)));
