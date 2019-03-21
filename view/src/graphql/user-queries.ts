@@ -23,6 +23,7 @@ export const user_fragment = gql`
   }
 `;
 
+
 export const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
     user: login(email: $email, password: $password) {
