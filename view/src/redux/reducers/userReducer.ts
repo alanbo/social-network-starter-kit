@@ -1,8 +1,8 @@
 import { UserQuery_user } from '../../graphql/operation-result-types';
-import { Omit } from 'utility-types';
+import { Omit, DeepReadonly } from 'utility-types';
 import { UserActions } from '../actions/userActions'
 
-export type UserState = Omit<UserQuery_user, 'posts'> | null;
+export type UserState = DeepReadonly<Omit<UserQuery_user, 'posts'> | null>;
 
 import {
   get_user_with_posts,
