@@ -13,6 +13,8 @@ import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import { connect } from 'react-redux';
 import { logoutUser } from '../../redux/actions/userActions';
+import { AppState } from '../../redux/reducers';
+import { UserState } from '../../redux/reducers/userReducer';
 
 const fg_list: Array<DataItem> = [
   {
@@ -41,7 +43,7 @@ interface Props extends NavigationFrameStyles {
   signOut: () => any,
   children: React.ReactNode,
   logoutUser: Function,
-  user: any
+  user: UserState
 }
 
 interface State {
@@ -86,7 +88,7 @@ class NavigationFrame extends React.Component<Props, State> {
             </IconButton>
 
             {
-              user._id && (
+              user && (
                 <Grid container justify="flex-end" alignItems="center">
                   {`${user.first_name} ${user.last_name}`}
                   <Avatar alt={'Profile Photo'} src="https://picsum.photos/300/300" className={classes.avatar} />
@@ -118,7 +120,7 @@ class NavigationFrame extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state: any) {
+function mapStateToProps(state: AppState) {
   return {
     user: state.user
   }
