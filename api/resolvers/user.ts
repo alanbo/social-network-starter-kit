@@ -30,7 +30,7 @@ export interface UserMongo extends UserInput {
 export class UserResolver {
   @Query(returns => User, { nullable: true })
   async user(
-    @Arg('email') email: string,
+    @Arg('email', { nullable: true }) email: string,
     @Ctx() context: Context,
     @Info() info: GraphQLResolveInfo
   ): Promise<UserMongo | Error> {
@@ -40,13 +40,13 @@ export class UserResolver {
     // TO DO: allow checking users that have friends connection.
     // with restriction to a subset of fields.
     if (!session.user) {
-      return new Error('User not logged in');
-    } else if (email !== session.user.email) {
-      return new Error('Not autorized to view this user');
+      return new Error('NOT_LOGGED_IN');
+    } else if (email && email !== session.user.email) {
+      return new Error('NOT_AUTHORIZED');
     }
 
     const user = users_col
-      .findOne({ email }, simpleProjection(info))
+      .findOne({ email: email || session.user.email }, simpleProjection(info))
       .then(u => {
         if (u) {
           u.createdAt = new Date(u.createdAt);

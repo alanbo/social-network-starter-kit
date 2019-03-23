@@ -1,43 +1,33 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { withRouter, RouteComponentProps } from 'react-router';
+
 import './App.css';
-import ApolloClient, { gql } from "apollo-boost";
-import { ApolloProvider, Query } from "react-apollo";
+import NavigationFrame from './components/NavigationFrame';
+import Main from './Main';
+import { client } from './index';
 
-const client = new ApolloClient({
-  uri: '/api'
-});
+interface Props extends RouteComponentProps<any> { }
 
-class App extends Component {
+class App extends Component<Props> {
+
+  async signOut() {
+
+    try {
+      await client.resetStore();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   render() {
     return (
-      <ApolloProvider client={client}>
-        <div className="App">
-          <Query
-            query={gql`
-              {
-                user(email: "cbrim1@nymag.com") {
-                  email
-                  first_name
-                  last_name
-                  gender
-                  createdAt
-                }
-              }
-            `}
-          >
-            {({ loading, error, data }) => {
-              if (loading) return <p>Loading...</p>;
-              if (error) return <p>Error :(</p>;
-
-              const { first_name, last_name, email } = data.user;
-                return (<p>Hello {first_name} {last_name}. Your email is: {email}</p>)
-            }}
-          </Query>
-        </div>
-      </ApolloProvider>
+      <div className="App">
+        <NavigationFrame signOut={this.signOut}>
+          <Main />
+        </NavigationFrame>
+      </div>
     );
   }
 }
 
-export default App;
+export default withRouter(App);
