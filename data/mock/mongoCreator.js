@@ -4,6 +4,11 @@ const util = require('util');
 const faker = require('faker');
 const uuid = require('uuid/v4');
 
+// Convention:
+// Every user has next 5 users and 5 previous users as friends.
+// The exception is the begining and the end of the arrray where only remaining prev/next users are added.
+// Every user has from after 5 next users to 
+
 // const USER_NUM = 100;
 const POSTS_NUM = 10;
 const GENDER = ['male', 'female', 'other'];
@@ -21,7 +26,7 @@ async function createUsers() {
   // }
 
   // fs.writeFileSync(`${__dirname}/users-login-data.json`, JSON.stringify(users, null, '  '));
-  let users = JSON.parse(fs.readFileSync(`${__dirname}/users-login-data.json`).toString());
+  let users = JSON.parse(fs.readFileSync(`${__dirname}/json/users-login-data.json`).toString());
 
   console.log('Creating users: ');
 
@@ -87,6 +92,7 @@ db.users.insertMany(
   { ordered: false }
 );`;
 
+  fs.writeFileSync(`${__dirname}/json/users-social.json`, usersJSON);
   fs.writeFileSync(`${__dirname}/mongo/users-social.js`, file_output);
   console.log('User file have been saved');
 
@@ -117,12 +123,15 @@ db.users.insertMany(
     }
   });
 
+  const postsJSON = JSON.stringify(posts, null, ' ');
+
   const file_output_posts = `
 db.posts.insertMany(
-  ${JSON.stringify(posts, null, ' ')},
+  ${postsJSON},
   { ordered: false }
 );`;
 
+  fs.writeFileSync(`${__dirname}/json/posts-social.json`, postsJSON);
   fs.writeFileSync(`${__dirname}/mongo/posts-social.js`, file_output_posts);
   console.log('Posts file have been saved');
 
