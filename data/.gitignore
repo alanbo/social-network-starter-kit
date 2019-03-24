@@ -1,3 +1,2 @@
 node_modules
-mock/users-login-data.json
 mock/mongo/*-social.js
