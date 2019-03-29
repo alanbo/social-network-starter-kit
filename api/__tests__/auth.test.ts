@@ -5,7 +5,9 @@ import ApolloMongoTester from './util/serverSetup';
 import { pickUserBasic } from './util';
 
 const LOGIN = fs.readFileSync(`${__dirname}/user/queries/user-login-mutation.graphql`).toString();
-const tester = new ApolloMongoTester([user_login_data], []);
+const USERS_DATA = fs.readFileSync(`${__dirname}/mongo-data/users-social.json`).toString();
+const USERS_LOGIN_DATA = fs.readFileSync(`${__dirname}/mongo-data/users-login-data.json`).toString();
+const tester = new ApolloMongoTester(JSON.parse(USERS_DATA), []);
 
 beforeAll(async () => {
   await tester.setup();
