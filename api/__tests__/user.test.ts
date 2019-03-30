@@ -1,9 +1,7 @@
 import "reflect-metadata";
 import fs from 'fs';
-import USER_DATA from './user/data/user-data';
 import ApolloMongoTester from './util/serverSetup';
 import { pickUserBasic } from './util';
-import pick from "ramda/es/pick";
 
 const USER = fs.readFileSync(`${__dirname}/user/queries/user-basic-query.graphql`).toString();
 const USER_FRIENDS = fs.readFileSync(`${__dirname}/user/queries/user-friends-query.graphql`).toString();
