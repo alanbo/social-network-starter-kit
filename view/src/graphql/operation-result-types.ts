@@ -8,6 +8,7 @@
 // ====================================================
 
 export interface GetPosts_posts_user {
+  _id: string;
   email: string;
   first_name: string;
   last_name: string;
@@ -26,6 +27,7 @@ export interface GetPosts_posts_comments {
 }
 
 export interface GetPosts_posts {
+  _id: string;
   message: string;
   tags: string[] | null;
   user: GetPosts_posts_user;
@@ -50,12 +52,14 @@ export interface GetPostsVariables {
 // ====================================================
 
 export interface AddPost_addPost_user {
+  _id: string;
   email: string;
   first_name: string;
   last_name: string;
 }
 
 export interface AddPost_addPost {
+  _id: string;
   message: string;
   tags: string[] | null;
   user: AddPost_addPost_user;
@@ -78,12 +82,14 @@ export interface AddPostVariables {
 // ====================================================
 
 export interface DeletePost_deletePost_user {
+  _id: string;
   email: string;
   first_name: string;
   last_name: string;
 }
 
 export interface DeletePost_deletePost {
+  _id: string;
   message: string;
   tags: string[] | null;
   user: DeletePost_deletePost_user;
@@ -106,12 +112,14 @@ export interface DeletePostVariables {
 // ====================================================
 
 export interface UpdatePost_updatePost_user {
+  _id: string;
   email: string;
   first_name: string;
   last_name: string;
 }
 
 export interface UpdatePost_updatePost {
+  _id: string;
   message: string;
   tags: string[] | null;
   user: UpdatePost_updatePost_user;
@@ -313,12 +321,14 @@ export interface GetUserPosts {
 // ====================================================
 
 export interface PostFragment_user {
+  _id: string;
   email: string;
   first_name: string;
   last_name: string;
 }
 
 export interface PostFragment {
+  _id: string;
   message: string;
   tags: string[] | null;
   user: PostFragment_user;
