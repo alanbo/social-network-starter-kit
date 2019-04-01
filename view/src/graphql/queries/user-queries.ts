@@ -6,20 +6,6 @@ export const user_fragment = gql`
     last_name
     first_name
     email
-    
-    posts {
-      message
-      comments {
-        _id
-        user {
-          first_name
-          last_name
-          email
-        }
-        message
-      }
-      tags
-    }
   }
 `;
 
@@ -45,6 +31,39 @@ export const USER = gql`
 export const LOGOUT = gql`
   mutation Logout {
     logout
+  }
+`;
+
+export const USER_FRIENDS = gql`
+  query GetUserFriends {
+    user {
+      friends {
+        _id
+        first_name
+        last_name
+        email
+      }
+    }
+  }
+`;
+
+export const USER_POSTS = gql`
+  query GetUserPosts {
+    user {
+      posts {
+        message
+        comments {
+          _id
+          user {
+            first_name
+            last_name
+            email
+          }
+          message
+        }
+        tags
+      }
+    }
   }
 `;
 
