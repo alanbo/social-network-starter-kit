@@ -2,9 +2,9 @@ import "reflect-metadata";
 import fs from 'fs';
 import ApolloMongoTester from './util/serverSetup';
 import { pickUserBasic } from './util';
-import { USER, LOGIN, LOGOUT } from './graphql/user-queries';
+import { USER, USER_FRIENDS } from './graphql/user-queries';
 import { ApolloQueryResult } from 'apollo-client';
-import { UserQuery, Logout } from './graphql/operation-result-types';
+import { UserQuery, GetUserFriends } from './graphql/operation-result-types';
 
 const USERS_JSON = fs.readFileSync(`${__dirname}/mongo-data/users-social.json`).toString();
 const USERS_DATA = JSON.parse(USERS_JSON);
@@ -20,7 +20,7 @@ afterAll(async () => {
 
 describe('"user" resolver: ', () => {
   it('It fetches basic user ', async () => {
-    const { createdAt, email, first_name, last_name, gender } = USERS_DATA[0];
+    const { email, first_name, last_name, _id } = USERS_DATA[0];
     const res: ApolloQueryResult<UserQuery> = await tester
       .login()
       .query({
@@ -29,7 +29,7 @@ describe('"user" resolver: ', () => {
       });
 
     expect(res.data).toEqual({
-      user: { createdAt, email, first_name, last_name, gender }
+      user: { email, first_name, last_name, _id }
     })
   });
 
@@ -46,25 +46,12 @@ describe('"user" resolver: ', () => {
   });
 
 
-  it('Wont\'t allow other logged in user to query the user', async () => {
-    const logged_user = USERS_DATA[1];
-    const queried_user = USERS_DATA[0];
-
-    const res = await tester
-      .login(logged_user)
-      .query({ query: USER, variables: { email: queried_user.email } });
-
-    expect(res.data.user).toBeNull();
-  });
-
-
   it('Will get basic info about friends', async () => {
-    const { email, _id } = USERS_DATA[0];
-    const res = await tester.login().query({ query: USER, variables: { email: USERS_DATA[0].email } });
+    const res: ApolloQueryResult<GetUserFriends> = await tester
+      .login()
+      .query({ query: USER_FRIENDS, variables: { email: USERS_DATA[0].email } });
 
     const match_obj = {
-      email,
-      _id,
       friends: USERS_DATA.slice(1, 6).map(pickUserBasic)
     };
 
