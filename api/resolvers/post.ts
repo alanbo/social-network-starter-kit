@@ -61,7 +61,9 @@ export class PostResolver {
     }
 
     // TO DO: need to add pagination.
-    return context.posts_col.find(query, simpleProjection(info)).toArray();
+    return context.posts_col.find(query, simpleProjection(info))
+      .sort({ createdAt: -1 })
+      .toArray();
   };
 
   @Mutation(returns => Post)
@@ -215,7 +217,7 @@ export class PostResolver {
       .findOneAndUpdate(
         { _id: post_id, $or: [{ user: _id }, { visible_to: _id }] },
         { $push: { comments: comment } },
-        { projection: simpleProjection(info), returnOriginal: false }
+        { returnOriginal: false }
       )
       .then(result => result.value);
 

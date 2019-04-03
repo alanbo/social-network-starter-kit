@@ -54,6 +54,7 @@ export const DELETE_POST = gql`
       ...PostFragment
     }
   }
+  ${POST_FRAGMENT}
 `;
 
 export const UPDATE_POST = gql`

@@ -27,7 +27,7 @@ interface QueryMutation {
 }
 
 class ApolloMongoTester {
-  private db: Db;
+  public db: Db;
   private connection: Promise<MongoClient>;
   protected user: { [ix: string]: any };
 
@@ -55,7 +55,7 @@ class ApolloMongoTester {
     });
   }
 
-  login(user?: { [ix: string]: any }) {
+  login(user?: UserMongo) {
     this.user = user || this.user_default;
 
     return this;

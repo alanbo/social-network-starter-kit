@@ -2,9 +2,10 @@ import "reflect-metadata";
 import fs from 'fs';
 import ApolloMongoTester from './util/serverSetup';
 import { pickUserBasic } from './util';
+import { USER, LOGIN, LOGOUT } from './graphql/user-queries';
+import { ApolloQueryResult } from 'apollo-client';
+import { UserQuery, Logout } from './graphql/operation-result-types';
 
-const USER = fs.readFileSync(`${__dirname}/user/queries/user-basic-query.graphql`).toString();
-const USER_FRIENDS = fs.readFileSync(`${__dirname}/user/queries/user-friends-query.graphql`).toString();
 const USERS_JSON = fs.readFileSync(`${__dirname}/mongo-data/users-social.json`).toString();
 const USERS_DATA = JSON.parse(USERS_JSON);
 const tester = new ApolloMongoTester(USERS_DATA, [], USERS_DATA[0]);
@@ -20,7 +21,12 @@ afterAll(async () => {
 describe('"user" resolver: ', () => {
   it('It fetches basic user ', async () => {
     const { createdAt, email, first_name, last_name, gender } = USERS_DATA[0];
-    const res = await tester.login().query({ query: USER, variables: { email: USERS_DATA[0].email } });
+    const res: ApolloQueryResult<UserQuery> = await tester
+      .login()
+      .query({
+        query: USER,
+        variables: { email: USERS_DATA[0].email }
+      });
 
     expect(res.data).toEqual({
       user: { createdAt, email, first_name, last_name, gender }
@@ -29,7 +35,12 @@ describe('"user" resolver: ', () => {
 
 
   it('Won\'t fetch user when the user is logged out', async () => {
-    const res = await tester.logout().query({ query: USER, variables: { email: USERS_DATA[0].email } });
+    const res: ApolloQueryResult<UserQuery> = await tester
+      .logout()
+      .query({
+        query: USER,
+        variables: { email: USERS_DATA[0].email }
+      });
 
     expect(res.data.user).toBeNull();
   });
@@ -49,7 +60,7 @@ describe('"user" resolver: ', () => {
 
   it('Will get basic info about friends', async () => {
     const { email, _id } = USERS_DATA[0];
-    const res = await tester.login().query({ query: USER_FRIENDS, variables: { email: USERS_DATA[0].email } });
+    const res = await tester.login().query({ query: USER, variables: { email: USERS_DATA[0].email } });
 
     const match_obj = {
       email,

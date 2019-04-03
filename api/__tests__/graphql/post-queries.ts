@@ -2,9 +2,11 @@ import gql from 'graphql-tag';
 
 const POST_FRAGMENT = gql`
   fragment PostFragment on Post {
+    _id
     message
     tags
     user {
+      _id
       email
       first_name
       last_name
@@ -52,6 +54,7 @@ export const DELETE_POST = gql`
       ...PostFragment
     }
   }
+  ${POST_FRAGMENT}
 `;
 
 export const UPDATE_POST = gql`
