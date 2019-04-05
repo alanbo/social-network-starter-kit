@@ -67,3 +67,31 @@ export const USER_POSTS = gql`
   }
 `;
 
+export const CREATE_USER = gql`
+  mutation CreateUser($data: UserInput!) {
+    createUser(data: $data) {
+      ...UserFragment
+    }
+  }
+  ${user_fragment}
+`;
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($data: UserInputOpt!) {
+    updateUser(data: $data) {
+      ...UserFragment
+    }
+  }
+  ${user_fragment}
+`;
+
+
+export const DELETE_USER = gql`
+  mutation DeleteUser {
+    deleteUser {
+      ...UserFragment
+    }
+  }
+  ${user_fragment}
+`;
+

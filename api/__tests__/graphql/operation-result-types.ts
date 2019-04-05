@@ -317,6 +317,71 @@ export interface GetUserPosts {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: CreateUser
+// ====================================================
+
+export interface CreateUser_createUser {
+  _id: string;
+  last_name: string;
+  first_name: string;
+  email: string;
+}
+
+export interface CreateUser {
+  createUser: CreateUser_createUser;
+}
+
+export interface CreateUserVariables {
+  data: UserInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateUser
+// ====================================================
+
+export interface UpdateUser_updateUser {
+  _id: string;
+  last_name: string;
+  first_name: string;
+  email: string;
+}
+
+export interface UpdateUser {
+  updateUser: UpdateUser_updateUser;
+}
+
+export interface UpdateUserVariables {
+  data: UserInputOpt;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteUser
+// ====================================================
+
+export interface DeleteUser_deleteUser {
+  _id: string;
+  last_name: string;
+  first_name: string;
+  email: string;
+}
+
+export interface DeleteUser {
+  deleteUser: DeleteUser_deleteUser;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL fragment: PostFragment
 // ====================================================
 
@@ -397,6 +462,25 @@ export interface PostInputUpdate {
   visible_to_add?: string[] | null;
   visible_to_delete?: string[] | null;
   visible_to_replace?: string[] | null;
+}
+
+// null
+export interface UserInput {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  gender: string;
+  password: string;
+}
+
+// null
+export interface UserInputOpt {
+  first_name?: string | null;
+  last_name?: string | null;
+  email?: string | null;
+  phone_number?: string | null;
+  gender?: string | null;
 }
 
 //==============================================================
