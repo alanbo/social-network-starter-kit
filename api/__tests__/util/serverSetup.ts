@@ -5,6 +5,15 @@ import { PostResolver, PostMongo } from '../../resolvers/post';
 import { buildSchema } from 'type-graphql';
 import { MongoClient, Collection } from 'mongodb';
 import { Db } from 'mongodb';
+import fs from 'fs';
+import path from 'path';
+
+const postsJSON = fs.readFileSync(path.resolve(__dirname, '../mongo-data/posts-social.json')).toString();
+const POSTS = JSON.parse(postsJSON);
+
+const usersJSON = fs.readFileSync(path.resolve(__dirname, '../mongo-data/users-social.json')).toString();
+const USERS = JSON.parse(usersJSON);
+
 
 interface Context {
   session?: { user?: any, __user?: any, destroy: (callback: Function) => void },
@@ -18,7 +27,7 @@ interface QueryMutation {
 }
 
 class ApolloMongoTester {
-  private db: Db;
+  public db: Db;
   private connection: Promise<MongoClient>;
   protected user: { [ix: string]: any };
 
@@ -31,9 +40,9 @@ class ApolloMongoTester {
 
 
   constructor(
-    readonly users_data: any[] = [],
-    readonly posts_data: any[] = [],
-    protected user_default?: { [ix: string]: any }
+    readonly users_data: any[] = USERS,
+    readonly posts_data: any[] = POSTS,
+    protected user_default: { [ix: string]: any } = USERS[0]
   ) {
     this.connection = MongoClient.connect(
       (global as any).__MONGO_URI__
@@ -46,7 +55,7 @@ class ApolloMongoTester {
     });
   }
 
-  login(user?: { [ix: string]: any }) {
+  login(user?: UserMongo) {
     this.user = user || this.user_default;
 
     return this;
@@ -84,6 +93,7 @@ class ApolloMongoTester {
         }
 
         const user = this.user;
+        const that = this;
 
         context.session = {
           __user: user,
@@ -98,6 +108,7 @@ class ApolloMongoTester {
 
           set user(val) {
             this.__user = val;
+            that.user = val;
           }
         }
 

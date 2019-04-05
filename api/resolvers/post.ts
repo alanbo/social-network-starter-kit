@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo } from 'graphql';
 import uuid from 'uuid/v4';
+import { ID } from 'type-graphql';
 
 import {
   Resolver,
@@ -16,7 +17,6 @@ import { PostInput, Post, PostInputUpdate, Comment } from '../schema/post';
 import { Context } from '../index';
 import simpleProjection from '../utils/simple-projection';
 import { UserMongo } from './user';
-
 import { UpdateQuery } from 'mongodb';
 
 export interface PostMongo extends PostInput {
@@ -61,14 +61,16 @@ export class PostResolver {
     }
 
     // TO DO: need to add pagination.
-    return context.posts_col.find(query, simpleProjection(info)).toArray();
+    return context.posts_col.find(query, simpleProjection(info))
+      .sort({ createdAt: -1 })
+      .toArray();
   };
 
   @Mutation(returns => Post)
   async deletePost(
     @Ctx() context: Context,
     @Info() info: GraphQLResolveInfo,
-    @Arg('id', type => String) id: string,
+    @Arg('id', type => ID) id: string,
   ): Promise<PostMongo | Error> {
 
     const { session, posts_col } = context;
@@ -78,10 +80,18 @@ export class PostResolver {
     }
 
     try {
-      return posts_col.findOneAndDelete(
+      const post = await posts_col.findOneAndDelete(
         { _id: id, user: session.user._id },
-        { projection: simpleProjection(info) }
-      ).then((result => result.value));
+        // TO DO: simple projection returns null here
+        // find a fix or replacement
+        // { projection: simpleProjection(info) }
+      );
+
+      if (!post.value) {
+        throw new Error('The post doesn\'t exist');
+      }
+
+      return post.value;
     } catch (e) {
       return e;
     }
@@ -181,7 +191,7 @@ export class PostResolver {
   async addComment(
     @Ctx() context: Context,
     @Info() info: GraphQLResolveInfo,
-    @Arg('post_id', type => String) post_id: string,
+    @Arg('post_id', type => ID) post_id: string,
     @Arg('message', type => String) message: string,
   ): Promise<PostMongo | Error> {
     const { session, posts_col } = context;
@@ -207,7 +217,7 @@ export class PostResolver {
       .findOneAndUpdate(
         { _id: post_id, $or: [{ user: _id }, { visible_to: _id }] },
         { $push: { comments: comment } },
-        { projection: simpleProjection(info), returnOriginal: false }
+        { returnOriginal: false }
       )
       .then(result => result.value);
 
@@ -217,8 +227,8 @@ export class PostResolver {
   async removeComment(
     @Ctx() context: Context,
     @Info() info: GraphQLResolveInfo,
-    @Arg('post_id', type => String) post_id: string,
-    @Arg('comment_id', type => String) comment_id: string,
+    @Arg('post_id', type => ID) post_id: string,
+    @Arg('comment_id', type => ID) comment_id: string,
     @Arg('post_owner', type => Boolean, { nullable: true }) post_owner = false
   ): Promise<PostMongo | Error> {
     const { session, posts_col } = context;

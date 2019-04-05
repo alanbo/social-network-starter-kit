@@ -1,5 +1,5 @@
 import { client } from '../../index';
-import { USER, LOGIN, LOGOUT } from '../../graphql/user-queries';
+import { USER, LOGIN, LOGOUT } from '../../graphql/queries/user-queries';
 import { ApolloQueryResult } from 'apollo-client';
 
 import {

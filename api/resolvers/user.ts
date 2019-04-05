@@ -2,6 +2,8 @@ import uuid from 'uuid/v4';
 import bcrypt from 'bcrypt';
 import { GraphQLResolveInfo } from 'graphql';
 
+import { sortArrayOfObjByArrayOfIds } from '../utils';
+
 import {
   Resolver,
   Mutation,
@@ -59,8 +61,10 @@ export class UserResolver {
     return user;
   }
 
+  // TO DO: Temporary solution. Not good for production. Creating user needs proper
+  // email confirmation workflow. 
   @Mutation(returns => User)
-  async addUser(
+  async createUser(
     @Arg("data") args: UserInput,
     @Ctx() context: Context,
   ): Promise<User> {
@@ -90,12 +94,36 @@ export class UserResolver {
   ): Promise<UserMongo | Error> {
     const { session, users_col } = context;
 
+    if (!session.user) {
+      return new Error('User needs to be logged in');
+    }
+
     try {
       const result = users_col
         .findOneAndUpdate(
           { _id: session.user._id },
           { $set: data },
-          { returnOriginal: false, projection: simpleProjection(info) }
+          { returnOriginal: false }
+        )
+        .then(result => result.value);
+
+      return result;
+    } catch (e) {
+      return e;
+    }
+  }
+
+  @Mutation(returns => User)
+  async deleteUser(
+    @Ctx() context: Context,
+    @Info() info: GraphQLResolveInfo
+  ): Promise<UserMongo | Error> {
+    const { session, users_col } = context;
+
+    try {
+      const result = users_col
+        .findOneAndDelete(
+          { _id: session.user._id },
         )
         .then(result => result.value);
 
@@ -330,7 +358,7 @@ export class UserResolver {
 
   @FieldResolver()
   friends(
-    @Root() user: User,
+    @Root() user: UserMongo,
     @Ctx() context: Context
   ) {
     if (!user.friends) {
@@ -339,12 +367,13 @@ export class UserResolver {
 
     return context.users_col.find({
       _id: { '$in': user.friends }
-    }).toArray();
+    }).toArray()
+      .then(friends => sortArrayOfObjByArrayOfIds(user.friends, friends));
   }
 
   @FieldResolver()
   friend_requests(
-    @Root() user: User,
+    @Root() user: UserMongo,
     @Ctx() context: Context
   ) {
     if (!user.friend_requests) {
@@ -353,6 +382,7 @@ export class UserResolver {
 
     return context.users_col.find({
       _id: { '$in': user.friend_requests }
-    }).toArray();
+    }).toArray()
+      .then(friend_req => sortArrayOfObjByArrayOfIds(user.friend_requests, friend_req));
   }
 }

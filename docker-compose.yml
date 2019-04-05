@@ -45,6 +45,8 @@ services:
     volumes:
       - /app/node_modules
       - ./api:/app
+      - ./data/mock/json:/app/__tests__/mongo-data
+      - ./view/src/graphql/queries:/app/__tests__/view-gql-queries
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379

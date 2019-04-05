@@ -1,11 +1,12 @@
 import "reflect-metadata";
 import fs from 'fs';
-import { user_login_data, login_credentials } from './user/data/user-login-data';
 import ApolloMongoTester from './util/serverSetup';
-import { pickUserBasic } from './util';
+import { UserMongo } from '../resolvers/user';
 
 const LOGIN = fs.readFileSync(`${__dirname}/user/queries/user-login-mutation.graphql`).toString();
-const tester = new ApolloMongoTester([user_login_data], []);
+const USERS_DATA: UserMongo[] = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/users-social.json`).toString());
+const USERS_LOGIN_DATA = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/users-login-data.json`).toString());
+const tester = new ApolloMongoTester(USERS_DATA, []);
 
 beforeAll(async () => {
   await tester.setup();
@@ -20,18 +21,18 @@ describe('Authentication, login and logout resolvers', () => {
     const res = await tester.mutate({
       mutation: LOGIN,
       variables: {
-        email: login_credentials.email,
-        password: login_credentials.password
+        email: USERS_LOGIN_DATA[0].email,
+        password: USERS_LOGIN_DATA[0].password
       }
     });
 
-    const session_user = user_login_data as any;
-    session_user.createdAt = new Date(user_login_data.createdAt);
-    delete user_login_data.password;
+    const session_user = USERS_DATA[0];
+    session_user.createdAt = new Date(session_user.createdAt);
+    delete session_user.password;
 
     expect(tester.setUserSpy).toHaveBeenCalledTimes(1);
     expect(tester.setUserSpy).toHaveBeenCalledWith(session_user);
-    expect(res.data.login._id).toEqual(user_login_data._id);
+    expect(res.data.login._id).toEqual(session_user._id);
   });
 
   it('successfully logs out', async () => {
@@ -42,5 +43,6 @@ describe('Authentication, login and logout resolvers', () => {
 
     const res = await tester.mutate({ mutation: LOGOUT });
     expect(tester.destroySessionSpy).toHaveBeenCalledTimes(1);
+    expect(res.data.logout).toBe(true);
   });
 });
