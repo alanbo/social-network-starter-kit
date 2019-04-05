@@ -94,6 +94,10 @@ export class UserResolver {
   ): Promise<UserMongo | Error> {
     const { session, users_col } = context;
 
+    if (!session.user) {
+      return new Error('User needs to be logged in');
+    }
+
     try {
       const result = users_col
         .findOneAndUpdate(

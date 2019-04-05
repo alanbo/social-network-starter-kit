@@ -26,8 +26,6 @@ import {
   DeleteUser
 } from './graphql/operation-result-types';
 
-import { User } from "../schema/user";
-
 const validator = new Validator();
 const USERS_JSON = fs.readFileSync(`${__dirname}/mongo-data/users-social.json`).toString();
 const USERS_DATA = JSON.parse(USERS_JSON);
@@ -37,7 +35,7 @@ const NEW_USER_INPUT: UserInput = {
   email: 'sample@email.com',
   first_name: 'Rowen',
   last_name: 'Atkinson',
-  phone_number: '+16047293087',
+  phone_number: '+16017778687',
   gender: 'male',
   password: 'SamplePass123%4'
 };
@@ -54,7 +52,7 @@ afterAll(async () => {
 
 describe('"user" resolver: ', () => {
   it('It fetches basic user ', async () => {
-    const { email, first_name, last_name, _id } = USERS_DATA[0];
+    const { email, first_name, last_name, _id, gender, createdAt, phone_number } = USERS_DATA[0];
     const res: ApolloQueryResult<UserQuery> = await tester
       .login()
       .query({
@@ -63,7 +61,7 @@ describe('"user" resolver: ', () => {
       });
 
     expect(res.data).toEqual({
-      user: { email, first_name, last_name, _id }
+      user: { email, first_name, last_name, _id, gender, createdAt, phone_number }
     })
   });
 
@@ -108,8 +106,13 @@ describe('"user" resolver: ', () => {
 
     expect(user.createdAt).toBeInstanceOf(Date);
 
-    delete user.createdAt;
     delete user.password;
+
+    // checks if a new session is established
+    expect(tester.setUserSpy).toHaveBeenCalledTimes(1);
+    expect(tester.setUserSpy).toHaveBeenCalledWith(user);
+
+    delete user.createdAt;
 
     const test_user = { _id: new_user_id, ...NEW_USER_INPUT };
     delete test_user.password;
@@ -118,7 +121,40 @@ describe('"user" resolver: ', () => {
   });
 
   it('Updates user data', async () => {
+    const variables: UpdateUserVariables = {
+      data: {
+        first_name: 'Aldous',
+        last_name: 'Huxley',
+        gender: 'other',
+        email: 'new@email.com',
+        phone_number: '+16017778687'
+      }
+    };
 
+    const res: ApolloQueryResult<UpdateUser> = await tester.mutate({
+      mutation: UPDATE_USER,
+      variables
+    });
+
+    const user = res.data.updateUser;
+    delete user.createdAt;
+
+    expect(user).toEqual({ _id: new_user_id, ...variables.data });
+
+    const user_mongo: UserMongo = await tester.db.collection('users').findOne(
+      { _id: new_user_id },
+      {
+        projection: {
+          first_name: 1,
+          last_name: 1,
+          gender: 1,
+          email: 1,
+          phone_number: 1
+        }
+      }
+    );
+
+    expect(user_mongo).toEqual({ _id: new_user_id, ...variables.data });
   });
 
   it('Deletes a user', async () => {

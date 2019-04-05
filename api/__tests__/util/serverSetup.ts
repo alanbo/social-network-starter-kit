@@ -93,6 +93,7 @@ class ApolloMongoTester {
         }
 
         const user = this.user;
+        const that = this;
 
         context.session = {
           __user: user,
@@ -107,6 +108,7 @@ class ApolloMongoTester {
 
           set user(val) {
             this.__user = val;
+            that.user = val;
           }
         }
 

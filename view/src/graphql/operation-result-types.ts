@@ -213,6 +213,9 @@ export interface Login_user {
   last_name: string;
   first_name: string;
   email: string;
+  gender: string;
+  createdAt: any;
+  phone_number: string;
 }
 
 export interface Login {
@@ -237,6 +240,9 @@ export interface UserQuery_user {
   last_name: string;
   first_name: string;
   email: string;
+  gender: string;
+  createdAt: any;
+  phone_number: string;
 }
 
 export interface UserQuery {
@@ -325,6 +331,9 @@ export interface CreateUser_createUser {
   last_name: string;
   first_name: string;
   email: string;
+  gender: string;
+  createdAt: any;
+  phone_number: string;
 }
 
 export interface CreateUser {
@@ -348,6 +357,9 @@ export interface UpdateUser_updateUser {
   last_name: string;
   first_name: string;
   email: string;
+  gender: string;
+  createdAt: any;
+  phone_number: string;
 }
 
 export interface UpdateUser {
@@ -371,6 +383,9 @@ export interface DeleteUser_deleteUser {
   last_name: string;
   first_name: string;
   email: string;
+  gender: string;
+  createdAt: any;
+  phone_number: string;
 }
 
 export interface DeleteUser {
@@ -436,6 +451,9 @@ export interface UserFragment {
   last_name: string;
   first_name: string;
   email: string;
+  gender: string;
+  createdAt: any;
+  phone_number: string;
 }
 
 /* tslint:disable */

@@ -5,7 +5,10 @@ export const user_fragment = gql`
     _id
     last_name
     first_name
-    email
+    email,
+    gender,
+    createdAt,
+    phone_number
   }
 `;
 
