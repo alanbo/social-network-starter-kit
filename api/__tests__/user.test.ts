@@ -19,7 +19,6 @@ import {
   UserQuery,
   GetUserFriends,
   CreateUser,
-  CreateUserVariables,
   UserInput,
   UpdateUser,
   UpdateUserVariables,
@@ -158,6 +157,16 @@ describe('"user" resolver: ', () => {
   });
 
   it('Deletes a user', async () => {
+    const res: ApolloQueryResult<DeleteUser> = await tester.mutate({
+      mutation: DELETE_USER
+    });
 
+    expect(res.data.deleteUser._id).toBe(new_user_id);
+
+    const user_mongo: UserMongo = await tester.db.collection('users').findOne(
+      { _id: new_user_id }
+    );
+
+    expect(user_mongo).toBeFalsy();
   });
 });
