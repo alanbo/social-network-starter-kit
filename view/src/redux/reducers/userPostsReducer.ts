@@ -1,4 +1,4 @@
-import { UserQuery_user_posts } from '../../graphql/operation-result-types';
+import { GetUserPosts } from '../../graphql/operation-result-types';
 import { DeepReadonly } from 'utility-types';
 import { UserActions } from '../actions/userActions'
 
@@ -9,7 +9,7 @@ import {
 } from '../actions/types';
 
 
-export type UserPostsState = DeepReadonly<UserQuery_user_posts>[] | null;
+export type UserPostsState = DeepReadonly<GetUserPosts>[] | null;
 
 export default function (state: UserPostsState = [], action: UserActions) {
   switch (action.type) {
@@ -21,7 +21,7 @@ export default function (state: UserPostsState = [], action: UserActions) {
         return state;
       }
 
-      return user.posts;
+      return user.
 
     case logout:
       return [];

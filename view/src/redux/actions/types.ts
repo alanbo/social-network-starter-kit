@@ -6,3 +6,10 @@ export const login = 'LOGIN';
 export const login_error = 'LOGIN_ERROR';
 export const logout = 'LOGOUT';
 export const logout_error = 'LOGOUT_ERROR';
+
+export default {
+  get_user: 'GET_USER_WITH_POSTS',
+  get_dashboard_posts: 'GET_DASHBOARD_POSTS',
+  login: 'LOGIN',
+  logout: 'LOGOUT',
+};
