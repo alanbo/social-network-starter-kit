@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import { gqlLogout } from '../../redux/actions/gql-thunks';
 import { AppState } from '../../redux/reducers';
 import { UserState } from '../../redux/reducers/userReducer';
+import LoadingIndicator from '../LoadingIndicator';
 
 const fg_list: Array<DataItem> = [
   {
@@ -43,7 +44,8 @@ interface Props extends NavigationFrameStyles {
   signOut: () => any,
   children: React.ReactNode,
   gqlLogout: Function,
-  user: UserState
+  user: UserState,
+  loading: Boolean
 }
 
 interface State {
@@ -114,6 +116,7 @@ class NavigationFrame extends React.Component<Props, State> {
         </Drawer>
         <main className={classes.content}>
           {this.props.children}
+          {this.props.loading && <LoadingIndicator />}
         </main>
       </div>
     );
@@ -122,7 +125,8 @@ class NavigationFrame extends React.Component<Props, State> {
 
 function mapStateToProps(state: AppState) {
   return {
-    user: state.user
+    user: state.user,
+    loading: !!state.loading.length
   }
 }
 
