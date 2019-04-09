@@ -14,9 +14,10 @@ import styles, { LoginStyles } from './styles';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { loginUser } from '../../redux/actions/userActions';
+import { LoginVariables } from '../../graphql/operation-result-types'
 
 interface Props extends LoginStyles, RouteComponentProps<any> {
-  loginUser: (email: string, password: string) => void
+  loginUser: (variables: LoginVariables) => void
 }
 
 interface State {
@@ -48,7 +49,12 @@ class Login extends Component<Props, State> {
   };
 
   async handleSubmit() {
-    this.props.loginUser(this.state.user_name, this.state.password);
+    const variables: LoginVariables = {
+      password: this.state.password,
+      email: this.state.user_name
+    };
+
+    this.props.loginUser(variables);
   }
 
   render() {

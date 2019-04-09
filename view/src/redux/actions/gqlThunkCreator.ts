@@ -1,48 +1,21 @@
 import { client } from '../../index';
 import { ApolloQueryResult } from 'apollo-client';
-import types from './types';
+import * as gql_types from './gql-types';
 import { ThunkAction } from 'redux-thunk';
 import { $Values } from 'utility-types';
+import { GqlErrorAction, GqlLoadingAction, GqlLoadingCancelAction } from './gql-action-interfaces';
 
-type Types = $Values<typeof types>;
+type Types = $Values<typeof gql_types>;
 
-interface ErrorAction<T extends Types> {
-  type: 'ERROR',
-  meta: {
-    type: T,
-    id: number
-  }
-}
-
-interface LoadingAction<T extends Types> {
-  type: 'LOADING',
-  meta: {
-    type: T,
-    id: number
-  }
-}
-
-interface LoadingCancelAction<T extends Types> {
-  type: 'LOADING_CANCEL',
-  meta: {
-    type: T,
-    id: number
-  }
-}
-
-interface GqlAction<T extends Types, Q> {
-  type: T,
-  payload: Q,
+export interface GqlAction {
+  type: Types,
+  payload: any,
   meta: {
     id: number
   }
 }
 
-type ActionType<T extends Types, Q> = ErrorAction<T>
-  | ErrorAction<T>
-  | LoadingAction<T>
-  | LoadingCancelAction<T>
-  | GqlAction<T, Q>;
+type ActionType = GqlErrorAction | GqlLoadingAction | GqlLoadingCancelAction | GqlAction;
 
 
 // initial value to incremental id that uniquely identifies each action. 
@@ -56,14 +29,15 @@ export default function gqlThunkCreator<Q, V>(
   }
 ) {
   // helps to uniquely identify each action.
-  const id = id_counter++;
 
-  type Thunk = (variables: V) => ThunkAction<void, {}, null, ActionType<typeof opts.type, Q>>
+  type Thunk = (variables: V) => ThunkAction<void, {}, null, ActionType>
 
 
   const thunk: Thunk = (variables: V) => async dispatch => {
+    const id = id_counter++;
+
     dispatch({
-      type: 'LOADING',
+      type: gql_types.gql_loading,
       meta: { type: opts.type, id }
     });
 
@@ -73,10 +47,11 @@ export default function gqlThunkCreator<Q, V>(
       if (opts.query) {
         query = client.query({ query: opts.query, variables });
       } else {
-        query = client.mutate({ mutation: opts.mutation });
+        query = client.mutate({ mutation: opts.mutation, variables }) as Promise<ApolloQueryResult<Q>>;
       }
 
       const { data: payload } = await query;
+      opts.type;
 
       dispatch({
         type: opts.type,
@@ -86,14 +61,14 @@ export default function gqlThunkCreator<Q, V>(
 
     } catch (e) {
       dispatch({
-        type: 'ERROR',
+        type: gql_types.gql_error,
         payload: e,
         meta: { type: opts.type, id }
       })
     }
 
     dispatch({
-      type: 'LOADING_CANCEL',
+      type: gql_types.gql_loading_cancel,
       meta: { type: opts.type, id }
     });
   }
