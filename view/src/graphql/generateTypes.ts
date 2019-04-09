@@ -2,24 +2,8 @@ import { print } from 'graphql/language/printer';
 import { ASTNode } from 'graphql';
 import fs from 'fs';
 import path from 'path';
-
-import * as user_gql from './queries/user-queries';
-import * as post_gql from './queries/post-queries';
-
-// Function that makes an interface for each gql action type.
-function makeActionInterface(action_type: string, gql_type: string) {
-  return `
-export interface Gql${gql_type}Action {
-  type: typeof ${action_type},
-  payload: ${gql_type},
-  meta: {
-    id: number
-  }
-}`;
-};
-
-// map of all grapqhql queries.
-const all_queries = Object.assign({}, user_gql, post_gql);
+import all_queries from './queries';
+// _________ ../redux/actions/gql-types.ts _________
 
 // fixed types that need to be hardcoded.
 let gql_types = `
@@ -53,7 +37,22 @@ Object.keys(all_queries).forEach(key => {
 const file_path = path.resolve(__dirname, '../redux/actions/gql-types.ts');
 fs.writeFileSync(file_path, gql_types);
 
-// Action Interfaces
+
+
+// _________ ../redux/actions/gql-action-interfaces.ts _________
+
+// Function that makes an interface for each gql action type.
+function makeActionInterface(action_type: string, gql_type: string) {
+  return `
+export interface Gql${gql_type}Action {
+  type: typeof ${action_type},
+  payload: ${gql_type},
+  meta: {
+    id: number
+  }
+}`;
+};
+
 let gql_type_imports = 'import {\n';
 let action_type_imports = 'import {\n  gql_error,\n  gql_loading,\n  gql_loading_cancel,\n';
 let action_interfaces = `
@@ -104,4 +103,46 @@ ${action_interfaces}
 // Save action interfaces file.
 const interfaces_file_path = path.resolve(__dirname, '../redux/actions/gql-action-interfaces.ts');
 fs.writeFileSync(interfaces_file_path, actions_file);
+
+// _________ ../redux/actions/gql-thunks.ts _________
+
+let thunks = '';
+
+Object.keys(all_queries).forEach(key => {
+  const query = print((all_queries as { [ix: string]: ASTNode })[key]);
+  // might need better matching pattern
+  const is_mutation = query.match('mutation ');
+  const is_query = query.match('query ');
+
+  // only process queries and mutations
+  if (!is_mutation && !is_query) {
+    return;
+  }
+
+  // make it camel case.
+  const thunk_name = key.toLowerCase().split('_').reduce((prev, curr) => {
+    return prev + curr[0].toUpperCase() + curr.substring(1).toLowerCase();
+  }, 'gql');
+
+
+  thunks += `
+export const ${thunk_name} = gqlThunkCreator({
+  ${is_query ? 'query' : 'mutation'}: gql_queries.${key},
+  type: gql_${key.toLowerCase()}
+});
+`;
+});
+
+const thunks_file = `${action_type_imports}
+
+import gql_queries from '../../graphql/queries';
+import gqlThunkCreator from './gqlThunkCreator';
+
+${thunks}
+`;
+
+const thunks_file_path = path.resolve(__dirname, '../redux/actions/gql-thunks.ts');
+fs.writeFileSync(thunks_file_path, thunks_file);
+
+
 

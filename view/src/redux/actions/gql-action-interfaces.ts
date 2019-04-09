@@ -2,6 +2,12 @@ import {
   gql_error,
   gql_loading,
   gql_loading_cancel,
+  gql_posts,
+  gql_add_post,
+  gql_delete_post,
+  gql_update_post,
+  gql_add_comment,
+  gql_remove_comment,
   gql_login,
   gql_user,
   gql_logout,
@@ -10,16 +16,16 @@ import {
   gql_create_user,
   gql_update_user,
   gql_delete_user,
-  gql_posts,
-  gql_add_post,
-  gql_delete_post,
-  gql_update_post,
-  gql_add_comment,
-  gql_remove_comment,
 } from './gql-types';
 
 
 import {
+  GetPosts,
+  AddPost,
+  DeletePost,
+  UpdatePost,
+  AddComment,
+  RemoveComment,
   Login,
   UserQuery,
   Logout,
@@ -28,12 +34,6 @@ import {
   CreateUser,
   UpdateUser,
   DeleteUser,
-  GetPosts,
-  AddPost,
-  DeletePost,
-  UpdatePost,
-  AddComment,
-  RemoveComment,
 } from '../../graphql/operation-result-types';
 
 
@@ -58,6 +58,54 @@ export interface GqlLoadingCancelAction {
   type: typeof gql_loading_cancel,
   meta: {
     type: string,
+    id: number
+  }
+}
+
+export interface GqlGetPostsAction {
+  type: typeof gql_posts,
+  payload: GetPosts,
+  meta: {
+    id: number
+  }
+}
+
+export interface GqlAddPostAction {
+  type: typeof gql_add_post,
+  payload: AddPost,
+  meta: {
+    id: number
+  }
+}
+
+export interface GqlDeletePostAction {
+  type: typeof gql_delete_post,
+  payload: DeletePost,
+  meta: {
+    id: number
+  }
+}
+
+export interface GqlUpdatePostAction {
+  type: typeof gql_update_post,
+  payload: UpdatePost,
+  meta: {
+    id: number
+  }
+}
+
+export interface GqlAddCommentAction {
+  type: typeof gql_add_comment,
+  payload: AddComment,
+  meta: {
+    id: number
+  }
+}
+
+export interface GqlRemoveCommentAction {
+  type: typeof gql_remove_comment,
+  payload: RemoveComment,
+  meta: {
     id: number
   }
 }
@@ -121,54 +169,6 @@ export interface GqlUpdateUserAction {
 export interface GqlDeleteUserAction {
   type: typeof gql_delete_user,
   payload: DeleteUser,
-  meta: {
-    id: number
-  }
-}
-
-export interface GqlGetPostsAction {
-  type: typeof gql_posts,
-  payload: GetPosts,
-  meta: {
-    id: number
-  }
-}
-
-export interface GqlAddPostAction {
-  type: typeof gql_add_post,
-  payload: AddPost,
-  meta: {
-    id: number
-  }
-}
-
-export interface GqlDeletePostAction {
-  type: typeof gql_delete_post,
-  payload: DeletePost,
-  meta: {
-    id: number
-  }
-}
-
-export interface GqlUpdatePostAction {
-  type: typeof gql_update_post,
-  payload: UpdatePost,
-  meta: {
-    id: number
-  }
-}
-
-export interface GqlAddCommentAction {
-  type: typeof gql_add_comment,
-  payload: AddComment,
-  meta: {
-    id: number
-  }
-}
-
-export interface GqlRemoveCommentAction {
-  type: typeof gql_remove_comment,
-  payload: RemoveComment,
   meta: {
     id: number
   }

@@ -21,7 +21,7 @@ type ActionType = GqlErrorAction | GqlLoadingAction | GqlLoadingCancelAction | G
 // initial value to incremental id that uniquely identifies each action. 
 let id_counter = 0;
 
-export default function gqlThunkCreator<Q, V>(
+export default function gqlThunkCreator(
   opts: {
     query?: any,
     mutation?: any
@@ -30,10 +30,10 @@ export default function gqlThunkCreator<Q, V>(
 ) {
   // helps to uniquely identify each action.
 
-  type Thunk = (variables: V) => ThunkAction<void, {}, null, ActionType>
+  type Thunk = (variables: any) => ThunkAction<void, {}, null, ActionType>
 
 
-  const thunk: Thunk = (variables: V) => async dispatch => {
+  const thunk: Thunk = (variables: any) => async dispatch => {
     const id = id_counter++;
 
     dispatch({
@@ -42,12 +42,12 @@ export default function gqlThunkCreator<Q, V>(
     });
 
     try {
-      let query: Promise<ApolloQueryResult<Q>>;
+      let query: Promise<ApolloQueryResult<any>>;
 
       if (opts.query) {
         query = client.query({ query: opts.query, variables });
       } else {
-        query = client.mutate({ mutation: opts.mutation, variables }) as Promise<ApolloQueryResult<Q>>;
+        query = client.mutate({ mutation: opts.mutation, variables }) as Promise<ApolloQueryResult<any>>;
       }
 
       const { data: payload } = await query;

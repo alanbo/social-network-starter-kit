@@ -12,7 +12,7 @@ import MenuList, { DataItem } from './MenuList';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import { connect } from 'react-redux';
-import { logoutUser } from '../../redux/actions/userActions';
+import { gqlLogout } from '../../redux/actions/gql-thunks';
 import { AppState } from '../../redux/reducers';
 import { UserState } from '../../redux/reducers/userReducer';
 
@@ -42,7 +42,7 @@ const fg_list: Array<DataItem> = [
 interface Props extends NavigationFrameStyles {
   signOut: () => any,
   children: React.ReactNode,
-  logoutUser: Function,
+  gqlLogout: Function,
   user: UserState
 }
 
@@ -56,7 +56,7 @@ class NavigationFrame extends React.Component<Props, State> {
   };
 
   signOut() {
-    this.props.logoutUser();
+    this.props.gqlLogout();
     this.props.signOut();
   }
 
@@ -126,4 +126,4 @@ function mapStateToProps(state: AppState) {
   }
 }
 
-export default connect(mapStateToProps, { logoutUser })(withStyles(styles)(NavigationFrame));
+export default connect(mapStateToProps, { gqlLogout })(withStyles(styles)(NavigationFrame));

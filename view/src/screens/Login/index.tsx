@@ -13,11 +13,11 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import styles, { LoginStyles } from './styles';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { loginUser } from '../../redux/actions/userActions';
+import { gqlLogin } from '../../redux/actions/gql-thunks';
 import { LoginVariables } from '../../graphql/operation-result-types'
 
 interface Props extends LoginStyles, RouteComponentProps<any> {
-  loginUser: (variables: LoginVariables) => void
+  gqlLogin: (variables: LoginVariables) => void
 }
 
 interface State {
@@ -54,7 +54,7 @@ class Login extends Component<Props, State> {
       email: this.state.user_name
     };
 
-    this.props.loginUser(variables);
+    this.props.gqlLogin(variables);
   }
 
   render() {
@@ -107,4 +107,4 @@ class Login extends Component<Props, State> {
   }
 };
 
-export default connect(null, { loginUser })(withRouter(withStyles(styles)(Login)));
+export default connect(null, { gqlLogin })(withRouter(withStyles(styles)(Login)));
