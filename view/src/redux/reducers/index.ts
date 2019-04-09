@@ -3,11 +3,13 @@ import { combineReducers } from 'redux';
 import dashboard_posts from './dashboardPostsReducer';
 import user from './userReducer';
 import user_posts from './userPostsReducer';
+import loading from './loadingReducer';
 
 const root_reducer = combineReducers({
   user,
   user_posts,
-  dashboard_posts
+  dashboard_posts,
+  loading
 });
 
 export default root_reducer;
