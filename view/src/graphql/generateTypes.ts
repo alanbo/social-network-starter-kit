@@ -58,6 +58,7 @@ let action_type_imports = 'import {\n  gql_error,\n  gql_loading,\n  gql_loading
 let action_interfaces = `
 export interface GqlErrorAction {
   type: typeof gql_error,
+  payload: Error,
   meta: {
     type: string,
     id: number

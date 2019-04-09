@@ -40,6 +40,7 @@ import {
 
 export interface GqlErrorAction {
   type: typeof gql_error,
+  payload: Error,
   meta: {
     type: string,
     id: number
