@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { AppState } from '../../redux/reducers';
 import { UserPostsState } from '../../redux/reducers/userPostsReducer';
+import { $PropertyType } from 'utility-types';
 
 interface Props {
-  posts: UserPostsState;
+  posts: $PropertyType<AppState, 'user_posts'>;
 }
 
 class Dashboard extends Component<Props> {

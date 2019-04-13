@@ -1,1 +1,1 @@
-export const clear_error = 'CLEAR_ERROR';
+export const clear_error = 'CLEAR_NOTIFICATION';

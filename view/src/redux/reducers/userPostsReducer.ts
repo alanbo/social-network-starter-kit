@@ -12,7 +12,7 @@ import {
 } from '../actions/gql-types';
 
 
-export type UserPostsState = DeepReadonly<GetUserPosts_user_posts>[] | null;
+export type UserPostsState = DeepReadonly<GetUserPosts_user_posts>[];
 
 type Action = GqlGetUserPostsAction | GqlLoginAction | GqlLogoutAction;
 

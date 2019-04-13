@@ -10,7 +10,7 @@ import {
   ClearErrorAction
 } from '../actions/actionCreators';
 
-import { $PropertyType, DeepReadonly } from 'utility-types';
+import { DeepReadonly } from 'utility-types';
 
 
 import {
@@ -18,19 +18,23 @@ import {
 } from '../actions/gql-action-interfaces';
 
 type Actions = GqlErrorAction | ClearErrorAction;
-interface ErrorItem extends $PropertyType<GqlErrorAction, 'meta'> {
-  message: string
-};
 
-type ErrorsState = DeepReadonly<ErrorItem[]>;
+export interface Notification {
+  type: 'error' | 'warning' | 'info' | 'success',
+  msg: string,
+  id: string
+}
+
+type NotificationState = DeepReadonly<Notification[]>;
 
 
-export default function (state: ErrorsState = [], action: Actions): ErrorsState {
+export default function (state: NotificationState = [], action: Actions): NotificationState {
   switch (action.type) {
     case gql_error: {
-      const error_item = {
-        message: action.payload.message,
-        ...action.meta
+      const error_item: Notification = {
+        msg: action.payload.message,
+        type: 'error',
+        id: `gql${action.meta.id}`
       };
 
       const new_state = Array.from(state);

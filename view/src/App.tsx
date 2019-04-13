@@ -3,6 +3,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 
 import './App.css';
 import NavigationFrame from './components/NavigationFrame';
+import SnackbarNotification from './components/SnackbarNotification';
 import Main from './Main';
 import { client } from './index';
 
@@ -25,6 +26,7 @@ class App extends Component<Props> {
         <NavigationFrame signOut={this.signOut}>
           <Main />
         </NavigationFrame>
+        <SnackbarNotification />
       </div>
     );
   }
