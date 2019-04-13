@@ -14,10 +14,13 @@ import styles, { LoginStyles } from './styles';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { gqlLogin } from '../../redux/actions/gql-thunks';
-import { LoginVariables } from '../../graphql/operation-result-types'
+import { LoginVariables } from '../../graphql/operation-result-types';
+import { AppState } from '../../redux/reducers';
+import { Redirect } from 'react-router';
 
 interface Props extends LoginStyles, RouteComponentProps<any> {
-  gqlLogin: (variables: LoginVariables) => void
+  gqlLogin: (variables: LoginVariables) => void,
+  is_logged_in: Boolean
 }
 
 interface State {
@@ -58,7 +61,11 @@ class Login extends Component<Props, State> {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, is_logged_in } = this.props;
+    if (is_logged_in) {
+      return <Redirect to='/' />
+    }
+
     return (
       <div className={classes.login_form_outer}>
         <div className={classes.login_form_wrapper}>
@@ -100,11 +107,17 @@ class Login extends Component<Props, State> {
           </FormControl>
           <Button variant="contained" className={classes.button} onClick={this.handleSubmit.bind(this)}>
             Login
-          </Button>
+        </Button>
         </div>
       </div>
     );
   }
 };
 
-export default connect(null, { gqlLogin })(withRouter(withStyles(styles)(Login)));
+function mapStateToProps(state: AppState) {
+  return {
+    is_logged_in: !!state.user
+  }
+}
+
+export default connect(mapStateToProps, { gqlLogin })(withRouter(withStyles(styles)(Login)));
