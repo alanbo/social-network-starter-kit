@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { AppState } from '../../redux/reducers';
-import { UserPostsState } from '../../redux/reducers/userPostsReducer';
 import { $PropertyType } from 'utility-types';
+import { gqlPosts } from '../../redux/actions/gql-thunks';
+import { GetPostsVariables } from '../../graphql/operation-result-types';
 
 interface Props {
-  posts: $PropertyType<AppState, 'user_posts'>;
+  posts: $PropertyType<AppState, 'dashboard_posts'>;
+  gqlPosts: (variables?: GetPostsVariables) => void
 }
 
 class Dashboard extends Component<Props> {
+  componentWillMount() {
+    this.props.gqlPosts();
+  }
+
   render() {
     const { posts } = this.props;
 
@@ -29,10 +35,10 @@ class Dashboard extends Component<Props> {
 
 function mapStateToProps(state: AppState) {
   return {
-    posts: state.user_posts
+    posts: state.dashboard_posts
   }
 }
 
 
 
-export default connect(mapStateToProps)(Dashboard);
+export default connect(mapStateToProps, { gqlPosts })(Dashboard);
