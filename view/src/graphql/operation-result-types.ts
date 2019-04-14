@@ -30,6 +30,7 @@ export interface GetPosts_posts {
   _id: string;
   message: string;
   tags: string[] | null;
+  createdAt: any;
   user: GetPosts_posts_user;
   comments: GetPosts_posts_comments[] | null;
 }
@@ -62,6 +63,7 @@ export interface AddPost_addPost {
   _id: string;
   message: string;
   tags: string[] | null;
+  createdAt: any;
   user: AddPost_addPost_user;
 }
 
@@ -92,6 +94,7 @@ export interface DeletePost_deletePost {
   _id: string;
   message: string;
   tags: string[] | null;
+  createdAt: any;
   user: DeletePost_deletePost_user;
 }
 
@@ -122,6 +125,7 @@ export interface UpdatePost_updatePost {
   _id: string;
   message: string;
   tags: string[] | null;
+  createdAt: any;
   user: UpdatePost_updatePost_user;
 }
 
@@ -292,22 +296,19 @@ export interface GetUserFriends {
 // GraphQL query operation: GetUserPosts
 // ====================================================
 
-export interface GetUserPosts_user_posts_comments_user {
+export interface GetUserPosts_user_posts_user {
+  _id: string;
+  email: string;
   first_name: string;
   last_name: string;
-  email: string;
-}
-
-export interface GetUserPosts_user_posts_comments {
-  _id: string;
-  user: GetUserPosts_user_posts_comments_user;
-  message: string;
 }
 
 export interface GetUserPosts_user_posts {
+  _id: string;
   message: string;
-  comments: GetUserPosts_user_posts_comments[] | null;
   tags: string[] | null;
+  createdAt: any;
+  user: GetUserPosts_user_posts_user;
 }
 
 export interface GetUserPosts_user {
@@ -411,6 +412,7 @@ export interface PostFragment {
   _id: string;
   message: string;
   tags: string[] | null;
+  createdAt: any;
   user: PostFragment_user;
 }
 

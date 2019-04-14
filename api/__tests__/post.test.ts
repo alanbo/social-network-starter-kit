@@ -49,6 +49,7 @@ const NEW_POST_INPUT: PostInput = {
 }
 
 let id: string;
+let createdAt: number;
 let comment_data: CommentsFragment_comments;
 
 beforeAll(async () => {
@@ -82,6 +83,7 @@ describe('Basic post operations', () => {
     });
 
     id = res.data.addPost._id;
+    createdAt = res.data.addPost.createdAt;
 
     expect(res.data.addPost.message).toBe(NEW_POST_INPUT.message);
     expect(res.data.addPost.tags).toEqual(NEW_POST_INPUT.tags);
@@ -106,7 +108,8 @@ describe('Basic post operations', () => {
       _id: id,
       ...NEW_POST_INPUT,
       user: getUserBasic(USERS_DATA[0]),
-      comments: null
+      comments: null,
+      createdAt
     });
   });
 

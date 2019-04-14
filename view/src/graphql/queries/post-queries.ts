@@ -1,10 +1,11 @@
 import gql from 'graphql-tag';
 
-const POST_FRAGMENT = gql`
+export const post_fragment = gql`
   fragment PostFragment on Post {
     _id
     message
     tags
+    createdAt
     user {
       _id
       email
@@ -14,7 +15,7 @@ const POST_FRAGMENT = gql`
   }
 `;
 
-const COMMENTS_FRAGMENT = gql`
+export const comments_fragment = gql`
   fragment CommentsFragment on Post {
     comments {
       message
@@ -35,8 +36,8 @@ export const POSTS = gql`
       ...CommentsFragment
     }
   }
-  ${POST_FRAGMENT}
-  ${COMMENTS_FRAGMENT}
+  ${post_fragment}
+  ${comments_fragment}
 `;
 
 export const ADD_POST = gql`
@@ -45,7 +46,7 @@ export const ADD_POST = gql`
       ...PostFragment
     }
   }
-  ${POST_FRAGMENT}
+  ${post_fragment}
 `;
 
 export const DELETE_POST = gql`
@@ -54,7 +55,7 @@ export const DELETE_POST = gql`
       ...PostFragment
     }
   }
-  ${POST_FRAGMENT}
+  ${post_fragment}
 `;
 
 export const UPDATE_POST = gql`
@@ -63,7 +64,7 @@ export const UPDATE_POST = gql`
       ...PostFragment
     }
   }
-  ${POST_FRAGMENT}
+  ${post_fragment}
 `;
 
 export const ADD_COMMENT = gql`
@@ -72,7 +73,7 @@ export const ADD_COMMENT = gql`
       ...CommentsFragment
     }
   }
-  ${COMMENTS_FRAGMENT}
+  ${comments_fragment}
 `;
 
 export const REMOVE_COMMENT = gql`
@@ -89,5 +90,5 @@ export const REMOVE_COMMENT = gql`
       ...CommentsFragment
     }
   }
-  ${COMMENTS_FRAGMENT}
+  ${comments_fragment}
 `;

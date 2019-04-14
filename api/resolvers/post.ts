@@ -61,9 +61,15 @@ export class PostResolver {
     }
 
     // TO DO: need to add pagination.
-    return context.posts_col.find(query, simpleProjection(info))
+    const posts = await context.posts_col.find(query)
       .sort({ createdAt: -1 })
-      .toArray();
+      .toArray()
+
+    posts.forEach((post: PostMongo) => {
+      post.createdAt = new Date(post.createdAt);
+    });
+
+    return posts;
   };
 
   @Mutation(returns => Post)

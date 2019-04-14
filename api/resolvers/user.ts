@@ -1,6 +1,7 @@
 import uuid from 'uuid/v4';
 import bcrypt from 'bcrypt';
 import { GraphQLResolveInfo } from 'graphql';
+import { PostMongo } from './post';
 
 import { sortArrayOfObjByArrayOfIds } from '../utils';
 
@@ -347,13 +348,17 @@ export class UserResolver {
   }
 
   @FieldResolver()
-  posts(
+  async posts(
     @Root() user: User,
     @Ctx() context: Context
   ) {
-    return context.posts_col.find({
+    const posts = await context.posts_col.find({
       user: user._id
     }).toArray();
+
+    posts.forEach((post: PostMongo) => {
+      post.createdAt = new Date(post.createdAt);
+    })
   }
 
   @FieldResolver()
