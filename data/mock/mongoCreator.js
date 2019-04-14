@@ -96,6 +96,28 @@ db.users.insertMany(
   fs.writeFileSync(`${__dirname}/mongo/users-social.js`, file_output);
   console.log('User file have been saved');
 
+
+
+  function createComment(user_id) {
+    const { first_name, last_name, email } = users.find(user => user._id === user_id);
+
+    const comment = {
+      _id: uuid(),
+      message: faker.lorem.paragraphs(),
+      // TO DO: it may be suitable to add a condition
+      // to make the comment creaton date later than that of the post
+      createdAt: +(faker.date.past()),
+      user: {
+        _id: user_id,
+        first_name,
+        last_name,
+        email
+      }
+    }
+
+    return comment;
+  }
+
   const posts = [];
 
   console.log('Creating posts: ');
@@ -109,7 +131,9 @@ db.users.insertMany(
         user: user._id,
         message: faker.lorem.paragraphs(),
         createdAt: +(faker.date.past()),
-        tags: faker.lorem.words().split(' ')
+        tags: faker.lorem.words().split(' '),
+        comments: [],
+        likes: []
       };
 
       if (i % 2 === 0) {
@@ -118,6 +142,16 @@ db.users.insertMany(
       } else {
         post.visible_to = user.friends;
       }
+
+      // add one comment from the first 3 friends of the user.
+      user.friends.slice(0, 3).forEach(friend_id => {
+        const comment = createComment(friend_id);
+
+        post.comments.push(comment);
+
+        // for the purpose of sample data the same user that commented like the post
+        post.likes.push(comment.user);
+      });
 
       posts.push(post);
     }
