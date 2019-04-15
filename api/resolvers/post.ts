@@ -65,10 +65,6 @@ export class PostResolver {
       .sort({ createdAt: -1 })
       .toArray()
 
-    posts.forEach((post: PostMongo) => {
-      post.createdAt = new Date(post.createdAt);
-    });
-
     return posts;
   };
 
@@ -210,6 +206,7 @@ export class PostResolver {
 
     const comment: Comment = {
       _id: uuid(),
+      createdAt: new Date(),
       message,
       user: {
         _id,

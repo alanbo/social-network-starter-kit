@@ -68,7 +68,7 @@ async function createUsers() {
 
     const new_user = Object.assign(user, {
       password: await bcrypt.hash(user.password, 10),
-      createdAt: +(faker.date.past()),
+      createdAt: faker.date.past().toISOString(),
       first_name: faker.name.firstName(),
       last_name: faker.name.lastName(),
       friends,
@@ -84,7 +84,8 @@ async function createUsers() {
 
   users = await Promise.all(users);
 
-  const usersJSON = JSON.stringify(users, null, ' ');
+  const usersJSON = JSON.stringify(users, null, ' ')
+    .replace(/"createdAt": (".+")/g, '"createdAt": new ISODate($1)');
 
   const file_output = `
 db.users.insertMany(
@@ -106,7 +107,7 @@ db.users.insertMany(
       message: faker.lorem.paragraphs(),
       // TO DO: it may be suitable to add a condition
       // to make the comment creaton date later than that of the post
-      createdAt: +(faker.date.past()),
+      createdAt: faker.date.past().toISOString(),
       user: {
         _id: user_id,
         first_name,
@@ -130,7 +131,7 @@ db.users.insertMany(
         _id: uuid(),
         user: user._id,
         message: faker.lorem.paragraphs(),
-        createdAt: +(faker.date.past()),
+        createdAt: faker.date.past().toISOString(),
         tags: faker.lorem.words().split(' '),
         comments: [],
         likes: []
@@ -157,7 +158,8 @@ db.users.insertMany(
     }
   });
 
-  const postsJSON = JSON.stringify(posts, null, ' ');
+  const postsJSON = JSON.stringify(posts, null, ' ')
+    .replace(/"createdAt": (".+")/g, '"createdAt": new ISODate($1)');
 
   const file_output_posts = `
 db.posts.insertMany(
