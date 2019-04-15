@@ -23,6 +23,7 @@ export interface GetPosts_posts_comments_user {
 export interface GetPosts_posts_comments {
   message: string;
   _id: string;
+  createdAt: any;
   user: GetPosts_posts_comments_user;
 }
 
@@ -154,6 +155,7 @@ export interface AddComment_addComment_comments_user {
 export interface AddComment_addComment_comments {
   message: string;
   _id: string;
+  createdAt: any;
   user: AddComment_addComment_comments_user;
 }
 
@@ -187,6 +189,7 @@ export interface RemoveComment_removeComment_comments_user {
 export interface RemoveComment_removeComment_comments {
   message: string;
   _id: string;
+  createdAt: any;
   user: RemoveComment_removeComment_comments_user;
 }
 
@@ -433,6 +436,7 @@ export interface CommentsFragment_comments_user {
 export interface CommentsFragment_comments {
   message: string;
   _id: string;
+  createdAt: any;
   user: CommentsFragment_comments_user;
 }
 

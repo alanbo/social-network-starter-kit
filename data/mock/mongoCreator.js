@@ -84,12 +84,11 @@ async function createUsers() {
 
   users = await Promise.all(users);
 
-  const usersJSON = JSON.stringify(users, null, ' ')
-    .replace(/"createdAt": (".+")/g, '"createdAt": new ISODate($1)');
+  const usersJSON = JSON.stringify(users, null, ' ');
 
   const file_output = `
 db.users.insertMany(
-  ${usersJSON},
+  ${usersJSON.replace(/"createdAt": (".+")/g, '"createdAt": new ISODate($1)')},
   { ordered: false }
 );`;
 
@@ -158,12 +157,11 @@ db.users.insertMany(
     }
   });
 
-  const postsJSON = JSON.stringify(posts, null, ' ')
-    .replace(/"createdAt": (".+")/g, '"createdAt": new ISODate($1)');
+  const postsJSON = JSON.stringify(posts, null, ' ');
 
   const file_output_posts = `
 db.posts.insertMany(
-  ${postsJSON},
+  ${postsJSON.replace(/"createdAt": (".+")/g, '"createdAt": new ISODate($1)')},
   { ordered: false }
 );`;
 

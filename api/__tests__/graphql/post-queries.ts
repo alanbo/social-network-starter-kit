@@ -20,6 +20,7 @@ export const comments_fragment = gql`
     comments {
       message
       _id
+      createdAt
       user {
         first_name
         last_name

@@ -30,8 +30,21 @@ import { Validator } from 'class-validator';
 
 const validator = new Validator();
 
-const USERS_DATA: UserMongo[] = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/users-social.json`).toString());
-const POSTS_DATA: PostMongo[] = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/posts-social.json`).toString());
+const USERS_DATA: UserMongo[] = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/users-social.json`).toString()).map((user: any) => {
+  user.createdAt = new Date(user.createdAt);
+
+  return user;
+});
+
+const POSTS_DATA: PostMongo[] = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/posts-social.json`).toString()).map((post: any) => {
+  post.createdAt = new Date(post.createdAt);
+
+  post.comments.forEach((comment: any) => {
+    comment.createdAt = new Date(comment.createdAt);
+  })
+
+  return post;
+});
 
 const USERS_LOGIN_DATA = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/users-login-data.json`).toString());
 
@@ -141,7 +154,8 @@ describe('Basic post operations', () => {
     comment_data = {
       _id: the_comment._id,
       user: getUserBasic(USERS_DATA[1]),
-      message: variables.message
+      message: variables.message,
+      createdAt: new Date(the_comment.createdAt)
     };
 
     expect(the_post_comment).toEqual(comment_data);
