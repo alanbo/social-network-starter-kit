@@ -306,12 +306,26 @@ export interface GetUserPosts_user_posts_user {
   last_name: string;
 }
 
+export interface GetUserPosts_user_posts_comments_user {
+  first_name: string;
+  last_name: string;
+  _id: string;
+}
+
+export interface GetUserPosts_user_posts_comments {
+  message: string;
+  _id: string;
+  createdAt: any;
+  user: GetUserPosts_user_posts_comments_user;
+}
+
 export interface GetUserPosts_user_posts {
   _id: string;
   message: string;
   tags: string[] | null;
   createdAt: any;
   user: GetUserPosts_user_posts_user;
+  comments: GetUserPosts_user_posts_comments[] | null;
 }
 
 export interface GetUserPosts_user {

@@ -16,19 +16,25 @@ import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
+import CommentList from '../CommentList';
+
+import { CommentsFragment_comments } from '../../graphql/operation-result-types';
+
 import styles, { PostCardStyles } from './styles';
+import { DeepReadonly } from 'utility-types';
 
 interface Props extends PostCardStyles {
   text: string,
   author: string,
-  date: Date
+  date: Date,
+  comments: DeepReadonly<CommentsFragment_comments[]>
 }
 
 interface State {
   expanded: Boolean
 }
 
-class RecipeReviewCard extends React.Component<Props, State> {
+class PostCard extends React.Component<Props, State> {
   state = { expanded: false };
 
   handleExpandClick = () => {
@@ -36,7 +42,7 @@ class RecipeReviewCard extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, text, author, date } = this.props;
+    const { classes, text, author, date, comments } = this.props;
 
     return (
       <Card className={classes.card}>
@@ -63,7 +69,7 @@ class RecipeReviewCard extends React.Component<Props, State> {
           <Typography align="left" component="p">{text}</Typography>
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton aria-label="Add to favorites">
+          <IconButton aria-label="Like">
             <FavoriteIcon />
           </IconButton>
           <IconButton aria-label="Share">
@@ -83,6 +89,7 @@ class RecipeReviewCard extends React.Component<Props, State> {
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography paragraph>Comments: </Typography>
+            <CommentList comments={comments} />
           </CardContent>
         </Collapse>
       </Card>
@@ -90,4 +97,4 @@ class RecipeReviewCard extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(RecipeReviewCard);
+export default withStyles(styles)(PostCard);

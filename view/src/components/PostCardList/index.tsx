@@ -3,10 +3,10 @@ import { withStyles } from '@material-ui/core/styles';
 import styles, { PostCardListStyles } from './styles';
 import { DeepReadonly } from 'utility-types';
 import PostCard from '../PostCard';
-import { PostFragment } from '../../graphql/operation-result-types';
+import { GetPosts_posts } from '../../graphql/operation-result-types';
 
 interface Props extends PostCardListStyles {
-  posts: DeepReadonly<PostFragment[]>
+  posts: DeepReadonly<GetPosts_posts[]>
 }
 
 function PostCardList(props: Props) {
@@ -21,6 +21,7 @@ function PostCardList(props: Props) {
             date={new Date(post.createdAt)}
             author={`${post.user.first_name} ${post.user.last_name}`}
             key={post._id}
+            comments={post.comments || []}
           />
         ))
       }

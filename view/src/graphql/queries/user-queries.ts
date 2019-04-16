@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { post_fragment } from './post-queries';
+import { post_fragment, comments_fragment } from './post-queries';
 
 export const user_fragment = gql`
   fragment UserFragment on User {
@@ -56,10 +56,12 @@ export const USER_POSTS = gql`
     user {
       posts {
         ...PostFragment
+        ...CommentsFragment
       }
     }
   }
   ${post_fragment}
+  ${comments_fragment}
 `;
 
 export const CREATE_USER = gql`
