@@ -17,6 +17,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 import CommentList from '../CommentList';
+import CommentInput from '../CommentInput';
 
 import { CommentsFragment_comments } from '../../graphql/operation-result-types';
 
@@ -41,6 +42,10 @@ class PostCard extends React.Component<Props, State> {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
+  onCommentSubmit = (message: string) => {
+    console.log(message);
+  }
+
   render() {
     const { classes, text, author, date, comments } = this.props;
 
@@ -60,11 +65,6 @@ class PostCard extends React.Component<Props, State> {
           title={author}
           subheader={date.toDateString()}
         />
-        {/* <CardMedia
-          className={classes.media}
-          image="/static/images/cards/paella.jpg"
-          title="Paella dish"
-        /> */}
         <CardContent>
           <Typography align="left" component="p">{text}</Typography>
         </CardContent>
@@ -89,6 +89,7 @@ class PostCard extends React.Component<Props, State> {
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography paragraph>Comments: </Typography>
+            <CommentInput onSubmit={this.onCommentSubmit} />
             <CommentList comments={comments} />
           </CardContent>
         </Collapse>
