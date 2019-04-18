@@ -22,6 +22,7 @@ function PostCardList(props: Props) {
             author={`${post.user.first_name} ${post.user.last_name}`}
             key={post._id}
             comments={post.comments || []}
+            post_id={post._id}
           />
         ))
       }
