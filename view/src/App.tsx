@@ -3,10 +3,16 @@ import { withRouter, RouteComponentProps } from 'react-router';
 
 import './App.css';
 import NavigationFrame from './components/NavigationFrame';
+import SnackbarNotification from './components/SnackbarNotification';
 import Main from './Main';
 import { client } from './index';
+import { connect } from 'react-redux';
+import { AppState } from './redux/reducers';
 
-interface Props extends RouteComponentProps<any> { }
+
+interface Props extends RouteComponentProps<any> {
+  is_logged_in: Boolean
+}
 
 class App extends Component<Props> {
 
@@ -19,15 +25,39 @@ class App extends Component<Props> {
     }
   }
 
+  componentDidMount() {
+    this._redirect();
+  }
+
+  componentDidUpdate() {
+    this._redirect();
+  }
+
+  // Redirect to the login page when user is not logged in.
+  _redirect() {
+    const is_login_route = this.props.location.pathname === '/login';
+
+    if (!this.props.is_logged_in && !is_login_route) {
+      this.props.history.push('/login');
+    }
+  }
+
   render() {
     return (
       <div className="App">
         <NavigationFrame signOut={this.signOut}>
           <Main />
         </NavigationFrame>
+        <SnackbarNotification />
       </div>
     );
   }
 }
 
-export default withRouter(App);
+function mapStateToProps(state: AppState) {
+  return {
+    is_logged_in: !!state.user
+  }
+}
+
+export default withRouter(connect(mapStateToProps)(App));

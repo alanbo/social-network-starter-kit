@@ -1,29 +1,33 @@
-import { UserQuery_user_posts } from '../../graphql/operation-result-types';
+import { GetUserPosts_user_posts, Logout } from '../../graphql/operation-result-types';
 import { DeepReadonly } from 'utility-types';
-import { UserActions } from '../actions/userActions'
+import {
+  GqlGetUserPostsAction,
+  GqlLoginAction,
+  GqlLogoutAction
+} from '../actions/gql-action-interfaces';
 
 import {
-  get_user_with_posts,
-  login,
-  logout
-} from '../actions/types';
+  gql_user_posts,
+  gql_logout,
+} from '../actions/gql-types';
 
 
-export type UserPostsState = DeepReadonly<UserQuery_user_posts>[] | null;
+export type UserPostsState = GetUserPosts_user_posts[];
 
-export default function (state: UserPostsState = [], action: UserActions) {
+type Action = GqlGetUserPostsAction | GqlLoginAction | GqlLogoutAction;
+
+export default function (state: UserPostsState = [], action: Action): UserPostsState {
   switch (action.type) {
-    case get_user_with_posts:
-    case login:
+    case gql_user_posts:
       const user = action.payload.user;
 
-      if (!user) {
+      if (!user || !user.posts) {
         return state;
       }
 
       return user.posts;
 
-    case logout:
+    case gql_logout:
       return [];
 
     default:

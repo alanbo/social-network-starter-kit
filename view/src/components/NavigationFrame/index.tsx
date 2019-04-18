@@ -12,9 +12,10 @@ import MenuList, { DataItem } from './MenuList';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import { connect } from 'react-redux';
-import { logoutUser } from '../../redux/actions/userActions';
+import { gqlLogout } from '../../redux/actions/gql-thunks';
 import { AppState } from '../../redux/reducers';
 import { UserState } from '../../redux/reducers/userReducer';
+import LoadingIndicator from '../LoadingIndicator';
 
 const fg_list: Array<DataItem> = [
   {
@@ -42,8 +43,9 @@ const fg_list: Array<DataItem> = [
 interface Props extends NavigationFrameStyles {
   signOut: () => any,
   children: React.ReactNode,
-  logoutUser: Function,
-  user: UserState
+  gqlLogout: Function,
+  user: UserState,
+  loading: Boolean
 }
 
 interface State {
@@ -56,7 +58,7 @@ class NavigationFrame extends React.Component<Props, State> {
   };
 
   signOut() {
-    this.props.logoutUser();
+    this.props.gqlLogout();
     this.props.signOut();
   }
 
@@ -114,6 +116,7 @@ class NavigationFrame extends React.Component<Props, State> {
         </Drawer>
         <main className={classes.content}>
           {this.props.children}
+          {this.props.loading && <LoadingIndicator />}
         </main>
       </div>
     );
@@ -122,8 +125,9 @@ class NavigationFrame extends React.Component<Props, State> {
 
 function mapStateToProps(state: AppState) {
   return {
-    user: state.user
+    user: state.user,
+    loading: !!state.loading.length
   }
 }
 
-export default connect(mapStateToProps, { logoutUser })(withStyles(styles)(NavigationFrame));
+export default connect(mapStateToProps, { gqlLogout })(withStyles(styles)(NavigationFrame));

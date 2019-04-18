@@ -68,7 +68,7 @@ async function createUsers() {
 
     const new_user = Object.assign(user, {
       password: await bcrypt.hash(user.password, 10),
-      createdAt: +(faker.date.past()),
+      createdAt: faker.date.past().toISOString(),
       first_name: faker.name.firstName(),
       last_name: faker.name.lastName(),
       friends,
@@ -88,13 +88,35 @@ async function createUsers() {
 
   const file_output = `
 db.users.insertMany(
-  ${usersJSON},
+  ${usersJSON.replace(/"createdAt": (".+")/g, '"createdAt": new ISODate($1)')},
   { ordered: false }
 );`;
 
   fs.writeFileSync(`${__dirname}/json/users-social.json`, usersJSON);
   fs.writeFileSync(`${__dirname}/mongo/users-social.js`, file_output);
   console.log('User file have been saved');
+
+
+
+  function createComment(user_id) {
+    const { first_name, last_name, email } = users.find(user => user._id === user_id);
+
+    const comment = {
+      _id: uuid(),
+      message: faker.lorem.paragraphs(),
+      // TO DO: it may be suitable to add a condition
+      // to make the comment creaton date later than that of the post
+      createdAt: faker.date.past().toISOString(),
+      user: {
+        _id: user_id,
+        first_name,
+        last_name,
+        email
+      }
+    }
+
+    return comment;
+  }
 
   const posts = [];
 
@@ -108,8 +130,10 @@ db.users.insertMany(
         _id: uuid(),
         user: user._id,
         message: faker.lorem.paragraphs(),
-        createdAt: +(faker.date.past()),
-        tags: faker.lorem.words().split(' ')
+        createdAt: faker.date.past().toISOString(),
+        tags: faker.lorem.words().split(' '),
+        comments: [],
+        likes: []
       };
 
       if (i % 2 === 0) {
@@ -119,6 +143,16 @@ db.users.insertMany(
         post.visible_to = user.friends;
       }
 
+      // add one comment from the first 3 friends of the user.
+      user.friends.slice(0, 3).forEach(friend_id => {
+        const comment = createComment(friend_id);
+
+        post.comments.push(comment);
+
+        // for the purpose of sample data the same user that commented like the post
+        post.likes.push(comment.user);
+      });
+
       posts.push(post);
     }
   });
@@ -127,7 +161,7 @@ db.users.insertMany(
 
   const file_output_posts = `
 db.posts.insertMany(
-  ${postsJSON},
+  ${postsJSON.replace(/"createdAt": (".+")/g, '"createdAt": new ISODate($1)')},
   { ordered: false }
 );`;
 

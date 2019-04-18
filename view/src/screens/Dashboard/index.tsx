@@ -1,13 +1,22 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { AppState } from '../../redux/reducers';
-import { UserPostsState } from '../../redux/reducers/userPostsReducer';
+import { withStyles } from '@material-ui/core/styles';
+import { $PropertyType } from 'utility-types';
+import { gqlPosts } from '../../redux/actions/gql-thunks';
+import { GetPostsVariables } from '../../graphql/operation-result-types';
+import PostCardList from '../../components/PostCardList';
 
 interface Props {
-  posts: UserPostsState;
+  posts: $PropertyType<AppState, 'dashboard_posts'>;
+  gqlPosts: (variables?: GetPostsVariables) => void
 }
 
 class Dashboard extends Component<Props> {
+  componentWillMount() {
+    this.props.gqlPosts();
+  }
+
   render() {
     const { posts } = this.props;
 
@@ -16,11 +25,8 @@ class Dashboard extends Component<Props> {
         <h1>Dashboard</h1>
 
         {
-          posts && posts.map(post => (
-            <p>{post.message}</p>
-          ))
+          posts && <PostCardList posts={posts} />
         }
-
       </div>
     );
   }
@@ -28,10 +34,10 @@ class Dashboard extends Component<Props> {
 
 function mapStateToProps(state: AppState) {
   return {
-    posts: state.user_posts
+    posts: state.dashboard_posts
   }
 }
 
 
 
-export default connect(mapStateToProps)(Dashboard);
+export default connect(mapStateToProps, { gqlPosts })(Dashboard);

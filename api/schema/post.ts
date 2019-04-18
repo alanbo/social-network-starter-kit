@@ -12,6 +12,9 @@ export class Comment {
 
   @Field(type => UserBasic)
   user: UserBasic;
+
+  @Field()
+  createdAt: Date;
 }
 
 
@@ -36,7 +39,10 @@ export class Post {
   visible_to: UserBasic[];
 
   @Field(type => [Comment], { nullable: true })
-  comments: Comment;
+  comments: Comment[];
+
+  @Field(type => [UserBasic], { nullable: true })
+  likes: UserBasic[];
 }
 
 @InputType()

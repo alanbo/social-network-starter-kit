@@ -61,9 +61,11 @@ export class PostResolver {
     }
 
     // TO DO: need to add pagination.
-    return context.posts_col.find(query, simpleProjection(info))
+    const posts = await context.posts_col.find(query)
       .sort({ createdAt: -1 })
-      .toArray();
+      .toArray()
+
+    return posts;
   };
 
   @Mutation(returns => Post)
@@ -204,6 +206,7 @@ export class PostResolver {
 
     const comment: Comment = {
       _id: uuid(),
+      createdAt: new Date(),
       message,
       user: {
         _id,

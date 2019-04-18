@@ -27,7 +27,12 @@ import {
 
 const validator = new Validator();
 const USERS_JSON = fs.readFileSync(`${__dirname}/mongo-data/users-social.json`).toString();
-const USERS_DATA = JSON.parse(USERS_JSON);
+const USERS_DATA = JSON.parse(USERS_JSON).map((user: any) => {
+  user.createdAt = new Date(user.createdAt);
+
+  return user;
+});
+
 const tester = new ApolloMongoTester(USERS_DATA, [], USERS_DATA[0]);
 
 const NEW_USER_INPUT: UserInput = {
@@ -60,7 +65,7 @@ describe('"user" resolver: ', () => {
       });
 
     expect(res.data).toEqual({
-      user: { email, first_name, last_name, _id, gender, createdAt, phone_number }
+      user: { email, first_name, last_name, _id, gender, createdAt: +createdAt, phone_number }
     })
   });
 

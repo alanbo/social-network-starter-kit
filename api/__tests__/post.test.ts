@@ -30,8 +30,21 @@ import { Validator } from 'class-validator';
 
 const validator = new Validator();
 
-const USERS_DATA: UserMongo[] = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/users-social.json`).toString());
-const POSTS_DATA: PostMongo[] = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/posts-social.json`).toString());
+const USERS_DATA: UserMongo[] = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/users-social.json`).toString()).map((user: any) => {
+  user.createdAt = new Date(user.createdAt);
+
+  return user;
+});
+
+const POSTS_DATA: PostMongo[] = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/posts-social.json`).toString()).map((post: any) => {
+  post.createdAt = new Date(post.createdAt);
+
+  post.comments.forEach((comment: any) => {
+    comment.createdAt = new Date(comment.createdAt);
+  })
+
+  return post;
+});
 
 const USERS_LOGIN_DATA = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/users-login-data.json`).toString());
 
@@ -49,6 +62,7 @@ const NEW_POST_INPUT: PostInput = {
 }
 
 let id: string;
+let createdAt: number;
 let comment_data: CommentsFragment_comments;
 
 beforeAll(async () => {
@@ -82,6 +96,7 @@ describe('Basic post operations', () => {
     });
 
     id = res.data.addPost._id;
+    createdAt = res.data.addPost.createdAt;
 
     expect(res.data.addPost.message).toBe(NEW_POST_INPUT.message);
     expect(res.data.addPost.tags).toEqual(NEW_POST_INPUT.tags);
@@ -106,7 +121,8 @@ describe('Basic post operations', () => {
       _id: id,
       ...NEW_POST_INPUT,
       user: getUserBasic(USERS_DATA[0]),
-      comments: null
+      comments: null,
+      createdAt
     });
   });
 
@@ -138,7 +154,8 @@ describe('Basic post operations', () => {
     comment_data = {
       _id: the_comment._id,
       user: getUserBasic(USERS_DATA[1]),
-      message: variables.message
+      message: variables.message,
+      createdAt: new Date(the_comment.createdAt)
     };
 
     expect(the_post_comment).toEqual(comment_data);
