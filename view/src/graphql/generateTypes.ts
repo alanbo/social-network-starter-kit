@@ -41,14 +41,22 @@ fs.writeFileSync(file_path, gql_types);
 
 // _________ ../redux/actions/gql-action-interfaces.ts _________
 
+// read all the types constructed by apollo codegen
+const gqlTypes = fs.readFileSync(path.resolve(__dirname, 'operation-result-types.ts')).toString();
+// match a list of Variables types
+const varTypesArr = gqlTypes.match(/(?<=export interface )\w+Variables/g) || [];
+
 // Function that makes an interface for each gql action type.
 function makeActionInterface(action_type: string, gql_type: string) {
+  const varType = `${gql_type}Variables`;
+  const has_variables = varTypesArr.includes(varType);
+  const has_variables_str = has_variables ? `\n    variables: ${varType}` : '';
   return `
 export interface Gql${gql_type}Action {
   type: typeof ${action_type},
   payload: ${gql_type},
   meta: {
-    id: number
+    id: number${has_variables_str}
   }
 }`;
 };
@@ -89,6 +97,10 @@ Object.keys(actions).forEach(key => {
   gql_type_imports += `  ${actions[key]},\n`;
   // Create an interface for a given action.
   action_interfaces += makeActionInterface('gql_' + key, actions[key]) + '\n';
+});
+
+varTypesArr.forEach(varType => {
+  gql_type_imports += `  ${varType},\n`;
 });
 
 // Close the imports.
