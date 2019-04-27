@@ -34,6 +34,15 @@ import {
   CreateUser,
   UpdateUser,
   DeleteUser,
+  GetPostsVariables,
+  AddPostVariables,
+  DeletePostVariables,
+  UpdatePostVariables,
+  AddCommentVariables,
+  RemoveCommentVariables,
+  LoginVariables,
+  CreateUserVariables,
+  UpdateUserVariables,
 } from '../../graphql/operation-result-types';
 
 
@@ -68,6 +77,7 @@ export interface GqlGetPostsAction {
   payload: GetPosts,
   meta: {
     id: number
+    variables: GetPostsVariables
   }
 }
 
@@ -76,6 +86,7 @@ export interface GqlAddPostAction {
   payload: AddPost,
   meta: {
     id: number
+    variables: AddPostVariables
   }
 }
 
@@ -84,6 +95,7 @@ export interface GqlDeletePostAction {
   payload: DeletePost,
   meta: {
     id: number
+    variables: DeletePostVariables
   }
 }
 
@@ -92,6 +104,7 @@ export interface GqlUpdatePostAction {
   payload: UpdatePost,
   meta: {
     id: number
+    variables: UpdatePostVariables
   }
 }
 
@@ -100,6 +113,7 @@ export interface GqlAddCommentAction {
   payload: AddComment,
   meta: {
     id: number
+    variables: AddCommentVariables
   }
 }
 
@@ -108,6 +122,7 @@ export interface GqlRemoveCommentAction {
   payload: RemoveComment,
   meta: {
     id: number
+    variables: RemoveCommentVariables
   }
 }
 
@@ -116,6 +131,7 @@ export interface GqlLoginAction {
   payload: Login,
   meta: {
     id: number
+    variables: LoginVariables
   }
 }
 
@@ -156,6 +172,7 @@ export interface GqlCreateUserAction {
   payload: CreateUser,
   meta: {
     id: number
+    variables: CreateUserVariables
   }
 }
 
@@ -164,6 +181,7 @@ export interface GqlUpdateUserAction {
   payload: UpdateUser,
   meta: {
     id: number
+    variables: UpdateUserVariables
   }
 }
 

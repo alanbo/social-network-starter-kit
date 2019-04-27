@@ -15,20 +15,25 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { connect } from 'react-redux';
 
 import CommentList from '../CommentList';
 import CommentInput from '../CommentInput';
 
 import { CommentsFragment_comments } from '../../graphql/operation-result-types';
+import { gqlAddComment } from '../../redux/actions/gql-thunks';
+import { AddCommentVariables } from '../../graphql/operation-result-types'
 
 import styles, { PostCardStyles } from './styles';
 import { DeepReadonly } from 'utility-types';
 
 interface Props extends PostCardStyles {
+  post_id: string,
   text: string,
   author: string,
   date: Date,
-  comments: DeepReadonly<CommentsFragment_comments[]>
+  comments: DeepReadonly<CommentsFragment_comments[]>,
+  gqlAddComment: (variables: AddCommentVariables) => void;
 }
 
 interface State {
@@ -43,7 +48,7 @@ class PostCard extends React.Component<Props, State> {
   };
 
   onCommentSubmit = (message: string) => {
-    console.log(message);
+    this.props.gqlAddComment({ post_id: this.props.post_id, message });
   }
 
   render() {
@@ -98,4 +103,4 @@ class PostCard extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(PostCard);
+export default connect(null, { gqlAddComment })(withStyles(styles)(PostCard));
