@@ -146,21 +146,9 @@ export interface UpdatePostVariables {
 // GraphQL mutation operation: AddComment
 // ====================================================
 
-export interface AddComment_addComment_comments_user {
-  first_name: string;
-  last_name: string;
-  _id: string;
-}
-
-export interface AddComment_addComment_comments {
-  message: string;
+export interface AddComment_addComment {
   _id: string;
   createdAt: any;
-  user: AddComment_addComment_comments_user;
-}
-
-export interface AddComment_addComment {
-  comments: AddComment_addComment_comments[] | null;
 }
 
 export interface AddComment {
@@ -180,25 +168,8 @@ export interface AddCommentVariables {
 // GraphQL mutation operation: RemoveComment
 // ====================================================
 
-export interface RemoveComment_removeComment_comments_user {
-  first_name: string;
-  last_name: string;
-  _id: string;
-}
-
-export interface RemoveComment_removeComment_comments {
-  message: string;
-  _id: string;
-  createdAt: any;
-  user: RemoveComment_removeComment_comments_user;
-}
-
-export interface RemoveComment_removeComment {
-  comments: RemoveComment_removeComment_comments[] | null;
-}
-
 export interface RemoveComment {
-  removeComment: RemoveComment_removeComment;
+  removeComment: string;
 }
 
 export interface RemoveCommentVariables {
