@@ -72,7 +72,14 @@ export const ADD_COMMENT = gql`
   mutation AddComment($post_id: ID!, $message: String!) {
     addComment(post_id: $post_id, message: $message) {
       _id
+      message
       createdAt
+      user {
+        _id
+        first_name
+        last_name
+        email
+      }
     }
   }
 `;

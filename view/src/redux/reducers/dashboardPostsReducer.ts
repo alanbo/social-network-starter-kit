@@ -1,6 +1,9 @@
+import { addCommentReduce, removeCommentReduce } from './shared/commentReduceFunctions';
+
 import {
   gql_posts,
-  gql_add_comment
+  gql_add_comment,
+  gql_remove_comment
 } from '../actions/gql-types';
 
 import {
@@ -9,7 +12,8 @@ import {
 
 import {
   GqlGetPostsAction,
-  GqlAddCommentAction
+  GqlAddCommentAction,
+  GqlRemoveCommentAction
 } from '../actions/gql-action-interfaces';
 
 function deepcopy(obj: any): any {
@@ -23,18 +27,27 @@ function deepcopy(obj: any): any {
   }
 }
 
-type Actions = GqlGetPostsAction | GqlAddCommentAction;
-type Posts = GetPosts_posts[] | null;
+type Actions = GqlGetPostsAction | GqlAddCommentAction | GqlRemoveCommentAction;
+type Posts = GetPosts_posts[];
 
 
 export default function (state: Posts = [], action: Actions): Posts {
   switch (action.type) {
     case gql_posts: {
-      return action.payload.posts;
+      const posts = action.payload.posts;
+
+      if (!posts) {
+        return state;
+      }
+
+      return posts;
     }
 
-    case gql_add_comment: {
-    }
+    case gql_add_comment:
+      return addCommentReduce(state, action);
+
+    case gql_remove_comment:
+      return removeCommentReduce(state, action);
 
     default:
       return state;
