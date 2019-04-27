@@ -189,13 +189,13 @@ export class PostResolver {
     }
   }
 
-  @Mutation(returns => Post)
+  @Mutation(returns => Comment)
   async addComment(
     @Ctx() context: Context,
     @Info() info: GraphQLResolveInfo,
     @Arg('post_id', type => ID) post_id: string,
     @Arg('message', type => String) message: string,
-  ): Promise<PostMongo | Error> {
+  ): Promise<Comment | Error> {
     const { session, posts_col } = context;
 
     if (!session.user) {
@@ -216,24 +216,27 @@ export class PostResolver {
       }
     }
 
-    return posts_col
-      .findOneAndUpdate(
-        { _id: post_id, $or: [{ user: _id }, { visible_to: _id }] },
-        { $push: { comments: comment } },
-        { returnOriginal: false }
-      )
-      .then(result => result.value);
+    try {
+      await posts_col
+        .update(
+          { _id: post_id, $or: [{ user: _id }, { visible_to: _id }] },
+          { $push: { comments: comment } }
+        );
 
+      return comment;
+    } catch (e) {
+      return e;
+    }
   }
 
-  @Mutation(returns => Post)
+  @Mutation(returns => ID)
   async removeComment(
     @Ctx() context: Context,
     @Info() info: GraphQLResolveInfo,
     @Arg('post_id', type => ID) post_id: string,
     @Arg('comment_id', type => ID) comment_id: string,
     @Arg('post_owner', type => Boolean, { nullable: true }) post_owner = false
-  ): Promise<PostMongo | Error> {
+  ): Promise<string | Error> {
     const { session, posts_col } = context;
 
     if (!session.user) {
@@ -250,13 +253,17 @@ export class PostResolver {
       update_expr = { $pull: { comments: { _id: comment_id, 'user._id': _id } } };
     }
 
-    return posts_col
-      .findOneAndUpdate(
-        { _id: post_id, $or: [{ user: _id }, { visible_to: _id }] },
-        update_expr,
-        { projection: simpleProjection(info), returnOriginal: false }
-      )
-      .then(result => result.value);
+    try {
+      await posts_col
+        .update(
+          { _id: post_id, $or: [{ user: _id }, { visible_to: _id }] },
+          update_expr
+        );
+      return comment_id;
+
+    } catch (e) {
+      return e;
+    }
   }
 
   @FieldResolver()

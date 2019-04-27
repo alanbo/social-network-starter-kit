@@ -138,24 +138,19 @@ describe('Basic post operations', () => {
         variables
       });
 
-    const comments = res.data.addComment.comments;
+    const comment = res.data.addComment;
 
-    expect(comments).toBeTruthy();
-    expect(comments.length).toBeGreaterThan(0);
-
-    const the_comment = comments[comments.length - 1];
-
-    expect(the_comment.message).toEqual(variables.message);
-    expect(validator.isUUID(the_comment._id)).toBeTruthy();
+    expect(validator.isUUID(comment._id)).toBeTruthy();
+    expect(typeof comment.createdAt).toBe('number');
 
     const the_post: PostMongo = await tester.db.collection('posts').findOne({ _id: id });
     const the_post_comment = the_post.comments[the_post.comments.length - 1];
 
     comment_data = {
-      _id: the_comment._id,
+      _id: comment._id,
       user: getUserBasic(USERS_DATA[1]),
       message: variables.message,
-      createdAt: new Date(the_comment.createdAt)
+      createdAt: new Date(comment.createdAt)
     };
 
     expect(the_post_comment).toEqual(comment_data);
@@ -173,11 +168,9 @@ describe('Basic post operations', () => {
         variables
       });
 
-    const comments = res.data.removeComment.comments;
+    const comment_id = res.data.removeComment;
+    expect(validator.isUUID(comment_id)).toBeTruthy();
 
-    if (comments) {
-      expect(comments).not.toContain(comment_data);
-    }
 
     const the_post: PostMongo = await tester.db.collection('posts').findOne({ _id: id });
     expect(the_post.comments).not.toContain(comment_data);

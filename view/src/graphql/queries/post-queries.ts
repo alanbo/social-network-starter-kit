@@ -71,10 +71,10 @@ export const UPDATE_POST = gql`
 export const ADD_COMMENT = gql`
   mutation AddComment($post_id: ID!, $message: String!) {
     addComment(post_id: $post_id, message: $message) {
-      ...CommentsFragment
+      _id
+      createdAt
     }
   }
-  ${comments_fragment}
 `;
 
 export const REMOVE_COMMENT = gql`
@@ -87,9 +87,6 @@ export const REMOVE_COMMENT = gql`
       post_id: $post_id
       comment_id: $comment_id
       post_owner: $post_owner
-    ) {
-      ...CommentsFragment
-    }
+    )
   }
-  ${comments_fragment}
 `;
