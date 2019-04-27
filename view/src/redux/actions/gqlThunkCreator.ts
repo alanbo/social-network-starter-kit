@@ -11,7 +11,8 @@ export interface GqlAction {
   type: Types,
   payload: any,
   meta: {
-    id: number
+    id: number,
+    variables?: any
   }
 }
 
@@ -51,13 +52,18 @@ export default function gqlThunkCreator(
       }
 
       const { data: payload } = await query;
-      opts.type;
 
-      dispatch({
+      const action: ActionType = {
         type: opts.type,
         payload,
         meta: { id }
-      });
+      };
+
+      if (variables) {
+        action.meta.variables = variables;
+      }
+
+      dispatch(action);
 
     } catch (e) {
       dispatch({
