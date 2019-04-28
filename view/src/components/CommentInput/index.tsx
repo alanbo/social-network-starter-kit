@@ -48,6 +48,10 @@ class CommentInput extends Component<Props, State> {
 
       this.props.onSubmit(this.state.comment_msg);
       this.setState({ comment_msg: '' });
+
+      if (this.text_ref) {
+        this.text_ref.blur();
+      }
     }
   }
 

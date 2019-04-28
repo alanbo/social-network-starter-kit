@@ -1,10 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Collapse from '@material-ui/core/Collapse';
@@ -16,16 +14,14 @@ import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { connect } from 'react-redux';
-
+import { AppState } from '../../redux/reducers';
 import CommentList from '../CommentList';
 import CommentInput from '../CommentInput';
-
-import { CommentsFragment_comments } from '../../graphql/operation-result-types';
 import { gqlAddComment } from '../../redux/actions/gql-thunks';
-import { AddCommentVariables } from '../../graphql/operation-result-types'
+import { AddCommentVariables, CommentsFragment_comments } from '../../graphql/operation-result-types'
 
 import styles, { PostCardStyles } from './styles';
-import { DeepReadonly } from 'utility-types';
+import { DeepReadonly, $PropertyType } from 'utility-types';
 
 interface Props extends PostCardStyles {
   post_id: string,
@@ -33,6 +29,7 @@ interface Props extends PostCardStyles {
   author: string,
   date: Date,
   comments: DeepReadonly<CommentsFragment_comments[]>,
+  user: $PropertyType<AppState, 'user'>;
   gqlAddComment: (variables: AddCommentVariables) => void;
 }
 
@@ -51,8 +48,20 @@ class PostCard extends React.Component<Props, State> {
     this.props.gqlAddComment({ post_id: this.props.post_id, message });
   }
 
+  onRemoveComment = (comment: CommentsFragment_comments) => {
+    console.log(comment);
+  }
+
+  onEditComment = (comment: CommentsFragment_comments) => {
+    console.log(comment);
+  }
+
   render() {
-    const { classes, text, author, date, comments } = this.props;
+    const { classes, text, author, date, comments, user } = this.props;
+
+    if (!user) {
+      return null;
+    }
 
     return (
       <Card className={classes.card}>
@@ -95,7 +104,12 @@ class PostCard extends React.Component<Props, State> {
           <CardContent>
             <Typography paragraph>Comments: </Typography>
             <CommentInput onSubmit={this.onCommentSubmit} />
-            <CommentList comments={comments} />
+            <CommentList
+              comments={comments}
+              user_id={user._id}
+              handleEditComment={this.onEditComment}
+              handleRemoveComment={this.onRemoveComment}
+            />
           </CardContent>
         </Collapse>
       </Card>
@@ -103,4 +117,10 @@ class PostCard extends React.Component<Props, State> {
   }
 }
 
-export default connect(null, { gqlAddComment })(withStyles(styles)(PostCard));
+function mapStateToProps(state: AppState) {
+  return {
+    user: state.user
+  }
+}
+
+export default connect(mapStateToProps, { gqlAddComment })(withStyles(styles)(PostCard));

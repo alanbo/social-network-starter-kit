@@ -12,7 +12,8 @@ const styles = (theme: Theme) => createStyles({
   commentIconsWrapper: {
     transform: `translateY(-${theme.spacing.unit * 2}px)`,
   },
-  commentIcon: {
+  listItem: {
+    minHeight: `${theme.spacing.unit * 10}px`
   }
 });
 

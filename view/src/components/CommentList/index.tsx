@@ -1,32 +1,35 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
 import styles, { CommentListStyles } from './styles';
-import { CommentsFragment_comments } from '../../graphql/operation-result-types';
 import { DeepReadonly } from 'utility-types';
-import IconButton from '@material-ui/core/IconButton';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MoreButtonMenu from '../MoreButtonMenu';
+import { CommentsFragment_comments } from '../../graphql/operation-result-types';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
 
 interface Props extends CommentListStyles {
   comments: DeepReadonly<CommentsFragment_comments[]>
+  user_id: string,
+  handleEditComment: (comment: CommentsFragment_comments) => void,
+  handleRemoveComment: (comment: CommentsFragment_comments) => void,
 }
 
 function CommentList(props: Props) {
   const { classes, comments } = props;
+
   return (
     <List className={classes.root}>
       {comments.map(comment => {
-        const full_name = `${comment.user.first_name} ${comment.user.last_name}`
+        const full_name = `${comment.user.first_name} ${comment.user.last_name}`;
+        const is_user_comment = props.user_id === comment.user._id;
 
         return (
-          <ListItem alignItems="flex-start" key={comment._id}>
+          <ListItem alignItems="flex-start" key={comment._id} className={classes.listItem}>
             <ListItemAvatar>
               <Avatar alt={full_name} src="https://picsum.photos/300/300" />
             </ListItemAvatar>
@@ -35,13 +38,14 @@ function CommentList(props: Props) {
               secondary={comment.message}
             />
             <div className={classes.commentIconsWrapper}>
-              <IconButton aria-label="Like" classes={{ root: classes.commentIcon }}>
-                <MoreVertIcon />
-              </IconButton>
-
-              <IconButton aria-label="Like" classes={{ root: classes.commentIcon }}>
-                <FavoriteIcon />
-              </IconButton>
+              <MoreButtonMenu>
+                <MenuList>
+                  {is_user_comment && (
+                    <MenuItem onClick={() => props.handleEditComment(comment)}>Edit</MenuItem>
+                  )}
+                  <MenuItem onClick={() => props.handleRemoveComment(comment)}>Remove</MenuItem>
+                </MenuList>
+              </MoreButtonMenu>
             </div>
           </ListItem>
         )
