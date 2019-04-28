@@ -17,8 +17,12 @@ import { connect } from 'react-redux';
 import { AppState } from '../../redux/reducers';
 import CommentList from '../CommentList';
 import CommentInput from '../CommentInput';
-import { gqlAddComment } from '../../redux/actions/gql-thunks';
-import { AddCommentVariables, CommentsFragment_comments } from '../../graphql/operation-result-types'
+import { gqlAddComment, gqlRemoveComment } from '../../redux/actions/gql-thunks';
+import {
+  AddCommentVariables,
+  CommentsFragment_comments,
+  RemoveCommentVariables
+} from '../../graphql/operation-result-types'
 
 import styles, { PostCardStyles } from './styles';
 import { DeepReadonly, $PropertyType } from 'utility-types';
@@ -29,8 +33,9 @@ interface Props extends PostCardStyles {
   author: string,
   date: Date,
   comments: DeepReadonly<CommentsFragment_comments[]>,
-  user: $PropertyType<AppState, 'user'>;
-  gqlAddComment: (variables: AddCommentVariables) => void;
+  user: $PropertyType<AppState, 'user'>,
+  gqlAddComment: (variables: AddCommentVariables) => void,
+  gqlRemoveComment: (variables: RemoveCommentVariables) => void
 }
 
 interface State {
@@ -49,7 +54,9 @@ class PostCard extends React.Component<Props, State> {
   }
 
   onRemoveComment = (comment: CommentsFragment_comments) => {
-    console.log(comment);
+    const { post_id, gqlRemoveComment } = this.props;
+
+    gqlRemoveComment({ post_id, comment_id: comment._id });
   }
 
   onEditComment = (comment: CommentsFragment_comments) => {
@@ -123,4 +130,7 @@ function mapStateToProps(state: AppState) {
   }
 }
 
-export default connect(mapStateToProps, { gqlAddComment })(withStyles(styles)(PostCard));
+export default connect(mapStateToProps, {
+  gqlAddComment,
+  gqlRemoveComment
+})(withStyles(styles)(PostCard));
