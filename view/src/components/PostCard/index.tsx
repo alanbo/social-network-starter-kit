@@ -13,11 +13,9 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { connect } from 'react-redux';
 import { AppState } from '../../redux/reducers';
 import CommentList from '../CommentList';
 import CommentInput from '../CommentInput';
-import { gqlAddComment, gqlRemoveComment } from '../../redux/actions/gql-thunks';
 import {
   AddCommentVariables,
   CommentsFragment_comments,
@@ -34,15 +32,16 @@ interface Props extends PostCardStyles {
   date: Date,
   comments: DeepReadonly<CommentsFragment_comments[]>,
   user: $PropertyType<AppState, 'user'>,
-  gqlAddComment: (variables: AddCommentVariables) => void,
-  gqlRemoveComment: (variables: RemoveCommentVariables) => void
+  onAddComment: (variables: AddCommentVariables) => void,
+  onRemoveComment: (variables: RemoveCommentVariables) => void
+  // onEditComment: (variables: RemoveCommentVariables) => void
 }
 
 interface State {
   expanded: Boolean
 }
 
-class PostCard extends React.Component<Props, State> {
+export class PostCard extends React.Component<Props, State> {
   state = { expanded: false };
 
   handleExpandClick = () => {
@@ -50,13 +49,13 @@ class PostCard extends React.Component<Props, State> {
   };
 
   onCommentSubmit = (message: string) => {
-    this.props.gqlAddComment({ post_id: this.props.post_id, message });
+    this.props.onAddComment({ post_id: this.props.post_id, message });
   }
 
   onRemoveComment = (comment: CommentsFragment_comments) => {
-    const { post_id, gqlRemoveComment } = this.props;
+    const { post_id, onRemoveComment } = this.props;
 
-    gqlRemoveComment({ post_id, comment_id: comment._id });
+    onRemoveComment({ post_id, comment_id: comment._id });
   }
 
   onEditComment = (comment: CommentsFragment_comments) => {
@@ -124,13 +123,4 @@ class PostCard extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state: AppState) {
-  return {
-    user: state.user
-  }
-}
-
-export default connect(mapStateToProps, {
-  gqlAddComment,
-  gqlRemoveComment
-})(withStyles(styles)(PostCard));
+export default withStyles(styles)(PostCard);

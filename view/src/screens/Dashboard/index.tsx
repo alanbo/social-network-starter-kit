@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { AppState } from '../../redux/reducers';
-import { withStyles } from '@material-ui/core/styles';
 import { $PropertyType } from 'utility-types';
 import { gqlPosts } from '../../redux/actions/gql-thunks';
 import { GetPostsVariables } from '../../graphql/operation-result-types';
-import PostCardList from '../../components/PostCardList';
+import PostCardList from '../../redux-wrapped-components/PostCardList';
 
 interface Props {
   posts: $PropertyType<AppState, 'dashboard_posts'>;
