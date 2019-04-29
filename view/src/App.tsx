@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import './App.css';
-import NavigationFrame from './components/NavigationFrame';
+import NavigationFrame from './redux-wrapped-components/NavigationFrame';
 import SnackbarNotification from './components/SnackbarNotification';
 import Main from './Main';
 import { client } from './index';
