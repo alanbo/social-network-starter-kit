@@ -146,9 +146,18 @@ export interface UpdatePostVariables {
 // GraphQL mutation operation: AddComment
 // ====================================================
 
+export interface AddComment_addComment_user {
+  _id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+}
+
 export interface AddComment_addComment {
   _id: string;
+  message: string;
   createdAt: any;
+  user: AddComment_addComment_user;
 }
 
 export interface AddComment {

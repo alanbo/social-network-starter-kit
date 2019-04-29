@@ -123,11 +123,5 @@ class NavigationFrame extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state: AppState) {
-  return {
-    user: state.user,
-    loading: !!state.loading.length
-  }
-}
+export default withStyles(styles)(NavigationFrame);
 
-export default connect(mapStateToProps, { gqlLogout })(withStyles(styles)(NavigationFrame));

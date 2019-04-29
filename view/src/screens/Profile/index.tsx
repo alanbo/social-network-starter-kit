@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { AppState } from '../../redux/reducers';
 import { $PropertyType } from 'utility-types';
 import { gqlUserPosts } from '../../redux/actions/gql-thunks';
-import PostCardList from '../../components/PostCardList';
+import PostCardList from '../../redux-wrapped-components/PostCardList';
 
 interface Props {
   posts: $PropertyType<AppState, 'user_posts'>,

@@ -1,20 +1,29 @@
-import { GetUserPosts_user_posts, Logout } from '../../graphql/operation-result-types';
-import { DeepReadonly } from 'utility-types';
+import { GetUserPosts_user_posts } from '../../graphql/operation-result-types';
+import { addCommentReduce, removeCommentReduce } from './shared/commentReduceFunctions';
+
 import {
   GqlGetUserPostsAction,
   GqlLoginAction,
-  GqlLogoutAction
+  GqlLogoutAction,
+  GqlAddCommentAction,
+  GqlRemoveCommentAction
 } from '../actions/gql-action-interfaces';
 
 import {
   gql_user_posts,
   gql_logout,
+  gql_add_comment,
+  gql_remove_comment
 } from '../actions/gql-types';
 
 
 export type UserPostsState = GetUserPosts_user_posts[];
 
-type Action = GqlGetUserPostsAction | GqlLoginAction | GqlLogoutAction;
+type Action = GqlGetUserPostsAction
+  | GqlLoginAction
+  | GqlLogoutAction
+  | GqlAddCommentAction
+  | GqlRemoveCommentAction;
 
 export default function (state: UserPostsState = [], action: Action): UserPostsState {
   switch (action.type) {
@@ -26,6 +35,12 @@ export default function (state: UserPostsState = [], action: Action): UserPostsS
       }
 
       return user.posts;
+
+    case gql_add_comment:
+      return addCommentReduce(state, action);
+
+    case gql_remove_comment:
+      return removeCommentReduce(state, action);
 
     case gql_logout:
       return [];
