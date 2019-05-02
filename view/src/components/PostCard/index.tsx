@@ -12,14 +12,15 @@ import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { AppState } from '../../redux/reducers';
 import CommentList from '../CommentList';
 import CommentInput from '../CommentInput';
+import MoreButtonMenu from '../MoreButtonMenu';
+
 import {
   AddCommentVariables,
   CommentsFragment_comments,
-  RemoveCommentVariables
+  RemoveCommentVariables,
 } from '../../graphql/operation-result-types'
 
 import styles, { PostCardStyles } from './styles';
@@ -30,10 +31,11 @@ interface Props extends PostCardStyles {
   text: string,
   author: string,
   date: Date,
+  is_post_owner: boolean,
   comments: DeepReadonly<CommentsFragment_comments[]>,
   user: $PropertyType<AppState, 'user'>,
   onAddComment: (variables: AddCommentVariables) => void,
-  onRemoveComment: (variables: RemoveCommentVariables) => void
+  onRemoveComment: (variables: RemoveCommentVariables) => void,
   // onEditComment: (variables: RemoveCommentVariables) => void
 }
 
@@ -42,6 +44,10 @@ interface State {
 }
 
 export class PostCard extends React.Component<Props, State> {
+  static defaultProps = {
+    is_post_owner: false
+  }
+
   state = { expanded: false };
 
   handleExpandClick = () => {
@@ -63,7 +69,7 @@ export class PostCard extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes, text, author, date, comments, user } = this.props;
+    const { classes, text, author, date, comments, user, is_post_owner } = this.props;
 
     if (!user) {
       return null;
@@ -78,9 +84,11 @@ export class PostCard extends React.Component<Props, State> {
             </Avatar>
           }
           action={
-            <IconButton>
-              <MoreVertIcon />
-            </IconButton>
+            is_post_owner && (
+              <MoreButtonMenu>
+                hey
+              </MoreButtonMenu>
+            )
           }
           title={author}
           subheader={date.toDateString()}
@@ -122,5 +130,6 @@ export class PostCard extends React.Component<Props, State> {
     );
   }
 }
+
 
 export default withStyles(styles)(PostCard);

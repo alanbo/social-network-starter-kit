@@ -35,6 +35,7 @@ function PostCardList(props: Props) {
             onAddComment={gqlAddComment}
             onRemoveComment={gqlRemoveComment}
             user={user}
+            is_post_owner={!!user && user._id === post.user._id}
           />
         ))
       }
