@@ -17,7 +17,7 @@ import { PostInput, Post, PostInputUpdate, Comment } from '../schema/post';
 import { Context } from '../index';
 import simpleProjection from '../utils/simple-projection';
 import { UserMongo } from './user';
-import { UpdateQuery } from 'mongodb';
+import { UpdateQuery, FilterQuery } from 'mongodb';
 
 export interface PostMongo extends PostInput {
   createdAt: Date,
@@ -228,6 +228,50 @@ export class PostResolver {
       return e;
     }
   }
+
+
+  @Mutation(returns => Boolean)
+  async updateComment(
+    @Ctx() context: Context,
+    @Info() info: GraphQLResolveInfo,
+    @Arg('post_id', type => ID) post_id: string,
+    @Arg('comment_id', type => ID) comment_id: string,
+    @Arg('message', type => String) message: string,
+  ): Promise<Boolean | Error> {
+    const { session, posts_col } = context;
+
+    if (!session.user) {
+      return new Error('User must be logged in');
+    }
+
+    const { _id } = session.user;
+
+    try {
+      const query: FilterQuery<PostMongo> = {
+        _id: post_id,
+        // user is either owner of the post
+        // or is a friend of the post owner
+        $or: [{ user: _id }, { visible_to: _id }],
+        comments: {
+          $elemMatch: {
+            _id: comment_id,
+            'user._id': _id
+          }
+        }
+      }
+
+      await posts_col
+        .update(
+          query,
+          { $set: { 'comments.$.message': message } }
+        );
+
+      return true;
+    } catch (e) {
+      return e;
+    }
+  }
+
 
   @Mutation(returns => ID)
   async removeComment(
