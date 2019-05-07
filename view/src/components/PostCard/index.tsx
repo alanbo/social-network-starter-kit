@@ -14,7 +14,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { AppState } from '../../redux/reducers';
 import CommentList from '../CommentList';
-import CommentInput from '../CommentInput';
+import CommentInput from '../TextInput';
 import MoreButtonMenu from '../MoreButtonMenu';
 
 import {
@@ -117,7 +117,10 @@ export class PostCard extends React.Component<Props, State> {
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography paragraph>Comments: </Typography>
-            <CommentInput onSubmit={this.onCommentSubmit} />
+            <CommentInput
+              onSubmit={this.onCommentSubmit}
+              label='Add Comment'
+            />
             <CommentList
               comments={comments}
               user_id={user._id}

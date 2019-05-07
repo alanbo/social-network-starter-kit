@@ -7,7 +7,8 @@ const HELPER_INFO = "Press ENTER to submit. Press Shift+ENTER for the newline";
 const HELPER_ERROR = "Can't submit an empty text";
 
 interface Props extends CommentInputStyles {
-  onSubmit: (message: string) => void
+  onSubmit: (message: string) => void,
+  label: string
 }
 
 interface State {
@@ -16,7 +17,7 @@ interface State {
   is_focused: Boolean
 }
 
-class CommentInput extends Component<Props, State> {
+class TextInput extends Component<Props, State> {
   state = {
     comment_msg: '',
     textarea_error: false,
@@ -80,7 +81,7 @@ class CommentInput extends Component<Props, State> {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, label } = this.props;
 
     let helper_text: false | string = false;
 
@@ -92,7 +93,7 @@ class CommentInput extends Component<Props, State> {
 
     return (
       <TextField
-        label="Add Comment"
+        label={label}
         multiline
         rowsMax="4"
         value={this.state.comment_msg}
@@ -110,4 +111,4 @@ class CommentInput extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(CommentInput);
+export default withStyles(styles)(TextInput);
