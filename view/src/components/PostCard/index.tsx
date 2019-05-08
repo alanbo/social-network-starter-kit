@@ -126,6 +126,7 @@ export class PostCard extends React.Component<Props, State> {
               user_id={user._id}
               handleEditComment={this.onEditComment}
               handleRemoveComment={this.onRemoveComment}
+              is_post_owner={false}
             />
           </CardContent>
         </Collapse>
