@@ -6,6 +6,13 @@ const styles = (theme: Theme) => createStyles({
   },
   listItem: {
     minHeight: `${theme.spacing.unit * 10}px`
+  },
+  textInputWrapper: {
+    paddingRight: `${theme.spacing.unit * 2}px`,
+    paddingLeft: `${theme.spacing.unit * 2}px`,
+    display: 'flex',
+    alignItems: 'stretch',
+    flex: 1
   }
 });
 

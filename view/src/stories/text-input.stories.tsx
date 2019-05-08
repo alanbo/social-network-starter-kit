@@ -7,8 +7,9 @@ import { withKnobs, text } from '@storybook/addon-knobs';
 import CommentInput from '../components/TextInput';
 
 
-storiesOf('CommentInput', module)
+storiesOf('TextInput', module)
   .addDecorator(withKnobs)
   .add('standard', () => <CommentInput
     label={text('label', 'Add Comment')}
-    onSubmit={action('submit')} />);
+    onSubmit={action('submit')}
+    onCancel={action('cancel')} />);
