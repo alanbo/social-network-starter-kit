@@ -11,8 +11,12 @@ storiesOf('PostCardList', module)
   .addDecorator(withKnobs)
   .add('standard', () => (
     <PostCardList
-      gqlAddComment={action('Add Comment')}
-      gqlRemoveComment={action('Remove Comment')}
+      onAddComment={action('Add Comment')}
+      onRemoveComment={action('Remove Comment')}
+      onUpdateComment={action('Update comment')}
+      onDeletePost={action('Delete Post')}
+      onUpdatePost={action('Update Post')}
+
       user={object('User', user) as UserQuery_user}
       posts={object('Posts', posts)}
     />

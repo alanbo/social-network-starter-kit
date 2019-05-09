@@ -12,8 +12,8 @@ interface Props extends CommentListStyles {
   comments: DeepReadonly<CommentsFragment_comments[]>
   user_id: string,
   is_post_owner: boolean,
-  handleEditComment: (comment: CommentsFragment_comments) => void,
-  handleRemoveComment: (comment: CommentsFragment_comments) => void,
+  handleEditComment: (id: string, message: string) => void,
+  handleRemoveComment: (id: string) => void,
 }
 
 function CommentList(props: Props) {
@@ -37,8 +37,8 @@ function CommentList(props: Props) {
           <CommentItem
             key={comment._id}
             full_name={full_name}
-            handleEditComment={is_editable ? () => handleEditComment(comment) : undefined}
-            handleRemoveComment={is_removable ? () => handleRemoveComment(comment) : undefined}
+            handleEditComment={is_editable ? message => handleEditComment(comment._id, message) : undefined}
+            handleRemoveComment={is_removable ? () => handleRemoveComment(comment._id) : undefined}
             message={comment.message}
           />
         )

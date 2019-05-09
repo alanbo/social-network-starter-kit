@@ -16,38 +16,48 @@ import { AppState } from '../../redux/reducers';
 import CommentList from '../CommentList';
 import CommentInput from '../TextInput';
 import MoreButtonMenu from '../MoreButtonMenu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
 
 import {
   AddCommentVariables,
   CommentsFragment_comments,
   RemoveCommentVariables,
+  UpdateCommentVariables
 } from '../../graphql/operation-result-types'
 
 import styles, { PostCardStyles } from './styles';
 import { DeepReadonly, $PropertyType } from 'utility-types';
 
-interface Props extends PostCardStyles {
+interface BaseProps extends PostCardStyles {
   post_id: string,
   text: string,
   author: string,
   date: Date,
-  is_post_owner: boolean,
   comments: DeepReadonly<CommentsFragment_comments[]>,
   user: $PropertyType<AppState, 'user'>,
   onAddComment: (variables: AddCommentVariables) => void,
   onRemoveComment: (variables: RemoveCommentVariables) => void,
-  // onEditComment: (variables: RemoveCommentVariables) => void
+  onEditComment: (variables: UpdateCommentVariables) => void
 }
+
+interface OwnerProps extends BaseProps {
+  is_post_owner: true,
+  onEditPost: (message: string) => void,
+  onRemovePost: () => void
+}
+
+interface RegProps extends BaseProps {
+  is_post_owner?: false
+}
+
+type Props = OwnerProps | RegProps;
 
 interface State {
   expanded: Boolean
 }
 
 export class PostCard extends React.Component<Props, State> {
-  static defaultProps = {
-    is_post_owner: false
-  }
-
   state = { expanded: false };
 
   handleExpandClick = () => {
@@ -58,14 +68,28 @@ export class PostCard extends React.Component<Props, State> {
     this.props.onAddComment({ post_id: this.props.post_id, message });
   }
 
-  onRemoveComment = (comment: CommentsFragment_comments) => {
+  onRemoveComment = (comment_id: string) => {
     const { post_id, onRemoveComment } = this.props;
 
-    onRemoveComment({ post_id, comment_id: comment._id });
+    onRemoveComment({ post_id, comment_id });
   }
 
-  onEditComment = (comment: CommentsFragment_comments) => {
-    console.log(comment);
+  onEditComment = (comment_id: string, message: string) => {
+    const { post_id, onEditComment } = this.props;
+
+    onEditComment({
+      post_id,
+      comment_id,
+      message
+    });
+  }
+
+  onEditPost = () => {
+    console.log('edit');
+  }
+
+  onRemovePost = () => {
+    this.props.is_post_owner && this.props.onRemovePost();
   }
 
   render() {
@@ -86,7 +110,10 @@ export class PostCard extends React.Component<Props, State> {
           action={
             is_post_owner && (
               <MoreButtonMenu>
-                hey
+                <MenuList>
+                  <MenuItem onClick={this.onEditPost}>Edit</MenuItem>
+                  <MenuItem onClick={this.onRemovePost}>Remove</MenuItem>
+                </MenuList>
               </MoreButtonMenu>
             )
           }

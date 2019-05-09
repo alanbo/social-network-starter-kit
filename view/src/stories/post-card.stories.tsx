@@ -22,6 +22,7 @@ storiesOf('PostCard', module)
       comments={object('Comments', comments)}
       onAddComment={action('Add Comment')}
       onRemoveComment={action('Remove Comment')}
+      onEditComment={action('onEditComment')}
       post_id={text('ID', 'a26b84b7-a498-4231-9280-bf820ab5c43e')}
       user={object('User', user) as UserQuery_user}
     />
@@ -34,8 +35,11 @@ storiesOf('PostCard', module)
       comments={object('Comments', comments)}
       onAddComment={action('Add Comment')}
       onRemoveComment={action('Remove Comment')}
+      onEditComment={action('onEditComment')}
       post_id={text('ID', 'a26b84b7-a498-4231-9280-bf820ab5c43e')}
       user={object('User', user) as UserQuery_user}
-      is_post_owner={boolean('Is Post Owner', true)}
+      is_post_owner={true}
+      onEditPost={action('Edit Post')}
+      onRemovePost={action('Remove Post')}
     />
   ));

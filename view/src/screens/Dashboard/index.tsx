@@ -24,7 +24,10 @@ class Dashboard extends Component<Props> {
         <h1>Dashboard</h1>
 
         {
-          posts && <PostCardList posts={posts} />
+          // there is an issue with connect typescript
+          // it doesn't correctly pass required props
+          //@ts-ignore
+          posts && <PostCardList posts={posts} is_owner={true} />
         }
       </div>
     );

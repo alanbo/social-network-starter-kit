@@ -22,7 +22,11 @@ class Profile extends Component<Props> {
       <div>
         <div>Profile</div>
         {
-          posts && <PostCardList posts={posts} />
+          // there is an issue with connect typescript
+          // it doesn't correctly pass required props
+          // TO DO: find more appropriate solution.
+          // @ts-ignore
+          posts && <PostCardList posts={posts} is_owner={true} />
         }
       </div>
     );
