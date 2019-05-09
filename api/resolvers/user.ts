@@ -350,7 +350,9 @@ export class UserResolver {
 
     posts.forEach((post: PostMongo) => {
       post.createdAt = new Date(post.createdAt);
-    })
+    });
+
+    return posts;
   }
 
   @FieldResolver()
