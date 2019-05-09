@@ -18,6 +18,7 @@ import CommentInput from '../TextInput';
 import MoreButtonMenu from '../MoreButtonMenu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
+import TextInput from '../TextInput';
 
 import {
   AddCommentVariables,
@@ -54,11 +55,15 @@ interface RegProps extends BaseProps {
 type Props = OwnerProps | RegProps;
 
 interface State {
-  expanded: Boolean
+  expanded: boolean,
+  is_edited: boolean
 }
 
 export class PostCard extends React.Component<Props, State> {
-  state = { expanded: false };
+  state = {
+    expanded: false,
+    is_edited: false
+  };
 
   handleExpandClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
@@ -84,8 +89,11 @@ export class PostCard extends React.Component<Props, State> {
     });
   }
 
-  onEditPost = () => {
-    console.log('edit');
+  onEditPost = (message: string) => {
+    if (this.props.is_post_owner) {
+      this.props.onEditPost(message);
+      this.setState({ is_edited: false });
+    }
   }
 
   onRemovePost = () => {
@@ -108,10 +116,10 @@ export class PostCard extends React.Component<Props, State> {
             </Avatar>
           }
           action={
-            is_post_owner && (
+            is_post_owner && !this.state.is_edited && (
               <MoreButtonMenu>
                 <MenuList>
-                  <MenuItem onClick={this.onEditPost}>Edit</MenuItem>
+                  <MenuItem onClick={() => this.setState({ is_edited: true })}>Edit</MenuItem>
                   <MenuItem onClick={this.onRemovePost}>Remove</MenuItem>
                 </MenuList>
               </MoreButtonMenu>
@@ -121,7 +129,18 @@ export class PostCard extends React.Component<Props, State> {
           subheader={date.toDateString()}
         />
         <CardContent>
-          <Typography align="left" component="p">{text}</Typography>
+          {
+            this.state.is_edited ? (
+              <div className={classes.textInputWrapper} >
+                <TextInput
+                  label='Edit Post'
+                  onSubmit={this.onEditPost}
+                  message={text}
+                  onCancel={() => this.setState({ is_edited: false })}
+                />
+              </div>
+            ) : <Typography align="left" component="p">{text}</Typography>
+          }
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
           <IconButton aria-label="Like">
