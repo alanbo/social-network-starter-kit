@@ -14,25 +14,16 @@ import {
 import { DeepReadonly, $PropertyType } from 'utility-types';
 import { AppState } from '../../redux/reducers';
 
-interface BaseProps extends PostCardListStyles {
+interface Props extends PostCardListStyles {
   posts: DeepReadonly<GetPosts_posts[]>
   onAddComment: (variables: AddCommentVariables) => void,
   onRemoveComment: (variables: RemoveCommentVariables) => void,
   onUpdateComment: (variables: UpdateCommentVariables) => void
+  onUpdatePost?: (variables: UpdatePostVariables) => void,
+  onDeletePost?: (variables: DeletePostVariables) => void
   user: $PropertyType<AppState, 'user'>,
+  is_owner: boolean
 }
-
-interface OwnerProps extends BaseProps {
-  is_owner: true,
-  onUpdatePost: (variables: UpdatePostVariables) => void,
-  onDeletePost: (variables: DeletePostVariables) => void
-}
-
-interface RegProps extends BaseProps {
-  is_owner?: false
-}
-
-type Props = OwnerProps | RegProps;
 
 function PostCardList(props: Props) {
   const {
@@ -41,6 +32,8 @@ function PostCardList(props: Props) {
     onAddComment,
     onRemoveComment,
     onUpdateComment,
+    onUpdatePost,
+    onDeletePost,
     user,
     is_owner
   } = props;
@@ -62,19 +55,24 @@ function PostCardList(props: Props) {
             user: user,
           }
 
-          if (is_owner) {
+          if (onUpdatePost && onDeletePost && is_owner) {
             return (
               <PostCard
                 {...post_card_props}
+                is_post_owner={true}
+                onEditPost={message => onUpdatePost({
+                  data: {
+                    _id: post._id,
+                    message
+                  }
+                })}
+                onRemovePost={() => onDeletePost({ id: post._id })}
               />
             )
           } else {
             return (
               <PostCard
                 {...post_card_props}
-                is_post_owner={true}
-                onEditPost={console.log}
-                onRemovePost={console.log}
               />
             )
           }
