@@ -22,23 +22,12 @@ interface State {
 
 class TextInput extends Component<Props, State> {
   state = {
-    comment_msg: '',
+    comment_msg: this.props.message || '',
     textarea_error: false,
     is_focused: false,
   }
 
   text_ref: HTMLTextAreaElement | null = null;
-
-  static getDerivedStateFromProps(props: Props, state: State) {
-    if (props.message && !state.comment_msg) {
-      return {
-        comment_msg: props.message
-      }
-    }
-
-    return null;
-  }
-
 
   handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const comment_msg = e.target.value;
