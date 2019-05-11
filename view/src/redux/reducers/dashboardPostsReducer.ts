@@ -18,16 +18,6 @@ import {
   GqlUpdateCommentAction
 } from '../actions/gql-action-interfaces';
 
-function deepcopy(obj: any): any {
-  if (obj === null) {
-    return null;
-  } else if (Array.isArray(obj)) {
-    return [...obj].map(deepcopy);
-
-
-  } else if (typeof obj === 'object') {
-  }
-}
 
 type Actions = GqlGetPostsAction | GqlAddCommentAction | GqlRemoveCommentAction | GqlUpdateCommentAction;
 type Posts = GetPosts_posts[];

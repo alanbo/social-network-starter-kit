@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import { GetUserPosts_user_posts } from '../../graphql/operation-result-types';
 import { addCommentReduce, removeCommentReduce, updateCommentReduce } from './shared/commentReduceFunctions';
 
@@ -7,7 +8,9 @@ import {
   GqlLogoutAction,
   GqlAddCommentAction,
   GqlRemoveCommentAction,
-  GqlUpdateCommentAction
+  GqlUpdateCommentAction,
+  GqlUpdatePostAction,
+  GqlDeletePostAction
 } from '../actions/gql-action-interfaces';
 
 import {
@@ -15,7 +18,9 @@ import {
   gql_logout,
   gql_add_comment,
   gql_remove_comment,
-  gql_update_comment
+  gql_update_comment,
+  gql_update_post,
+  gql_delete_post
 } from '../actions/gql-types';
 
 
@@ -26,7 +31,9 @@ type Action = GqlGetUserPostsAction
   | GqlLogoutAction
   | GqlAddCommentAction
   | GqlRemoveCommentAction
-  | GqlUpdateCommentAction;
+  | GqlUpdateCommentAction
+  | GqlUpdatePostAction
+  | GqlDeletePostAction;
 
 export default function (state: UserPostsState = [], action: Action): UserPostsState {
   switch (action.type) {
@@ -47,6 +54,29 @@ export default function (state: UserPostsState = [], action: Action): UserPostsS
 
     case gql_update_comment:
       return updateCommentReduce(state, action);
+
+    case gql_delete_post: {
+      const post_id = action.meta.variables.id;
+
+      return R.reject(R.propEq('_id', post_id), state);
+    }
+
+    case gql_update_post: {
+      const { message, tags } = action.payload.updatePost;
+      const post_id = action.meta.variables.data._id;
+
+      const new_state = R.map(
+        R.ifElse(
+          R.propEq('_id', post_id),
+          R.mergeDeepLeft({ message, tags }
+          ),
+          R.identity),
+        state
+      ) as UserPostsState;
+
+      return new_state;
+
+    }
 
     case gql_logout:
       return [];

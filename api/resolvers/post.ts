@@ -182,7 +182,7 @@ export class PostResolver {
       return posts_col.findOneAndUpdate(
         { _id: data._id, user: session.user._id },
         update_expr,
-        { projection: simpleProjection(info), returnOriginal: false }
+        { returnOriginal: false }
       ).then(result => result.value);
     } catch (e) {
       return e;
