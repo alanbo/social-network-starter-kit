@@ -17,7 +17,7 @@ export const addCommentReduce = (state: GetUserPosts_user_posts[], action: GqlAd
 
   const { post_id } = action.meta.variables;
 
-  const new_state = { ...state };
+  const new_state = [...state];
   const ix = new_state.findIndex(post => post._id === post_id);
 
   if (ix < 0) {
@@ -41,7 +41,7 @@ export const removeCommentReduce = (state: GetUserPosts_user_posts[], action: Gq
   }
 
   const { post_id } = action.meta.variables;
-  const new_state = { ...state };
+  const new_state = [...state];
   const ix = new_state.findIndex(post => post._id === post_id);
 
   if (ix < 0) {
@@ -56,13 +56,14 @@ export const removeCommentReduce = (state: GetUserPosts_user_posts[], action: Gq
   return new_state;
 }
 
-export const updateCommentReduce = (state: GetUserPosts_user_posts[], action: GqlUpdateCommentAction) => {
+export const updateCommentReduce = (state: GetUserPosts_user_posts[] = [], action: GqlUpdateCommentAction) => {
   if (!state.length) {
     return state;
   }
 
   const { post_id, comment_id, message } = action.meta.variables;
-  const new_state = { ...state };
+  const new_state = [...state];
+
   // find index of the post
   const ix = new_state.findIndex(post => post._id === post_id);
 
