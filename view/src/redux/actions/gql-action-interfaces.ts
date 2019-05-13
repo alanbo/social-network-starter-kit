@@ -8,6 +8,7 @@ import {
   gql_update_post,
   gql_add_comment,
   gql_remove_comment,
+  gql_update_comment,
   gql_login,
   gql_user,
   gql_logout,
@@ -26,6 +27,7 @@ import {
   UpdatePost,
   AddComment,
   RemoveComment,
+  UpdateComment,
   Login,
   UserQuery,
   Logout,
@@ -40,6 +42,7 @@ import {
   UpdatePostVariables,
   AddCommentVariables,
   RemoveCommentVariables,
+  UpdateCommentVariables,
   LoginVariables,
   CreateUserVariables,
   UpdateUserVariables,
@@ -123,6 +126,15 @@ export interface GqlRemoveCommentAction {
   meta: {
     id: number
     variables: RemoveCommentVariables
+  }
+}
+
+export interface GqlUpdateCommentAction {
+  type: typeof gql_update_comment,
+  payload: UpdateComment,
+  meta: {
+    id: number
+    variables: UpdateCommentVariables
   }
 }
 

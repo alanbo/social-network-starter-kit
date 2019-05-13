@@ -4,7 +4,8 @@ import { createStyles, WithStyles, Theme } from '@material-ui/core/styles';
 const styles = (theme: Theme) => createStyles({
   card: {
     maxWidth: 800,
-    marginBottom: theme.spacing.unit * 4
+    marginBottom: theme.spacing.unit * 4,
+    width: '100%'
   },
   media: {
     height: 0,
@@ -26,6 +27,13 @@ const styles = (theme: Theme) => createStyles({
   avatar: {
     backgroundColor: red[500],
   },
+  textInputWrapper: {
+    paddingRight: `${theme.spacing.unit * 2}px`,
+    paddingLeft: `${theme.spacing.unit * 2}px`,
+    display: 'flex',
+    alignItems: 'stretch',
+    flex: 1
+  }
 });
 
 export default styles;

@@ -9,12 +9,6 @@ const styles = (theme: Theme) => createStyles({
   inline: {
     display: 'inline',
   },
-  commentIconsWrapper: {
-    transform: `translateY(-${theme.spacing.unit * 2}px)`,
-  },
-  listItem: {
-    minHeight: `${theme.spacing.unit * 10}px`
-  }
 });
 
 export default styles;

@@ -47,7 +47,7 @@ export class Post {
 
 @InputType()
 export class PostInput {
-  @Length(5, 500)
+  @Length(5, 1000)
   @Field()
   message: string;
 
@@ -68,7 +68,7 @@ export class PostInputUpdate {
   @Field()
   _id: string
 
-  @Length(5, 500)
+  @Length(5, 1000)
   @Field({ nullable: true })
   message: string;
 

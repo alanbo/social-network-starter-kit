@@ -12,20 +12,25 @@ import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { AppState } from '../../redux/reducers';
 import CommentList from '../CommentList';
-import CommentInput from '../CommentInput';
+import CommentInput from '../TextInput';
+import MoreButtonMenu from '../MoreButtonMenu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
+import TextInput from '../TextInput';
+
 import {
   AddCommentVariables,
   CommentsFragment_comments,
-  RemoveCommentVariables
+  RemoveCommentVariables,
+  UpdateCommentVariables
 } from '../../graphql/operation-result-types'
 
 import styles, { PostCardStyles } from './styles';
 import { DeepReadonly, $PropertyType } from 'utility-types';
 
-interface Props extends PostCardStyles {
+interface BaseProps extends PostCardStyles {
   post_id: string,
   text: string,
   author: string,
@@ -33,16 +38,32 @@ interface Props extends PostCardStyles {
   comments: DeepReadonly<CommentsFragment_comments[]>,
   user: $PropertyType<AppState, 'user'>,
   onAddComment: (variables: AddCommentVariables) => void,
-  onRemoveComment: (variables: RemoveCommentVariables) => void
-  // onEditComment: (variables: RemoveCommentVariables) => void
+  onRemoveComment: (variables: RemoveCommentVariables) => void,
+  onEditComment: (variables: UpdateCommentVariables) => void
 }
 
+interface OwnerProps extends BaseProps {
+  is_post_owner: true,
+  onEditPost: (message: string) => void,
+  onRemovePost: () => void
+}
+
+interface RegProps extends BaseProps {
+  is_post_owner?: false
+}
+
+type Props = OwnerProps | RegProps;
+
 interface State {
-  expanded: Boolean
+  expanded: boolean,
+  is_edited: boolean
 }
 
 export class PostCard extends React.Component<Props, State> {
-  state = { expanded: false };
+  state = {
+    expanded: false,
+    is_edited: false
+  };
 
   handleExpandClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
@@ -52,18 +73,35 @@ export class PostCard extends React.Component<Props, State> {
     this.props.onAddComment({ post_id: this.props.post_id, message });
   }
 
-  onRemoveComment = (comment: CommentsFragment_comments) => {
+  onRemoveComment = (comment_id: string) => {
     const { post_id, onRemoveComment } = this.props;
 
-    onRemoveComment({ post_id, comment_id: comment._id });
+    onRemoveComment({ post_id, comment_id });
   }
 
-  onEditComment = (comment: CommentsFragment_comments) => {
-    console.log(comment);
+  onEditComment = (comment_id: string, message: string) => {
+    const { post_id, onEditComment } = this.props;
+
+    onEditComment({
+      post_id,
+      comment_id,
+      message
+    });
+  }
+
+  onEditPost = (message: string) => {
+    if (this.props.is_post_owner) {
+      this.props.onEditPost(message);
+      this.setState({ is_edited: false });
+    }
+  }
+
+  onRemovePost = () => {
+    this.props.is_post_owner && this.props.onRemovePost();
   }
 
   render() {
-    const { classes, text, author, date, comments, user } = this.props;
+    const { classes, text, author, date, comments, user, is_post_owner } = this.props;
 
     if (!user) {
       return null;
@@ -78,15 +116,31 @@ export class PostCard extends React.Component<Props, State> {
             </Avatar>
           }
           action={
-            <IconButton>
-              <MoreVertIcon />
-            </IconButton>
+            is_post_owner && !this.state.is_edited && (
+              <MoreButtonMenu>
+                <MenuList>
+                  <MenuItem onClick={() => this.setState({ is_edited: true })}>Edit</MenuItem>
+                  <MenuItem onClick={this.onRemovePost}>Remove</MenuItem>
+                </MenuList>
+              </MoreButtonMenu>
+            )
           }
           title={author}
           subheader={date.toDateString()}
         />
         <CardContent>
-          <Typography align="left" component="p">{text}</Typography>
+          {
+            this.state.is_edited ? (
+              <div className={classes.textInputWrapper} >
+                <TextInput
+                  label='Edit Post'
+                  onSubmit={this.onEditPost}
+                  message={text}
+                  onCancel={() => this.setState({ is_edited: false })}
+                />
+              </div>
+            ) : <Typography align="left" component="p">{text}</Typography>
+          }
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
           <IconButton aria-label="Like">
@@ -109,12 +163,16 @@ export class PostCard extends React.Component<Props, State> {
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography paragraph>Comments: </Typography>
-            <CommentInput onSubmit={this.onCommentSubmit} />
+            <CommentInput
+              onSubmit={this.onCommentSubmit}
+              label='Add Comment'
+            />
             <CommentList
               comments={comments}
               user_id={user._id}
               handleEditComment={this.onEditComment}
               handleRemoveComment={this.onRemoveComment}
+              is_post_owner={false}
             />
           </CardContent>
         </Collapse>
@@ -122,5 +180,6 @@ export class PostCard extends React.Component<Props, State> {
     );
   }
 }
+
 
 export default withStyles(styles)(PostCard);

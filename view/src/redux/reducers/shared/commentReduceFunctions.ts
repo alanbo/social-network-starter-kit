@@ -1,5 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep';
-
 import {
   GetUserPosts_user_posts_comments,
   GetUserPosts_user_posts
@@ -7,13 +5,10 @@ import {
 
 import {
   GqlAddCommentAction,
-  GqlRemoveCommentAction
+  GqlRemoveCommentAction,
+  GqlUpdateCommentAction
 } from '../../actions/gql-action-interfaces';
 
-interface StateItem {
-  _id: string,
-  comments: GetUserPosts_user_posts_comments[]
-}
 
 export const addCommentReduce = (state: GetUserPosts_user_posts[], action: GqlAddCommentAction) => {
   if (!state.length) {
@@ -22,7 +17,7 @@ export const addCommentReduce = (state: GetUserPosts_user_posts[], action: GqlAd
 
   const { post_id } = action.meta.variables;
 
-  const new_state = cloneDeep(state);
+  const new_state = [...state];
   const ix = new_state.findIndex(post => post._id === post_id);
 
   if (ix < 0) {
@@ -46,7 +41,7 @@ export const removeCommentReduce = (state: GetUserPosts_user_posts[], action: Gq
   }
 
   const { post_id } = action.meta.variables;
-  const new_state = cloneDeep(state);
+  const new_state = [...state];
   const ix = new_state.findIndex(post => post._id === post_id);
 
   if (ix < 0) {
@@ -57,6 +52,36 @@ export const removeCommentReduce = (state: GetUserPosts_user_posts[], action: Gq
   const comments = new_state[ix].comments || [];
 
   new_state[ix].comments = comments.filter(comment => comment._id !== comment_id);
+
+  return new_state;
+}
+
+export const updateCommentReduce = (state: GetUserPosts_user_posts[] = [], action: GqlUpdateCommentAction) => {
+  if (!state.length) {
+    return state;
+  }
+
+  const { post_id, comment_id, message } = action.meta.variables;
+  const new_state = [...state];
+
+  // find index of the post
+  const ix = new_state.findIndex(post => post._id === post_id);
+
+  if (ix < 0) {
+    return state;
+  }
+
+  // retrieve comments of the post
+  const comments = new_state[ix].comments || [];
+  // find index of the comment
+  const c_ix = comments.findIndex(comment => comment._id === comment_id);
+
+  if (c_ix < 0) {
+    return state;
+  }
+
+  // update the message of the give comment
+  comments[c_ix].message = message;
 
   return new_state;
 }

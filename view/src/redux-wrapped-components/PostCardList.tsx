@@ -1,7 +1,14 @@
 import PostCardList from '../components/PostCardList';
-import { gqlAddComment, gqlRemoveComment } from '../redux/actions/gql-thunks';
+import {
+  gqlAddComment,
+  gqlRemoveComment,
+  gqlUpdateComment,
+  gqlUpdatePost,
+  gqlDeletePost
+} from '../redux/actions/gql-thunks';
 import { AppState } from '../redux/reducers';
 import { connect } from 'react-redux';
+
 
 function mapStateToProps(state: AppState) {
   return {
@@ -9,7 +16,11 @@ function mapStateToProps(state: AppState) {
   }
 }
 
+
 export default connect(mapStateToProps, {
-  gqlAddComment,
-  gqlRemoveComment
+  onAddComment: gqlAddComment,
+  onRemoveComment: gqlRemoveComment,
+  onUpdateComment: gqlUpdateComment,
+  onUpdatePost: gqlUpdatePost,
+  onDeletePost: gqlDeletePost
 })(PostCardList);

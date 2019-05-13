@@ -97,3 +97,17 @@ export const REMOVE_COMMENT = gql`
     )
   }
 `;
+
+export const UPDATE_COMMENT = gql`
+  mutation UpdateComment(
+    $message: String!,
+    $comment_id: ID!,
+    $post_id: ID!
+  ) {
+    updateComment(
+      message: $message,
+      comment_id: $comment_id,
+      post_id: $post_id
+    )
+  }
+`;
