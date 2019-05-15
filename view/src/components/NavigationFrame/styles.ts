@@ -64,6 +64,7 @@ const styles = (theme: any) => createStyles({
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
+    paddingTop: theme.spacing.unit * 8,
     overflow: 'auto'
   },
   flex: {

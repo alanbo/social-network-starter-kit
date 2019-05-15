@@ -110,6 +110,8 @@ export class PostCard extends React.Component<Props, State> {
     return (
       <Card className={classes.card}>
         <CardHeader
+          className={classes.cardHeader}
+          classes={{ avatar: classes.avatarRoot }}
           avatar={
             <Avatar aria-label="Author" className={classes.avatar}>
               R
