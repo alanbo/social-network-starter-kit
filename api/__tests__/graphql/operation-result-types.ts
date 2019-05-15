@@ -7,6 +7,10 @@
 // GraphQL query operation: GetPosts
 // ====================================================
 
+export interface GetPosts_posts_likes {
+  _id: string;
+}
+
 export interface GetPosts_posts_user {
   _id: string;
   email: string;
@@ -32,6 +36,7 @@ export interface GetPosts_posts {
   message: string;
   tags: string[] | null;
   createdAt: any;
+  likes: GetPosts_posts_likes[] | null;
   user: GetPosts_posts_user;
   comments: GetPosts_posts_comments[] | null;
 }
@@ -53,6 +58,10 @@ export interface GetPostsVariables {
 // GraphQL mutation operation: AddPost
 // ====================================================
 
+export interface AddPost_addPost_likes {
+  _id: string;
+}
+
 export interface AddPost_addPost_user {
   _id: string;
   email: string;
@@ -65,6 +74,7 @@ export interface AddPost_addPost {
   message: string;
   tags: string[] | null;
   createdAt: any;
+  likes: AddPost_addPost_likes[] | null;
   user: AddPost_addPost_user;
 }
 
@@ -84,6 +94,10 @@ export interface AddPostVariables {
 // GraphQL mutation operation: DeletePost
 // ====================================================
 
+export interface DeletePost_deletePost_likes {
+  _id: string;
+}
+
 export interface DeletePost_deletePost_user {
   _id: string;
   email: string;
@@ -96,6 +110,7 @@ export interface DeletePost_deletePost {
   message: string;
   tags: string[] | null;
   createdAt: any;
+  likes: DeletePost_deletePost_likes[] | null;
   user: DeletePost_deletePost_user;
 }
 
@@ -115,6 +130,10 @@ export interface DeletePostVariables {
 // GraphQL mutation operation: UpdatePost
 // ====================================================
 
+export interface UpdatePost_updatePost_likes {
+  _id: string;
+}
+
 export interface UpdatePost_updatePost_user {
   _id: string;
   email: string;
@@ -127,6 +146,7 @@ export interface UpdatePost_updatePost {
   message: string;
   tags: string[] | null;
   createdAt: any;
+  likes: UpdatePost_updatePost_likes[] | null;
   user: UpdatePost_updatePost_user;
 }
 
@@ -202,6 +222,38 @@ export interface UpdateComment {
 export interface UpdateCommentVariables {
   message: string;
   comment_id: string;
+  post_id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: LikePost
+// ====================================================
+
+export interface LikePost {
+  likePost: boolean;
+}
+
+export interface LikePostVariables {
+  post_id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UnlikePost
+// ====================================================
+
+export interface UnlikePost {
+  unlikePost: boolean;
+}
+
+export interface UnlikePostVariables {
   post_id: string;
 }
 
@@ -297,6 +349,10 @@ export interface GetUserFriends {
 // GraphQL query operation: GetUserPosts
 // ====================================================
 
+export interface GetUserPosts_user_posts_likes {
+  _id: string;
+}
+
 export interface GetUserPosts_user_posts_user {
   _id: string;
   email: string;
@@ -322,6 +378,7 @@ export interface GetUserPosts_user_posts {
   message: string;
   tags: string[] | null;
   createdAt: any;
+  likes: GetUserPosts_user_posts_likes[] | null;
   user: GetUserPosts_user_posts_user;
   comments: GetUserPosts_user_posts_comments[] | null;
 }
@@ -416,6 +473,10 @@ export interface DeleteUser {
 // GraphQL fragment: PostFragment
 // ====================================================
 
+export interface PostFragment_likes {
+  _id: string;
+}
+
 export interface PostFragment_user {
   _id: string;
   email: string;
@@ -428,6 +489,7 @@ export interface PostFragment {
   message: string;
   tags: string[] | null;
   createdAt: any;
+  likes: PostFragment_likes[] | null;
   user: PostFragment_user;
 }
 

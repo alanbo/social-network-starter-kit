@@ -20,7 +20,9 @@ import {
   gql_remove_comment,
   gql_update_comment,
   gql_update_post,
-  gql_delete_post
+  gql_delete_post,
+  gql_like_post,
+  gql_unlike_post
 } from '../actions/gql-types';
 
 

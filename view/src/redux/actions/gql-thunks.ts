@@ -9,6 +9,8 @@ import {
   gql_add_comment,
   gql_remove_comment,
   gql_update_comment,
+  gql_like_post,
+  gql_unlike_post,
   gql_login,
   gql_user,
   gql_logout,
@@ -56,6 +58,16 @@ export const gqlRemoveComment = gqlThunkCreator({
 export const gqlUpdateComment = gqlThunkCreator({
   mutation: gql_queries.UPDATE_COMMENT,
   type: gql_update_comment
+});
+
+export const gqlLikePost = gqlThunkCreator({
+  mutation: gql_queries.LIKE_POST,
+  type: gql_like_post
+});
+
+export const gqlUnlikePost = gqlThunkCreator({
+  mutation: gql_queries.UNLIKE_POST,
+  type: gql_unlike_post
 });
 
 export const gqlLogin = gqlThunkCreator({

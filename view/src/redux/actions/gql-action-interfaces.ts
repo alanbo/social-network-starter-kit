@@ -9,6 +9,8 @@ import {
   gql_add_comment,
   gql_remove_comment,
   gql_update_comment,
+  gql_like_post,
+  gql_unlike_post,
   gql_login,
   gql_user,
   gql_logout,
@@ -28,6 +30,8 @@ import {
   AddComment,
   RemoveComment,
   UpdateComment,
+  LikePost,
+  UnlikePost,
   Login,
   UserQuery,
   Logout,
@@ -43,6 +47,8 @@ import {
   AddCommentVariables,
   RemoveCommentVariables,
   UpdateCommentVariables,
+  LikePostVariables,
+  UnlikePostVariables,
   LoginVariables,
   CreateUserVariables,
   UpdateUserVariables,
@@ -135,6 +141,24 @@ export interface GqlUpdateCommentAction {
   meta: {
     id: number
     variables: UpdateCommentVariables
+  }
+}
+
+export interface GqlLikePostAction {
+  type: typeof gql_like_post,
+  payload: LikePost,
+  meta: {
+    id: number
+    variables: LikePostVariables
+  }
+}
+
+export interface GqlUnlikePostAction {
+  type: typeof gql_unlike_post,
+  payload: UnlikePost,
+  meta: {
+    id: number
+    variables: UnlikePostVariables
   }
 }
 

@@ -6,6 +6,10 @@ export const post_fragment = gql`
     message
     tags
     createdAt
+    likes {
+      _id
+    }
+
     user {
       _id
       email
@@ -109,5 +113,17 @@ export const UPDATE_COMMENT = gql`
       comment_id: $comment_id,
       post_id: $post_id
     )
+  }
+`;
+
+export const LIKE_POST = gql`
+  mutation LikePost($post_id: String!) {
+    likePost(post_id: $post_id)
+  }
+`;
+
+export const UNLIKE_POST = gql`
+  mutation UnlikePost($post_id: String!) {
+    unlikePost(post_id: $post_id)
   }
 `;

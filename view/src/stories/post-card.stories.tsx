@@ -23,8 +23,11 @@ storiesOf('PostCard', module)
       onAddComment={action('Add Comment')}
       onRemoveComment={action('Remove Comment')}
       onEditComment={action('onEditComment')}
+      onLikePost={action('Like')}
+      onUnlikePost={action('Unlike')}
       post_id={text('ID', 'a26b84b7-a498-4231-9280-bf820ab5c43e')}
       user={object('User', user) as UserQuery_user}
+      liked={boolean('Liked', false)}
     />
   ))
   .add('post owner post', () => (
@@ -36,9 +39,12 @@ storiesOf('PostCard', module)
       onAddComment={action('Add Comment')}
       onRemoveComment={action('Remove Comment')}
       onEditComment={action('onEditComment')}
+      onLikePost={action('Like')}
+      onUnlikePost={action('Unlike')}
       post_id={text('ID', 'a26b84b7-a498-4231-9280-bf820ab5c43e')}
       user={object('User', user) as UserQuery_user}
       is_post_owner={true}
+      liked={boolean('Liked', false)}
       onEditPost={action('Edit Post')}
       onRemovePost={action('Remove Post')}
     />
