@@ -9,6 +9,8 @@ import {
   gql_add_comment,
   gql_remove_comment,
   gql_update_comment,
+  gql_like_post,
+  gql_unlike_post,
   gql_login,
   gql_user,
   gql_logout,
@@ -28,6 +30,8 @@ import {
   AddComment,
   RemoveComment,
   UpdateComment,
+  LikePost,
+  UnlikePost,
   Login,
   UserQuery,
   Logout,
@@ -43,6 +47,8 @@ import {
   AddCommentVariables,
   RemoveCommentVariables,
   UpdateCommentVariables,
+  LikePostVariables,
+  UnlikePostVariables,
   LoginVariables,
   CreateUserVariables,
   UpdateUserVariables,
@@ -50,12 +56,16 @@ import {
 
 
 
+
+import { AppState } from '../reducers';
+
 export interface GqlErrorAction {
   type: typeof gql_error,
   payload: Error,
   meta: {
     type: string,
-    id: number
+    id: number,
+    state: AppState
   }
 }
 
@@ -63,7 +73,8 @@ export interface GqlLoadingAction {
   type: typeof gql_loading,
   meta: {
     type: string,
-    id: number
+    id: number,
+    state: AppState
   }
 }
 
@@ -71,7 +82,8 @@ export interface GqlLoadingCancelAction {
   type: typeof gql_loading_cancel,
   meta: {
     type: string,
-    id: number
+    id: number,
+    state: AppState
   }
 }
 
@@ -80,7 +92,8 @@ export interface GqlGetPostsAction {
   payload: GetPosts,
   meta: {
     id: number
-    variables: GetPostsVariables
+    variables: GetPostsVariables,
+    state: AppState
   }
 }
 
@@ -89,7 +102,8 @@ export interface GqlAddPostAction {
   payload: AddPost,
   meta: {
     id: number
-    variables: AddPostVariables
+    variables: AddPostVariables,
+    state: AppState
   }
 }
 
@@ -98,7 +112,8 @@ export interface GqlDeletePostAction {
   payload: DeletePost,
   meta: {
     id: number
-    variables: DeletePostVariables
+    variables: DeletePostVariables,
+    state: AppState
   }
 }
 
@@ -107,7 +122,8 @@ export interface GqlUpdatePostAction {
   payload: UpdatePost,
   meta: {
     id: number
-    variables: UpdatePostVariables
+    variables: UpdatePostVariables,
+    state: AppState
   }
 }
 
@@ -116,7 +132,8 @@ export interface GqlAddCommentAction {
   payload: AddComment,
   meta: {
     id: number
-    variables: AddCommentVariables
+    variables: AddCommentVariables,
+    state: AppState
   }
 }
 
@@ -125,7 +142,8 @@ export interface GqlRemoveCommentAction {
   payload: RemoveComment,
   meta: {
     id: number
-    variables: RemoveCommentVariables
+    variables: RemoveCommentVariables,
+    state: AppState
   }
 }
 
@@ -134,7 +152,28 @@ export interface GqlUpdateCommentAction {
   payload: UpdateComment,
   meta: {
     id: number
-    variables: UpdateCommentVariables
+    variables: UpdateCommentVariables,
+    state: AppState
+  }
+}
+
+export interface GqlLikePostAction {
+  type: typeof gql_like_post,
+  payload: LikePost,
+  meta: {
+    id: number
+    variables: LikePostVariables,
+    state: AppState
+  }
+}
+
+export interface GqlUnlikePostAction {
+  type: typeof gql_unlike_post,
+  payload: UnlikePost,
+  meta: {
+    id: number
+    variables: UnlikePostVariables,
+    state: AppState
   }
 }
 
@@ -143,7 +182,8 @@ export interface GqlLoginAction {
   payload: Login,
   meta: {
     id: number
-    variables: LoginVariables
+    variables: LoginVariables,
+    state: AppState
   }
 }
 
@@ -151,7 +191,8 @@ export interface GqlUserQueryAction {
   type: typeof gql_user,
   payload: UserQuery,
   meta: {
-    id: number
+    id: number,
+    state: AppState
   }
 }
 
@@ -159,7 +200,8 @@ export interface GqlLogoutAction {
   type: typeof gql_logout,
   payload: Logout,
   meta: {
-    id: number
+    id: number,
+    state: AppState
   }
 }
 
@@ -167,7 +209,8 @@ export interface GqlGetUserFriendsAction {
   type: typeof gql_user_friends,
   payload: GetUserFriends,
   meta: {
-    id: number
+    id: number,
+    state: AppState
   }
 }
 
@@ -175,7 +218,8 @@ export interface GqlGetUserPostsAction {
   type: typeof gql_user_posts,
   payload: GetUserPosts,
   meta: {
-    id: number
+    id: number,
+    state: AppState
   }
 }
 
@@ -184,7 +228,8 @@ export interface GqlCreateUserAction {
   payload: CreateUser,
   meta: {
     id: number
-    variables: CreateUserVariables
+    variables: CreateUserVariables,
+    state: AppState
   }
 }
 
@@ -193,7 +238,8 @@ export interface GqlUpdateUserAction {
   payload: UpdateUser,
   meta: {
     id: number
-    variables: UpdateUserVariables
+    variables: UpdateUserVariables,
+    state: AppState
   }
 }
 
@@ -201,7 +247,8 @@ export interface GqlDeleteUserAction {
   type: typeof gql_delete_user,
   payload: DeleteUser,
   meta: {
-    id: number
+    id: number,
+    state: AppState
   }
 }
 

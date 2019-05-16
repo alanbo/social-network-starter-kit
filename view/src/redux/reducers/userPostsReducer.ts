@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 import { GetUserPosts_user_posts } from '../../graphql/operation-result-types';
 import { addCommentReduce, removeCommentReduce, updateCommentReduce } from './shared/commentReduceFunctions';
+import { likePostReduce, unlikePostReduce } from './shared/likeReducerFunctions'
 
 import {
   GqlGetUserPostsAction,
@@ -10,7 +11,9 @@ import {
   GqlRemoveCommentAction,
   GqlUpdateCommentAction,
   GqlUpdatePostAction,
-  GqlDeletePostAction
+  GqlDeletePostAction,
+  GqlLikePostAction,
+  GqlUnlikePostAction
 } from '../actions/gql-action-interfaces';
 
 import {
@@ -20,7 +23,9 @@ import {
   gql_remove_comment,
   gql_update_comment,
   gql_update_post,
-  gql_delete_post
+  gql_delete_post,
+  gql_like_post,
+  gql_unlike_post
 } from '../actions/gql-types';
 
 
@@ -33,7 +38,9 @@ type Action = GqlGetUserPostsAction
   | GqlRemoveCommentAction
   | GqlUpdateCommentAction
   | GqlUpdatePostAction
-  | GqlDeletePostAction;
+  | GqlDeletePostAction
+  | GqlLikePostAction
+  | GqlUnlikePostAction;
 
 export default function (state: UserPostsState = [], action: Action): UserPostsState {
   switch (action.type) {
@@ -54,6 +61,14 @@ export default function (state: UserPostsState = [], action: Action): UserPostsS
 
     case gql_update_comment:
       return updateCommentReduce(state, action);
+
+    case gql_like_post: {
+      return likePostReduce(state, action);
+    }
+
+    case gql_unlike_post: {
+      return unlikePostReduce(state, action);
+    }
 
     case gql_delete_post: {
       const post_id = action.meta.variables.id;

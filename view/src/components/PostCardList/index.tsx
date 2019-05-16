@@ -8,19 +8,23 @@ import {
   RemoveCommentVariables,
   UpdatePostVariables,
   DeletePostVariables,
-  UpdateCommentVariables
+  UpdateCommentVariables,
+  UnlikePostVariables,
+  LikePostVariables
 } from '../../graphql/operation-result-types'
 
 import { DeepReadonly, $PropertyType } from 'utility-types';
 import { AppState } from '../../redux/reducers';
 
 interface Props extends PostCardListStyles {
-  posts: DeepReadonly<GetPosts_posts[]>
+  posts: GetPosts_posts[],
   onAddComment: (variables: AddCommentVariables) => void,
   onRemoveComment: (variables: RemoveCommentVariables) => void,
   onUpdateComment: (variables: UpdateCommentVariables) => void
   onUpdatePost?: (variables: UpdatePostVariables) => void,
-  onDeletePost?: (variables: DeletePostVariables) => void
+  onDeletePost?: (variables: DeletePostVariables) => void,
+  onLikePost: (variables: LikePostVariables) => void,
+  onUnlikePost: (variables: UnlikePostVariables) => void,
   user: $PropertyType<AppState, 'user'>,
   is_owner: boolean
 }
@@ -34,6 +38,8 @@ function PostCardList(props: Props) {
     onUpdateComment,
     onUpdatePost,
     onDeletePost,
+    onLikePost,
+    onUnlikePost,
     user,
     is_owner
   } = props;
@@ -52,6 +58,9 @@ function PostCardList(props: Props) {
             onAddComment: onAddComment,
             onRemoveComment: onRemoveComment,
             onEditComment: onUpdateComment,
+            liked: !!post.likes && post.likes.some(likedby => likedby._id === user!._id),
+            onLikePost: () => onLikePost({ post_id: post._id }),
+            onUnlikePost: () => onUnlikePost({ post_id: post._id }),
             user: user,
           }
 

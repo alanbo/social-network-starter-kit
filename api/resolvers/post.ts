@@ -1,6 +1,7 @@
 import { GraphQLResolveInfo } from 'graphql';
 import uuid from 'uuid/v4';
 import { ID } from 'type-graphql';
+import R from 'ramda';
 
 import {
   Resolver,
@@ -18,11 +19,13 @@ import { Context } from '../index';
 import simpleProjection from '../utils/simple-projection';
 import { UserMongo } from './user';
 import { UpdateQuery, FilterQuery } from 'mongodb';
+import { UserBasic } from '../schema/user';
 
 export interface PostMongo extends PostInput {
   createdAt: Date,
   _id: string,
-  comments?: Comment[]
+  comments?: Comment[],
+  likes?: UserBasic[]
 }
 
 interface PostsQuery {
@@ -130,6 +133,64 @@ export class PostResolver {
     }
 
     return to_insert;
+  }
+
+  @Mutation(returns => Boolean)
+  async likePost(
+    @Ctx() context: Context,
+    @Arg('post_id') post_id: string,
+  ): Promise<Boolean | Error> {
+    const { session, posts_col, users_col } = context;
+
+    if (!session.user) {
+      return new Error('User must be logged in');
+    }
+
+    const user_basic: UserBasic = R.pick(['_id', 'email', 'first_name', 'last_name'], session.user);
+
+    try {
+      await posts_col.updateOne(
+        { _id: post_id },
+        {
+          $addToSet: {
+            likes: user_basic
+          }
+        }
+      );
+
+      return true;
+    } catch (e) {
+      return e;
+    }
+  }
+
+  @Mutation(returns => Boolean)
+  async unlikePost(
+    @Ctx() context: Context,
+    @Arg('post_id') post_id: string,
+  ): Promise<Boolean | Error> {
+    const { session, posts_col, users_col } = context;
+
+    if (!session.user) {
+      return new Error('User must be logged in');
+    }
+
+    const user_basic: UserBasic = R.pick(['_id', 'email', 'first_name', 'last_name'], session.user);
+
+    try {
+      await posts_col.updateOne(
+        { _id: post_id },
+        {
+          $pull: {
+            likes: user_basic
+          }
+        }
+      );
+
+      return true;
+    } catch (e) {
+      return e;
+    }
   }
 
   @Mutation(returns => Post)

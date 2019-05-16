@@ -24,7 +24,9 @@ import {
   AddCommentVariables,
   CommentsFragment_comments,
   RemoveCommentVariables,
-  UpdateCommentVariables
+  UpdateCommentVariables,
+  LikePostVariables,
+  UnlikePostVariables
 } from '../../graphql/operation-result-types'
 
 import styles, { PostCardStyles } from './styles';
@@ -37,9 +39,12 @@ interface BaseProps extends PostCardStyles {
   date: Date,
   comments: DeepReadonly<CommentsFragment_comments[]>,
   user: $PropertyType<AppState, 'user'>,
+  liked: boolean,
   onAddComment: (variables: AddCommentVariables) => void,
   onRemoveComment: (variables: RemoveCommentVariables) => void,
-  onEditComment: (variables: UpdateCommentVariables) => void
+  onEditComment: (variables: UpdateCommentVariables) => void,
+  onLikePost: () => void,
+  onUnlikePost: () => void,
 }
 
 interface OwnerProps extends BaseProps {
@@ -100,8 +105,16 @@ export class PostCard extends React.Component<Props, State> {
     this.props.is_post_owner && this.props.onRemovePost();
   }
 
+  onLikeClick() {
+    if (this.props.liked) {
+      this.props.onUnlikePost();
+    } else {
+      this.props.onLikePost();
+    }
+  }
+
   render() {
-    const { classes, text, author, date, comments, user, is_post_owner } = this.props;
+    const { classes, text, author, date, comments, user, is_post_owner, liked } = this.props;
 
     if (!user) {
       return null;
@@ -110,6 +123,8 @@ export class PostCard extends React.Component<Props, State> {
     return (
       <Card className={classes.card}>
         <CardHeader
+          className={classes.cardHeader}
+          classes={{ avatar: classes.avatarRoot }}
           avatar={
             <Avatar aria-label="Author" className={classes.avatar}>
               R
@@ -143,8 +158,8 @@ export class PostCard extends React.Component<Props, State> {
           }
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton aria-label="Like">
-            <FavoriteIcon />
+          <IconButton aria-label="Like" onClick={this.onLikeClick.bind(this)}>
+            <FavoriteIcon color={liked ? 'secondary' : 'inherit'} />
           </IconButton>
           <IconButton aria-label="Share">
             <ShareIcon />

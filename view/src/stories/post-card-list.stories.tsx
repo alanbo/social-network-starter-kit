@@ -16,6 +16,8 @@ storiesOf('PostCardList', module)
       onUpdateComment={action('Update comment')}
       onDeletePost={action('Delete Post')}
       onUpdatePost={action('Update Post')}
+      onLikePost={action('Like')}
+      onUnlikePost={action('Unlike')}
 
       user={object('User', user) as UserQuery_user}
       posts={object('Posts', posts)}

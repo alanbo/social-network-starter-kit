@@ -27,13 +27,19 @@ const styles = (theme: Theme) => createStyles({
   avatar: {
     backgroundColor: red[500],
   },
+  avatarRoot: {
+    position: 'absolute'
+  },
   textInputWrapper: {
     paddingRight: `${theme.spacing.unit * 2}px`,
     paddingLeft: `${theme.spacing.unit * 2}px`,
     display: 'flex',
     alignItems: 'stretch',
     flex: 1
-  }
+  },
+  cardHeader: {
+    position: 'relative'
+  },
 });
 
 export default styles;

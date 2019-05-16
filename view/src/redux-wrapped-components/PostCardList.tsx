@@ -4,7 +4,9 @@ import {
   gqlRemoveComment,
   gqlUpdateComment,
   gqlUpdatePost,
-  gqlDeletePost
+  gqlDeletePost,
+  gqlLikePost,
+  gqlUnlikePost
 } from '../redux/actions/gql-thunks';
 import { AppState } from '../redux/reducers';
 import { connect } from 'react-redux';
@@ -22,5 +24,7 @@ export default connect(mapStateToProps, {
   onRemoveComment: gqlRemoveComment,
   onUpdateComment: gqlUpdateComment,
   onUpdatePost: gqlUpdatePost,
-  onDeletePost: gqlDeletePost
+  onDeletePost: gqlDeletePost,
+  onLikePost: gqlLikePost,
+  onUnlikePost: gqlUnlikePost
 })(PostCardList);

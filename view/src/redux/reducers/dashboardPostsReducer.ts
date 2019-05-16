@@ -1,10 +1,15 @@
 import { addCommentReduce, removeCommentReduce, updateCommentReduce } from './shared/commentReduceFunctions';
 
+import { likePostReduce, unlikePostReduce } from './shared/likeReducerFunctions'
+
+
 import {
   gql_posts,
   gql_add_comment,
   gql_remove_comment,
-  gql_update_comment
+  gql_update_comment,
+  gql_like_post,
+  gql_unlike_post
 } from '../actions/gql-types';
 
 import {
@@ -15,11 +20,19 @@ import {
   GqlGetPostsAction,
   GqlAddCommentAction,
   GqlRemoveCommentAction,
-  GqlUpdateCommentAction
+  GqlUpdateCommentAction,
+  GqlLikePostAction,
+  GqlUnlikePostAction
 } from '../actions/gql-action-interfaces';
 
 
-type Actions = GqlGetPostsAction | GqlAddCommentAction | GqlRemoveCommentAction | GqlUpdateCommentAction;
+type Actions = GqlGetPostsAction
+  | GqlAddCommentAction
+  | GqlRemoveCommentAction
+  | GqlUpdateCommentAction
+  | GqlLikePostAction
+  | GqlUnlikePostAction;
+
 type Posts = GetPosts_posts[];
 
 
@@ -43,6 +56,14 @@ export default function (state: Posts = [], action: Actions): Posts {
 
     case gql_update_comment:
       return updateCommentReduce(state, action);
+
+    case gql_like_post: {
+      return likePostReduce(state, action);
+    }
+
+    case gql_unlike_post: {
+      return unlikePostReduce(state, action);
+    }
 
     default:
       return state;
