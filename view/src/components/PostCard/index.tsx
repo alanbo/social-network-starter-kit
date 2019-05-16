@@ -159,7 +159,7 @@ export class PostCard extends React.Component<Props, State> {
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
           <IconButton aria-label="Like" onClick={this.onLikeClick.bind(this)}>
-            <FavoriteIcon color={liked ? 'secondary' : 'default'} />
+            <FavoriteIcon color={liked ? 'secondary' : 'inherit'} />
           </IconButton>
           <IconButton aria-label="Share">
             <ShareIcon />

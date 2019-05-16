@@ -56,7 +56,8 @@ export interface Gql${gql_type}Action {
   type: typeof ${action_type},
   payload: ${gql_type},
   meta: {
-    id: number${has_variables_str}
+    id: number${has_variables_str},
+    state: AppState
   }
 }`;
 };
@@ -64,12 +65,16 @@ export interface Gql${gql_type}Action {
 let gql_type_imports = 'import {\n';
 let action_type_imports = 'import {\n  gql_error,\n  gql_loading,\n  gql_loading_cancel,\n';
 let action_interfaces = `
+
+import { AppState } from '../reducers';
+
 export interface GqlErrorAction {
   type: typeof gql_error,
   payload: Error,
   meta: {
     type: string,
-    id: number
+    id: number,
+    state: AppState
   }
 }
 
@@ -77,7 +82,8 @@ export interface GqlLoadingAction {
   type: typeof gql_loading,
   meta: {
     type: string,
-    id: number
+    id: number,
+    state: AppState
   }
 }
 
@@ -85,7 +91,8 @@ export interface GqlLoadingCancelAction {
   type: typeof gql_loading_cancel,
   meta: {
     type: string,
-    id: number
+    id: number,
+    state: AppState
   }
 }
 `;
