@@ -122,7 +122,8 @@ describe('Basic post operations', () => {
       ...NEW_POST_INPUT,
       user: getUserBasic(USERS_DATA[0]),
       comments: null,
-      createdAt
+      createdAt,
+      likes: null
     });
   });
 
