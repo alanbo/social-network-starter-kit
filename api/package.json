@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "start": "node -r ts-node/register ./index.ts"
   },
   "keywords": [],
   "author": "",
