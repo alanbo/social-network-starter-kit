@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  parameter-store:
+    DHUB_PASSWORD: "dhub_password"
+  variables:
+    IMAGE_REPO_NAME: "vegewolf/social-api"
+    key: "value"
+
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+  pre_build:
+    commands:
+      - echo Logging in to Docker Hub...
+      - docker login --password $DHUB_PASSWORD --username $DHUB_USERNAME
+      # Type the command to log in to your Docker Hub account here.          
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - cd api
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $IMAGE_REPO_NAME:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $IMAGE_REPO_NAME:latest

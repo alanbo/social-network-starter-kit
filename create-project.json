@@ -1,0 +1,27 @@
+{
+  "name": "sample-docker-project",
+  "source": {
+    "type": "GITHUB",
+    "location": "https://github.com/alanbo/social-network-starter-kit"
+  },
+  "artifacts": {
+    "type": "NO_ARTIFACTS"
+  },
+  "environment": {
+    "type": "LINUX_CONTAINER",
+    "image": "aws/codebuild/standard:2.0",
+    "computeType": "BUILD_GENERAL1_SMALL",
+    "environmentVariables": [
+      {
+        "name": "IMAGE_REPO_NAME",
+        "value": "vegewolf/social-api"
+      },
+      {
+        "name": "IMAGE_TAG",
+        "value": "latest"
+      }
+    ],
+    "privilegedMode": true
+  },
+  "serviceRole": "CodeBuildServiceRole"
+}
