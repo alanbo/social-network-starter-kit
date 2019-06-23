@@ -5,7 +5,7 @@ env:
     DHUB_PASSWORD: "dhub_password"
   variables:
     IMAGE_REPO_NAME: "vegewolf/social-api"
-    key: "value"
+    DHUB_USERNAME: "vegewolf"
 
 phases:
   install:
