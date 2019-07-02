@@ -58,10 +58,10 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         PrivilegedMode: true
         EnvironmentVariables:
-            - Name: IMAGE_REPO_NAME,
+            - Name: IMAGE_REPO_NAME
               Value:
                 Ref: ImageRepoName
-            - Name: IMAGE_USER_NAME,
+            - Name: IMAGE_USER_NAME
               Value:
                 Ref: ImageUserName
 

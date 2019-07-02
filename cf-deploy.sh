@@ -20,7 +20,7 @@ aws cloudformation create-stack \
 ParameterKey=DockerHubPasswordArn,\
 ParameterValue=$dhub_password_arn \
 ParameterKey=ImageRepoName,\
-ParameterValue=$docker_user_name/$dhub_repo_name \
+ParameterValue=$dhub_repo_name \
 ParameterKey=ImageUserName,\
 ParameterValue=$docker_user_name \
 ParameterKey=GithubRepoUrl,\
