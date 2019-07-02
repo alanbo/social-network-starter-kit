@@ -1,0 +1,75 @@
+Parameters: 
+  ImageRepoName: 
+    Type: String
+    Description: Provide docker image repo name.
+  ImageUserName:
+    Type: String
+    Description: Docker user name.
+  GithubRepoUrl: 
+    Type: String
+    Description: Github repo link.
+  DockerHubPasswordArn:
+    Type: String
+    Description: SSM Arn of Password to access docker hub.
+
+
+Resources:
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CodeBuildRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
+
+      Policies:
+        - PolicyName: CodeBuildPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+
+                Resource:
+                  - '*'
+
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                Resource:
+                 - Ref: DockerHubPasswordArn
+
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties: 
+      Artifacts: 
+        Type: NO_ARTIFACTS
+      Description: String
+      Environment: 
+        Type: LINUX_CONTAINER
+        Image: aws/codebuild/standard:2.0
+        ComputeType: BUILD_GENERAL1_SMALL
+        PrivilegedMode: true
+        EnvironmentVariables:
+            - Name: IMAGE_REPO_NAME,
+              Value:
+                Ref: ImageRepoName
+            - Name: IMAGE_USER_NAME,
+              Value:
+                Ref: ImageUserName
+
+      ServiceRole: CodeBuildRole
+      Source: 
+        Type: GITHUB
+        Location:
+          Ref: GithubRepoUrl 
+
+      TimeoutInMinutes: 10
+    DependsOn: CodeBuildRole

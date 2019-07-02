@@ -4,8 +4,7 @@ env:
   parameter-store:
     DHUB_PASSWORD: "dhub_password"
   variables:
-    IMAGE_REPO_NAME: "vegewolf/social-api"
-    key: "value"
+    IMAGE_TAG: "latest"
 
 phases:
   install:
@@ -15,8 +14,8 @@ phases:
     commands:
       - echo Logging in to Docker Hub...
       - echo $DHUB_PASSWORD
-      - echo $DHUB_USERNAME
-      - docker login --password $DHUB_PASSWORD --username $DHUB_USERNAME
+      - echo $IMAGE_USER_NAME
+      - docker login --password $DHUB_PASSWORD --username $IMAGE_USER_NAME
       # Type the command to log in to your Docker Hub account here.          
   build:
     commands:
