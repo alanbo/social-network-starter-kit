@@ -46,6 +46,39 @@ Resources:
                 Resource:
                  - Ref: DockerHubPasswordArn
 
+              # - Effect: Allow
+              #   Action:
+              #     - "s3:GetObject"
+              #     - "s3:GetObjectVersion"
+              #     - "s3:GetBucketVersioning"
+              #     - "s3:PutObject"
+
+              #   Resource: 
+              #     - !GetAtt PipelineBucket.Arn
+              #     - !Join ['', [!GetAtt PipelineBucket.Arn, "/*"]]
+
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:GetObjectVersion"
+                  - "s3:GetBucketVersioning"
+                  - "s3:PutObject"
+                  - "s3:PutObjectAcl"
+
+                Resource: 
+                  - !GetAtt DeployBucket.Arn
+                  - !Join ['', [!GetAtt DeployBucket.Arn, "/*"]]
+
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                  - "cloudfront:CreateInvalidation"
+
+                Resource:
+                  - "*"
+
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties: 
@@ -58,12 +91,15 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         PrivilegedMode: true
         EnvironmentVariables:
-            - Name: IMAGE_REPO_NAME,
+            - Name: IMAGE_REPO_NAME
               Value:
                 Ref: ImageRepoName
-            - Name: IMAGE_USER_NAME,
+            - Name: IMAGE_USER_NAME
               Value:
                 Ref: ImageUserName
+            - Name: DEPLOY_BUCKET
+              Value:
+                Ref: DeployBucket
 
       ServiceRole: CodeBuildRole
       Source: 
@@ -73,3 +109,31 @@ Resources:
 
       TimeoutInMinutes: 10
     DependsOn: CodeBuildRole
+
+  DeployBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  Distribution:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        Origins:
+          - 
+            # Use the DeployBucket as the CDN origin
+            DomainName: !GetAtt DeployBucket.DomainName
+            Id: !Ref DeployBucket
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        DefaultRootObject: index.html
+        Enabled: true
+        # Configure the caching behavior for our CDN
+        DefaultCacheBehavior: 
+          MinTTL: 86400  # 1 day
+          MaxTTL: 31536000  # 1 year
+          ForwardedValues: 
+            QueryString: true
+          TargetOriginId: !Ref DeployBucket
+          ViewerProtocolPolicy: "redirect-to-https"   # we want to force HTTPS

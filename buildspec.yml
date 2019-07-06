@@ -5,6 +5,7 @@ env:
     DHUB_PASSWORD: "dhub_password"
   variables:
     IMAGE_TAG: "latest"
+    IMAGE_USER_NAME: 
 
 phases:
   install:
@@ -12,6 +13,12 @@ phases:
       docker: 18
   pre_build:
     commands:
+      # view
+      - echo Installing source NPM dependencies for the view layer
+      - cd view
+      - npm install
+
+      # api
       - echo Logging in to Docker Hub...
       - echo $DHUB_PASSWORD
       - echo $IMAGE_USER_NAME
@@ -19,13 +26,48 @@ phases:
       # Type the command to log in to your Docker Hub account here.          
   build:
     commands:
+      # view
       - echo Build started on `date`
+      - npm run build
+
+      # api
+      - cd ../api
+      - echo api build started on `date`
       - echo Building the Docker image...
       - cd api
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $IMAGE_REPO_NAME:latest
   post_build:
     commands:
+      # view
+      # copy the contents of /build to S3
+      - cd ../view
+      - aws s3 cp --recursive --acl public-read ./build s3://${DEPLOY_BUCKET}/ 
+      # set the cache-control headers for service-worker.js to prevent
+      # browser caching
+      - >
+        aws s3 cp --acl public-read 
+        --cache-control="max-age=0, no-cache, no-store, must-revalidate" 
+        ./build/service-worker.js s3://${DEPLOY_BUCKET}/
+      # set the cache-control headers for index.html to prevent
+      # browser caching
+      - >
+        aws s3 cp --acl public-read 
+        --cache-control="max-age=0, no-cache, no-store, must-revalidate" 
+        ./build/index.html s3://${DEPLOY_BUCKET}/
+      # invalidate the CloudFront cache for index.html and service-worker.js
+      # to force CloudFront to update its edge locations with the new versions
+      - >
+        aws cloudfront create-invalidation --distribution-id ${Distribution} 
+        --paths /index.html /service-worker.js
+
+      # api
+      - cd ../api
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push $IMAGE_REPO_NAME:latest
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: build
