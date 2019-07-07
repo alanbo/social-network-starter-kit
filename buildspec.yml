@@ -34,7 +34,6 @@ phases:
       - cd ../api
       - echo api build started on `date`
       - echo Building the Docker image...
-      - cd api
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $IMAGE_REPO_NAME:latest
   post_build:
