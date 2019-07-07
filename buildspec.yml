@@ -65,6 +65,7 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push $IMAGE_REPO_NAME:latest
+      - cd ..
 
 artifacts:
   files:
