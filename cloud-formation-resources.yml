@@ -11,7 +11,14 @@ Parameters:
   DockerHubPasswordArn:
     Type: String
     Description: SSM Arn of Password to access docker hub.
-
+  GithubOwner:
+    Type: String
+    Default: alanbo
+    Description: "Github repo owner"
+  GithubRepo:
+    Type: String
+    Default: social-network-starter-kit
+    Description: "Github repo name"
 
 Resources:
   CodeBuildRole:
@@ -44,18 +51,18 @@ Resources:
                 Action:
                   - ssm:GetParameters
                 Resource:
-                 - Ref: DockerHubPasswordArn
+                - Ref: DockerHubPasswordArn
 
-              # - Effect: Allow
-              #   Action:
-              #     - "s3:GetObject"
-              #     - "s3:GetObjectVersion"
-              #     - "s3:GetBucketVersioning"
-              #     - "s3:PutObject"
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:GetObjectVersion"
+                  - "s3:GetBucketVersioning"
+                  - "s3:PutObject"
 
-              #   Resource: 
-              #     - !GetAtt PipelineBucket.Arn
-              #     - !Join ['', [!GetAtt PipelineBucket.Arn, "/*"]]
+                Resource: 
+                  - !GetAtt PipelineBucket.Arn
+                  - !Join ['', [!GetAtt PipelineBucket.Arn, "/*"]]
 
               - Effect: Allow
                 Action:
@@ -83,8 +90,9 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties: 
       Artifacts: 
-        Type: NO_ARTIFACTS
-      Description: String
+        Type: CODEPIPELINE
+        Name: MyProject
+      Description: Code Build for Social Network Starter Kit
       Environment: 
         Type: LINUX_CONTAINER
         Image: aws/codebuild/standard:2.0
@@ -106,9 +114,7 @@ Resources:
 
       ServiceRole: CodeBuildRole
       Source: 
-        Type: GITHUB
-        Location:
-          Ref: GithubRepoUrl 
+        Type: CODEPIPELINE
 
       TimeoutInMinutes: 10
     DependsOn: CodeBuildRole
@@ -140,3 +146,87 @@ Resources:
             QueryString: true
           TargetOriginId: !Ref DeployBucket
           ViewerProtocolPolicy: "redirect-to-https"   # we want to force HTTPS
+
+  CodePipeline:
+    Type: 'AWS::CodePipeline::Pipeline'
+    Properties:
+      RoleArn: !GetAtt CodePipeLineRole.Arn
+      ArtifactStore:
+        Location: !Ref PipelineBucket
+        Type: S3
+      Stages:
+        - 
+          Name: Source
+          Actions: 
+            - 
+              Name: SourceAction
+              ActionTypeId: 
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: 1
+              OutputArtifacts: 
+                - 
+                  Name: MyApp
+              Configuration:
+                Owner: !Ref GithubOwner
+                Repo: !Ref GithubRepo
+                Branch: master
+                OAuthToken: '{{resolve:secretsmanager:SocialNetworkStarterKitSecrets:SecretString:GithubOAuthToken}}'
+        - 
+          Name: Build
+          Actions: 
+            - 
+              Name: BuildAction
+              ActionTypeId: 
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              InputArtifacts: 
+                - 
+                  Name: MyApp
+              OutputArtifacts: 
+                - 
+                  Name: MyAppBuild
+              Configuration:
+                ProjectName: !Ref CodeBuildProject
+
+  CodePipeLineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - 
+            Effect: Allow
+            Principal:
+              Service:
+                - "codepipeline.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:GetObjectVersion"
+                  - "s3:GetBucketVersioning"
+                  - "s3:PutObject"
+                Resource: 
+                  - !GetAtt PipelineBucket.Arn
+                  - !Join ['', [!GetAtt PipelineBucket.Arn, "/*"]]
+              - 
+                Effect: Allow  
+                Action:
+                  - "codebuild:BatchGetBuilds"
+                  - "codebuild:StartBuild"
+                Resource: "*"
+  # Temp bucket for storing build artifacts
+  PipelineBucket: 
+    Type: 'AWS::S3::Bucket'
+    Properties: {}
