@@ -106,7 +106,7 @@ class Login extends Component<Props, State> {
             />
           </FormControl>
           <Button variant="contained" className={classes.button} onClick={this.handleSubmit.bind(this)}>
-            Login Testing
+            Hello Kirill :-)
         </Button>
         </div>
       </div>
