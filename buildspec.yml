@@ -36,6 +36,13 @@ phases:
       - echo Building the Docker image...
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $IMAGE_REPO_NAME:latest
+
+      # mongodb
+      - cd ../data
+      - echo mongo build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $IMAGE_REPO_NAME-mongo:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME-mongo:$IMAGE_TAG $IMAGE_REPO_NAME-mongo:latest
   post_build:
     commands:
       # view
@@ -65,6 +72,13 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push $IMAGE_REPO_NAME:latest
+      - cd ..
+
+      # mongodb
+      - cd ../data
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $IMAGE_REPO_NAME-mongo:latest
       - cd ..
 
 artifacts:
