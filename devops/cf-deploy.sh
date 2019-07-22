@@ -18,7 +18,7 @@ echo "export github_repo_name=\"$github_repo_name\"" >> .cf-env
 
 aws cloudformation create-stack \
   --stack-name social-network-starter-kit \
-  --template-body file:///$PWD/cloud-formation-resources.yml \
+  --template-body file:///$PWD/.build/template.out \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
   --parameters \
 ParameterKey=DockerHubPasswordArn,\

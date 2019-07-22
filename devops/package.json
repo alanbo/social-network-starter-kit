@@ -1,0 +1,16 @@
+{
+  "name": "social-network-starter-kit-devops",
+  "version": "1.0.0",
+  "description": "Dev Ops part of social network starter kit.",
+  "main": "index.js",
+  "scripts": {
+    "generate-aws-template": "cloudform template.ts > .build/template.out",
+    "deploy": "npm run generate-aws-template && ./cf-deploy",
+    "update": "npm run generate-aws-template && ./cf-update"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cloudform": "^3.5.0"
+  }
+}
