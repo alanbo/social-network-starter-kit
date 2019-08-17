@@ -3,7 +3,7 @@
 source .cf-env
 
 aws cloudformation update-stack \
-  --stack-name social-network-starter-kit \
+  --stack-name "$stack_name" \
   --template-body file:///$PWD/.build/template.out \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
   --parameters \

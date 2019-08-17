@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+echo "Provide the stack name:"
+read stack_name
+echo "export stack_name=\"$stack_name\"" > .cf-env
+
 echo "Provide Arn of dhub_password in SSM:"
 read dhub_password_arn
 echo "export dhub_password_arn=\"$dhub_password_arn\"" >> .cf-env
@@ -17,7 +21,7 @@ read github_repo_name
 echo "export github_repo_name=\"$github_repo_name\"" >> .cf-env
 
 aws cloudformation create-stack \
-  --stack-name social-network-starter-kit \
+  --stack-name $stack_name \
   --template-body file:///$PWD/.build/template.out \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
   --parameters \

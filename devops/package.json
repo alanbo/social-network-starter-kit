@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "generate-aws-template": "cloudform template.ts > .build/template.out",
-    "deploy": "npm run generate-aws-template && ./cf-deploy",
-    "update": "npm run generate-aws-template && ./cf-update"
+    "deploy": "npm run generate-aws-template && ./cf-deploy.sh",
+    "update": "npm run generate-aws-template && ./cf-update.sh"
   },
   "author": "",
   "license": "ISC",
