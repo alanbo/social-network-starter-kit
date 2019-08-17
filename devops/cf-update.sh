@@ -3,8 +3,8 @@
 source .cf-env
 
 aws cloudformation update-stack \
-  --stack-name social-network-starter-kit \
-  --template-body file:///$PWD/cloud-formation-resources.yml \
+  --stack-name "$stack_name" \
+  --template-body file:///$PWD/.build/template.out \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
   --parameters \
 ParameterKey=DockerHubPasswordArn,\

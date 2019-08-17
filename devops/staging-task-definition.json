@@ -1,0 +1,89 @@
+{
+  "executionRoleArn": "arn:aws:iam::XXXXXXXX:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/social-api-staging",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 27017,
+          "protocol": "tcp",
+          "containerPort": 27017
+        }
+      ],
+      "image": "vegewolf/social-api-mongo",
+      "name": "mongo"
+    },
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/social-api-staging",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "protocol": "tcp",
+          "containerPort": 4000
+        }
+      ],
+      "environment": [
+        {
+          "name": "AUTH_SECRET",
+          "value": "2323$$%%SS522dkssk"
+        },
+        {
+          "name": "MONGODB_ADMINPASSWORD",
+          "value": "example"
+        },
+        {
+          "name": "MONGODB_ADMINUSERNAME",
+          "value": "root"
+        }
+      ],
+      "image": "vegewolf/social-api",
+      "essential": true,
+      "links": [
+        "mongo"
+      ],
+      "name": "api"
+    }
+  ],
+  "memory": "900",
+  "taskRoleArn": "arn:aws:iam::455592204913:role/ecsTaskExecutionRole",
+  "compatibilities": [
+    "EC2"
+  ],
+  "taskDefinitionArn": "arn:aws:ecs:us-west-2:455592204913:task-definition/social-api-staging:2",
+  "family": "social-api-staging",
+  "requiresAttributes": [
+    {
+      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+    },
+    {
+      "name": "ecs.capability.execution-role-awslogs"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.task-iam-role"
+    }
+  ],
+  "requiresCompatibilities": [
+    "EC2"
+  ],
+  "networkMode": "bridge",
+  "cpu": "1024",
+  "revision": 2,
+  "status": "ACTIVE"
+}

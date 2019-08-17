@@ -81,7 +81,11 @@ phases:
       - docker push $IMAGE_REPO_NAME-mongo:latest
       - cd ..
 
+      # add image definitions file necessary for ecs deployment
+      # https://docs.aws.amazon.com/codepipeline/latest/userguide/file-reference.html
+      - printf "[{\"name\":\"api\",\"imageUri\":\"$IMAGE_REPO_NAME:latest\"},{\"name\":\"mongo\",\"imageUri\":\"$IMAGE_REPO_NAME-mongo:latest\"}]" > imagedefinitions.json
+
 artifacts:
   files:
-    - '**/*'
-  base-directory: 'view/build'
+    - 'view/build/**/*'
+    - imagedefinitions.json 
