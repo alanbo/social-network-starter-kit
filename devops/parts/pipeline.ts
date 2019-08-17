@@ -255,6 +255,32 @@ const build_template_resources: Template['Resources'] = {
               }
             }
           ]
+        },
+        {
+          Name: 'Deploy',
+          Actions: [
+            {
+              Name: 'DeployAction',
+              ActionTypeId: {
+                Category: 'Deploy',
+                Owner: 'AWS',
+                Version: 1,
+                Provider: 'ECS'
+              },
+              InputArtifacts: [
+                {
+                  Name: Fn.Join('', [
+                    Refs.StackName,
+                    'Build'
+                  ])
+                }
+              ],
+              Configuration: {
+                ClusterName: Fn.Ref('StagingECSCluster'),
+                ServiceName: Fn.GetAtt('StagingECSService', 'Name')
+              }
+            }
+          ]
         }
       ]
     }
