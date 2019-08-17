@@ -87,6 +87,5 @@ phases:
 
 artifacts:
   files:
-    - '**/*'
+    - 'view/build/**/*'
     - imagedefinitions.json 
-  base-directory: build
