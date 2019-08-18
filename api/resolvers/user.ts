@@ -54,11 +54,6 @@ export class UserResolver {
     return user;
   }
 
-  @Query(returns => String, { nullable: true })
-  test() {
-    return 'test works';
-  }
-
   // TO DO: Temporary solution. Not good for production. Creating user needs proper
   // email confirmation workflow. 
   @Mutation(returns => User)
