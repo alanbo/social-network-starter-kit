@@ -48,7 +48,9 @@ const staging_template_resources: Template['Resources'] = {
           }
         ],
         Image: 'vegewolf/social-api-mongo',
-        Name: 'mongo'
+        Name: 'mongo',
+        Memory: 256,
+        Cpu: 200
       },
       {
         LogConfiguration: {
@@ -83,10 +85,12 @@ const staging_template_resources: Template['Resources'] = {
         Image: 'vegewolf/social-api',
         Essential: true,
         Links: ['mongo'],
-        Name: 'api'
+        Name: 'api',
+        Memory: 256,
+        Cpu: 200
       }
     ],
-    Memory: '900',
+    Memory: '983',
     TaskRoleArn: Fn.GetAtt('StagingECSExecutionRole', 'Arn'),
     RequiresCompatibilities: ['EC2'],
     NetworkMode: 'bridge',
