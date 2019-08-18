@@ -332,6 +332,23 @@ const build_template_resources: Template['Resources'] = {
                   'codebuild:StartBuild'
                 ],
                 Resource: '*'
+              },
+              {
+                Action: [
+                  'ecs:DescribeServices',
+                  'ecs:DescribeTaskDefinition',
+                  'ecs:DescribeTasks',
+                  'ecs:ListTasks',
+                  'ecs:RegisterTaskDefinition',
+                  'ecs:UpdateService'
+                ],
+                Resource: "*",
+                Effect: "Allow"
+              },
+              {
+                Effect: 'Allow',
+                Action: 'iam:PassRole',
+                Resource: '*'
               }
             ]
           }
