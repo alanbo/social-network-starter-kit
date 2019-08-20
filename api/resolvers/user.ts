@@ -299,6 +299,9 @@ export class UserResolver {
     @Ctx() context: Context,
   ): Promise<UserMongo | Error> {
     const { session, users_col } = context;
+      
+    // just for testing the pipeline
+    console.log(`loging: ${email}`);
 
     try {
       const user = await users_col
