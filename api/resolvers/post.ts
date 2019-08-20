@@ -25,7 +25,8 @@ export interface PostMongo extends PostInput {
   createdAt: Date,
   _id: string,
   comments?: Comment[],
-  likes?: UserBasic[]
+  likes?: UserBasic[],
+  user: string
 }
 
 interface PostsQuery {
@@ -373,7 +374,7 @@ export class PostResolver {
 
   @FieldResolver()
   user(
-    @Root() post: Post,
+    @Root() post: PostMongo,
     @Ctx() context: Context,
     @Info() info: GraphQLResolveInfo
   ): Promise<UserMongo> {
@@ -384,7 +385,7 @@ export class PostResolver {
 
   @FieldResolver()
   async visible_to(
-    @Root() post: Post,
+    @Root() post: PostMongo,
     @Ctx() context: Context
   ) {
 
