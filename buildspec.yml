@@ -40,7 +40,10 @@ phases:
       # mongodb
       - cd ../data
       # create fake data for mongo database
-      - node ./mock/mongoCreator.js
+      - cd mock
+      - npm install
+      - node ./mongoCreator.js
+      - cd ..
       - echo mongo build started on `date`
       - echo Building the Docker image...
       - docker build -t $IMAGE_REPO_NAME-mongo:$IMAGE_TAG .
