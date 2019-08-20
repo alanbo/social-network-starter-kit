@@ -114,6 +114,8 @@ const staging_template_resources: Template['Resources'] = {
         'echo ECS_CLUSTER=',
         Fn.Ref('StagingECSCluster'),
         ' >> /etc/ecs/ecs.config\n',
+        'echo ECS_IMAGE_CLEANUP_INTERVAL=10m >> /etc/ecs/ecs.config\n',
+        'echo ECS_IMAGE_MINIMUM_CLEANUP_AGE=1m >> /etc/ecs/ecs.config\n',
         'yum install -y aws-cfn-bootstrap\n',
         '/opt/aws/bin/cfn-signal -e $? --stack ',
         Refs.StackName,
