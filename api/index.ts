@@ -26,20 +26,33 @@ const url = `mongodb://${MONGODB_ADMINUSERNAME}:${MONGODB_ADMINPASSWORD}@mongo:2
 
 // Database Name
 const dbName = 'social';
+let backoff = 1000;
 
-async function bootstrap() {
-
-  // Create a new MongoClient
-  const client = new MongoClient(url);
-
+// function that use expotential backoff to connect to mongo
+async function mongoConnect(client: MongoClient) {
   // Use connect method to connect to the Server
   try {
     await client.connect();
     console.log("Connected successfully to MongoDB server");
   } catch (err) {
-    console.log(err);
-    process.exit(1);
+    // console.log(err);
+    // process.exit(1);
+    await new Promise(resolve => {
+      setTimeout(async () => {
+        await mongoConnect(client);
+        resolve();
+      }, backoff);
+
+      backoff *= 2;
+    });
   }
+}
+
+async function bootstrap() {
+
+  // Create a new MongoClient
+  const client = new MongoClient(url);
+  await mongoConnect(client);
 
   const db = client.db(dbName);
 
