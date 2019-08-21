@@ -49,7 +49,7 @@ const staging_template_resources: Template['Resources'] = {
         ],
         Image: 'vegewolf/social-api-mongo',
         Name: 'mongo',
-        Memory: 256,
+        Memory: 683,
         Cpu: 200
       },
       {
@@ -85,8 +85,13 @@ const staging_template_resources: Template['Resources'] = {
         Image: 'vegewolf/social-api',
         Essential: true,
         Links: ['mongo'],
+        // @ts-ignore
+        DependsOn: [{
+          Condition: 'START',
+          ContainerName: 'mongo'
+        }],
         Name: 'api',
-        Memory: 256,
+        Memory: 300,
         Cpu: 200
       }
     ],
@@ -94,7 +99,7 @@ const staging_template_resources: Template['Resources'] = {
     TaskRoleArn: Fn.GetAtt('StagingECSExecutionRole', 'Arn'),
     RequiresCompatibilities: ['EC2'],
     NetworkMode: 'bridge',
-    Cpu: '1024'
+    Cpu: '400'
   }),
 
   StagingECSService: new ECS.Service({
@@ -106,7 +111,7 @@ const staging_template_resources: Template['Resources'] = {
   StagingEC2Instance: new EC2.Instance({
     ImageId: Fn.FindInMap('amiIDS', Refs.Region, 'imageId'),
     // SubnetId: Fn.Ref('StagingPublicSubnet'),
-    InstanceType: 't2.micro',
+    InstanceType: 't3a.small',
     IamInstanceProfile: 'StagingEC2Profile',
     UserData: Fn.Base64(
       Fn.Join('', [
