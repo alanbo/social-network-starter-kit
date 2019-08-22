@@ -301,7 +301,7 @@ export class UserResolver {
     const { session, users_col } = context;
       
     // just for testing the pipeline
-    console.log(`loging: ${email} update 1`);
+    console.log(`loging: ${email} update 2`);
 
     try {
       const user = await users_col
