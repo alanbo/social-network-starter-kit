@@ -32,7 +32,7 @@ const build_template_parameters: Template['Parameters'] = {
 
 const build_template_resources: Template['Resources'] = {
   CodeBuildRole: new IAM.Role({
-    RoleName: 'CodeBuildRole',
+    RoleName: Fn.Join('', [Refs.StackName, 'CodeBuildRole']),
     AssumeRolePolicyDocument: {
       Version: '2012-10-17',
       Statement: [
@@ -150,7 +150,7 @@ const build_template_resources: Template['Resources'] = {
         }
       ]
     },
-    ServiceRole: 'CodeBuildRole',
+    ServiceRole: Fn.Join('', [Refs.StackName, 'CodeBuildRole']),
     Source: {
       Type: 'CODEPIPELINE'
     },
