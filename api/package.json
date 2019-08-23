@@ -22,6 +22,7 @@
     "apollo-server-express": "^2.4.6",
     "bcrypt": "^3.0.4",
     "class-validator": "^0.9.1",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "graphql": "^14.1.1",

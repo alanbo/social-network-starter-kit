@@ -147,6 +147,10 @@ const build_template_resources: Template['Resources'] = {
         {
           Name: 'DISTRIBUTION',
           Value: Fn.Ref('Distribution')
+        },
+        {
+          Name: 'REACT_APP_API_URI',
+          Value: Fn.GetAtt('StagingEC2Instance', 'PublicDnsName')
         }
       ]
     },
