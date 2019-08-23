@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ApolloClient from "apollo-boost";
 import { BrowserRouter as Router } from 'react-router-dom';
+import * as serviceWorker from './serviceWorker';
 import './index.css';
 import App from './App';
 import { Provider } from 'react-redux'
@@ -20,9 +21,8 @@ const store = createStore(root_reducer, composeWithDevTools(
 ));
 
 export const client = new ApolloClient({
-  uri: '/api/'
+  uri: process.env.REACT_APP_API_URI
 });
-import * as serviceWorker from './serviceWorker';
 
 
 ReactDOM.render((

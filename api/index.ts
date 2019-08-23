@@ -7,6 +7,7 @@ import session from 'express-session';
 import { UserResolver, UserMongo } from './resolvers/user';
 import { PostResolver, PostMongo } from './resolvers/post';
 import { User } from './schema/user';
+import cors from 'cors';
 
 interface UserSession extends Express.Session {
   // TO DO: user object needs to be trimmed. Too much data in UserMongo. 
@@ -88,6 +89,10 @@ async function bootstrap() {
 
   // Additional middleware can be mounted at this point to run before Apollo.
   var app = express()
+
+  // TO DO: Make it specific
+  app.options('*', cors())
+
   var sess = {
     secret: process.env.AUTH_SECRET,
     cookie: { secure: false }

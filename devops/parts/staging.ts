@@ -49,8 +49,8 @@ const staging_template_resources: Template['Resources'] = {
         ],
         Image: 'vegewolf/social-api-mongo',
         Name: 'mongo',
-        Memory: 683,
-        Cpu: 200
+        // Memory: 724,
+        // Cpu: 212
       },
       {
         LogConfiguration: {
@@ -91,28 +91,35 @@ const staging_template_resources: Template['Resources'] = {
           ContainerName: 'mongo'
         }],
         Name: 'api',
-        Memory: 300,
-        Cpu: 200
+        // Memory: 300,
+        // Cpu: 300
       }
     ],
     Memory: '983',
     TaskRoleArn: Fn.GetAtt('StagingECSExecutionRole', 'Arn'),
     RequiresCompatibilities: ['EC2'],
     NetworkMode: 'bridge',
-    Cpu: '400'
+    Cpu: '1024'
   }),
 
   StagingECSService: new ECS.Service({
     Cluster: Fn.Ref('StagingECSCluster'),
     TaskDefinition: Fn.Ref('StagingECSTaskDef'),
-    DesiredCount: 1
+    DesiredCount: 1,
+    DeploymentConfiguration: {
+      MaximumPercent: 100,
+      MinimumHealthyPercent: 0
+    }
   }),
 
   StagingEC2Instance: new EC2.Instance({
     ImageId: Fn.FindInMap('amiIDS', Refs.Region, 'imageId'),
     // SubnetId: Fn.Ref('StagingPublicSubnet'),
-    InstanceType: 't3a.small',
-    IamInstanceProfile: 'StagingEC2Profile',
+    InstanceType: 't2.micro',
+    IamInstanceProfile: Fn.Join('', [
+      Refs.StackName,
+      'StagingEC2Profile',
+    ]),
     UserData: Fn.Base64(
       Fn.Join('', [
         '#!/bin/bash\n',
@@ -365,7 +372,10 @@ const staging_template_resources: Template['Resources'] = {
   }),
 
   StagingEC2Profile: new IAM.InstanceProfile({
-    InstanceProfileName: 'StagingEC2Profile',
+    InstanceProfileName: Fn.Join('', [
+      Refs.StackName,
+      'StagingEC2Profile',
+    ]),
     Roles: [Fn.Ref('StagingECSEC2Role')]
   }).dependsOn('StagingECSEC2Role')
 }
