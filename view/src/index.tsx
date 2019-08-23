@@ -20,6 +20,8 @@ const store = createStore(root_reducer, composeWithDevTools(
   // other store enhancers if any
 ));
 
+console.log(process.env.REACT_APP_API_URI);
+
 export const client = new ApolloClient({
   uri: process.env.REACT_APP_API_URI
 });
