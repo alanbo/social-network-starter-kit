@@ -150,7 +150,11 @@ const build_template_resources: Template['Resources'] = {
         },
         {
           Name: 'REACT_APP_API_URI',
-          Value: Fn.GetAtt('StagingEC2Instance', 'PublicDnsName')
+          Value:
+            Fn.Join('', [
+              'http://',
+              Fn.GetAtt('StagingEC2Instance', 'PublicDnsName')
+            ])
         }
       ]
     },
@@ -191,7 +195,7 @@ const build_template_resources: Template['Resources'] = {
             QueryString: true
           },
           TargetOriginId: Fn.Ref('DeployBucket'),
-          ViewerProtocolPolicy: 'redirect-to-https'
+          ViewerProtocolPolicy: 'allow-all'
         }
       }
     }
