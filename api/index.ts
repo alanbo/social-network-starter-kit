@@ -20,10 +20,7 @@ export interface Context {
   posts_col: Collection<PostMongo>,
 }
 
-const { MONGODB_ADMINUSERNAME, MONGODB_ADMINPASSWORD } = process.env;
-
-// Connection URL
-const url = `mongodb://${MONGODB_ADMINUSERNAME}:${MONGODB_ADMINPASSWORD}@mongo:27017`;
+const { MONGO_URI } = process.env;
 
 // Database Name
 const dbName = 'social';
@@ -52,7 +49,7 @@ async function mongoConnect(client: MongoClient) {
 async function bootstrap() {
 
   // Create a new MongoClient
-  const client = new MongoClient(url);
+  const client = new MongoClient(MONGO_URI, { useNewUrlParser: true });
   await mongoConnect(client);
 
   const db = client.db(dbName);
