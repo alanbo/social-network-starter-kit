@@ -6,6 +6,12 @@ import ProdStack from '../lib/production/prod-stack';
 import StagingStack from '../lib/staging/staging-stack';
 
 const app = new cdk.App();
-new PipelineStack(app, 'PipelineStack');
-new ProdStack(app, 'ProdStack');
-new StagingStack(app, 'StagingStack');
+const staging = new StagingStack(app, 'StagingStack');
+
+new PipelineStack(app, 'PipelineStack', {
+  distribution: staging.distribution,
+  deploy_bucket: staging.deploy_bucket,
+  service: staging.service
+});
+
+// new ProdStack(app, 'ProdStack');

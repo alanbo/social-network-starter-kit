@@ -50,9 +50,10 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      MONGODB_ADMINUSERNAME: root
-      MONGODB_ADMINPASSWORD: example
-      AUTH_SECRET: 2323$$%%SS522dkssk
+      # MONGODB_ADMINUSERNAME: root
+      # MONGODB_ADMINPASSWORD: example
+      AUTH_SECRET: 2323$$%%SS522dkssk,
+      MONGO_URI: mongodb://root:example@mongo:27017
 
     depends_on:
       - mongo
