@@ -11,17 +11,14 @@ import ecs = require("@aws-cdk/aws-ecs");
 interface StagingStackProps extends cdk.StackProps {
   distribution: cloudfront.CloudFrontWebDistribution,
   deploy_bucket: s3.Bucket,
-  service: ecs.Ec2Service
+  service: ecs.Ec2Service,
+  api_url: string,
+  staging_secret: sm.Secret
 }
 
 export default class PipelineStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: StagingStackProps) {
     super(scope, id, props);
-
-    const secret = sm.Secret.fromSecretAttributes(this, "ImportedSecret", {
-      secretArn: this.node.tryGetContext('SecretsArn')
-    });
-
     const pipeline_bucket = new s3.Bucket(this, 'PipelineBucket');
 
     const code_build_role = new iam.Role(this, 'CodeBuildRole', {
@@ -41,38 +38,16 @@ export default class PipelineStack extends cdk.Stack {
             new iam.PolicyStatement({
               effect: iam.Effect.ALLOW,
               actions: [
-                'ssm:GetParameters'
+                'secretsmanager:DescribeSecret',
+                'secretsmanager:GetSecretValue'
               ],
-              // TO DO: make it specific.
-              resources: ['*']
+              resources: [
+                props.staging_secret.secretArn
+              ]
             }),
-            // new iam.PolicyStatement({
-            //   effect: iam.Effect.ALLOW,
-            //   actions: [
-            //     's3:GetObject',
-            //     's3:GetObjectVersion',
-            //     's3:GetBucketVersioning',
-            //     's3:PutObject'
-            //   ],
-            //   resources: ['*']
-            // }),
-            // new iam.PolicyStatement({
-            //   effect: iam.Effect.ALLOW,
-            //   actions: [
-            //     's3:GetObject',
-            //     's3:GetObjectVersion',
-            //     's3:GetBucketVersioning',
-            //     's3:PutObject',
-            //     's3:PutObjectAcl'
-            //   ],
-            //   resources: ['*']
-            // }),
             new iam.PolicyStatement({
               effect: iam.Effect.ALLOW,
               actions: [
-                // 'logs:CreateLogGroup',
-                // 'logs:CreateLogStream',
-                // 'logs:PutLogEvents',
                 'cloudfront:CreateInvalidation'
               ],
               resources: ['*']
@@ -99,10 +74,13 @@ export default class PipelineStack extends cdk.Stack {
             value: props.deploy_bucket.bucketName
           },
           'DISTRIBUTION': {
-            value: props.distribution.domainName
+            value: props.distribution.distributionId
           },
           'REACT_APP_API_URI': {
-            value: ''
+            value: props.api_url
+          },
+          'SECRET_ARN': {
+            value: props.staging_secret.secretArn
           }
         }
       }
@@ -122,7 +100,7 @@ export default class PipelineStack extends cdk.Stack {
           actions: [
             new codepipeline_actions.GitHubSourceAction({
               owner: this.node.tryGetContext('GithubOwner'),
-              oauthToken: secret.secretValueFromJson('GithubOAuthToken'),
+              oauthToken: props.staging_secret.secretValueFromJson('GithubOAuthToken'),
               repo: this.node.tryGetContext('GithubRepo'),
               actionName: 'SourceAction',
               output: sourceOutput
