@@ -1,8 +1,6 @@
 version: 0.2
 
 env:
-  parameter-store:
-    STACK_SECRETS: "/aws/reference/secretsmanager/SocialNetworkStarterKitSecrets"
   variables:
     IMAGE_TAG: "latest"
     IMAGE_USER_NAME: 
@@ -20,7 +18,8 @@ phases:
 
       # api
       - echo Logging in to Docker Hub...
-      - DHUB_PASSWORD=$(node -pe 'JSON.parse(JSON.parse(JSON.parse(process.argv[1]).Parameter.SourceResult).secretString).DockerHubPassword' "$STACK_SECRETS")
+      - STACK_SECRETS="$(aws secretsmanager get-secret-value --secret-id $SECRET_ARN)"
+      - DHUB_PASSWORD=$(node -pe 'JSON.parse(JSON.parse(process.argv[1]).SecretString).DockerHubPassword' "$STACK_SECRETS")
       - echo $DHUB_PASSWORD
       - echo $IMAGE_USER_NAME
       - docker login --password $DHUB_PASSWORD --username $IMAGE_USER_NAME
