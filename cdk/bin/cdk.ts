@@ -16,7 +16,9 @@ new PipelineStack(app, 'PipelineStack', {
   deploy_bucket: staging.deploy_bucket,
   service: staging.service,
   api_url: staging.api_url,
-  staging_secret: secrets.staging_secret
+  staging_secret: secrets.staging_secret,
+  client_id: staging.client_id,
+  user_pool_id: staging.user_pool_id
 });
 
 // new ProdStack(app, 'ProdStack');

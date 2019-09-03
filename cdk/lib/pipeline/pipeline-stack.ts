@@ -13,7 +13,9 @@ interface StagingStackProps extends cdk.StackProps {
   deploy_bucket: s3.Bucket,
   service: ecs.Ec2Service,
   api_url: string,
-  staging_secret: sm.Secret
+  staging_secret: sm.Secret,
+  user_pool_id: string,
+  client_id: string
 }
 
 export default class PipelineStack extends cdk.Stack {
@@ -78,6 +80,12 @@ export default class PipelineStack extends cdk.Stack {
           },
           'REACT_APP_API_URI': {
             value: props.api_url
+          },
+          'REACT_USER_POOL_ID': {
+            value: props.user_pool_id
+          },
+          'REACT_CLIENT_ID': {
+            value: props.client_id
           },
           'SECRET_ARN': {
             value: props.staging_secret.secretArn

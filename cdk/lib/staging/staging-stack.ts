@@ -17,6 +17,8 @@ export default class StagingStack extends cdk.Stack {
   readonly deploy_bucket: s3.Bucket;
   readonly service: ecs.Ec2Service;
   readonly api_url: string;
+  readonly user_pool_id: string;
+  readonly client_id: string;
 
   constructor(scope: cdk.Construct, id: string, props: Props) {
     super(scope, id, props);
@@ -119,8 +121,12 @@ export default class StagingStack extends cdk.Stack {
       autoVerifiedAttributes: [cognito.UserPoolAttribute.EMAIL]
     });
 
-    new cognito.UserPoolClient(this, 'StagingUserPoolClient', {
+    this.user_pool_id = user_pool.userPoolId;
+
+    const cognito_client = new cognito.UserPoolClient(this, 'StagingUserPoolClient', {
       userPool: user_pool
     });
+
+    this.client_id = cognito_client.userPoolClientId;
   }
 }
