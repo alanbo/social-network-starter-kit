@@ -6,6 +6,7 @@ import ecs = require("@aws-cdk/aws-ecs");
 import ecs_patterns = require("@aws-cdk/aws-ecs-patterns");
 import sm = require("@aws-cdk/aws-secretsmanager");
 import elbv2 = require("@aws-cdk/aws-elasticloadbalancingv2");
+import cognito = require("@aws-cdk/aws-cognito");
 
 interface Props extends cdk.StackProps {
   staging_secret: sm.Secret
@@ -111,6 +112,15 @@ export default class StagingStack extends cdk.Stack {
       taskDefinition,
       maxHealthyPercent: 100,
       minHealthyPercent: 0
-    })
+    });
+
+    const user_pool = new cognito.UserPool(this, 'StagingUserPool', {
+      signInType: cognito.SignInType.EMAIL,
+      autoVerifiedAttributes: [cognito.UserPoolAttribute.EMAIL]
+    });
+
+    new cognito.UserPoolClient(this, 'StagingUserPoolClient', {
+      userPool: user_pool
+    });
   }
 }
