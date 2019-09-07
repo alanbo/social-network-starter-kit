@@ -81,7 +81,9 @@ const resolvers: Resolvers = {
                 return;
               }
 
-              const user_data: { [ix: string]: any } = {};
+              const user_data: { [ix: string]: any } = {
+                __typename: 'UserAuth'
+              };
 
               result!.forEach(item => {
                 const name = item.getName()
@@ -204,6 +206,42 @@ const resolvers: Resolvers = {
       });
     },
   },
+  Query: {
+    getUser: () => {
+      return new Promise((resolve, reject) => {
+        cognitoUser!.getUserAttributes((err, result) => {
+          if (err) {
+            console.log(err);
+            reject(null);
+            return;
+          }
+
+          console.log(result);
+
+          const user_data: { [ix: string]: any } = {
+            __typename: 'UserAuth'
+          };
+
+          result!.forEach(item => {
+            const name = item.getName()
+            const value = item.getValue();
+
+            // turn sub value into _id
+            const key = name === 'sub' ? '_id' : name;
+
+            user_data[key] = value;
+          });
+
+          console.log(user_data);
+
+          resolve(user_data);
+        });
+      }).then(result => {
+        console.log(result);
+        return result;
+      });
+    }
+  }
 }
 
 export default resolvers;

@@ -34,4 +34,8 @@ export default gql`
     forgotPasswordInit(email: String!): Boolean
     forgotPasswordConfirm(new_password: String!, code: String!): Boolean
   }
+
+  extend type Query {
+    getUser: UserAuth
+  }
 `;
