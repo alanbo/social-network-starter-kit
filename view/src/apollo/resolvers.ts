@@ -167,7 +167,42 @@ const resolvers: Resolvers = {
           console.log('call result: ' + result);
         });
       });
-    }
+    },
+
+    forgotPasswordInit: (__root, variables: { email: string }) => {
+      const { email } = variables;
+
+      if (!cognitoUser) {
+        const userData = {
+          Username: email,
+          Pool: userPool
+        };
+
+        cognitoUser = new CognitoUser(userData);
+      }
+
+      return new Promise((resolve, reject) => {
+        cognitoUser!.forgotPassword({
+          onFailure: () => resolve(false),
+          onSuccess: () => resolve(true)
+        });
+      });
+    },
+
+    forgotPasswordConfirm: (__root, variables: { new_password: string, code: string }) => {
+      const { new_password, code } = variables;
+
+      if (!cognitoUser) {
+        return false;
+      }
+
+      return new Promise((resolve, reject) => {
+        cognitoUser!.confirmPassword(code, new_password, {
+          onFailure: () => resolve(false),
+          onSuccess: () => resolve(true)
+        });
+      });
+    },
   },
 }
 
