@@ -29,5 +29,7 @@ export default gql`
     confirmUser(code: String!): Boolean
     loginUser(email: String!, password: String!): UserAuth
     logoutUser: Boolean
+    resendConfirmationCode: Boolean
+    changePassword(old_password: String, new_password: String): Boolean
   }
 `;

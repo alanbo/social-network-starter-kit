@@ -133,7 +133,41 @@ const resolvers: Resolvers = {
       });
     },
 
+    resendConfirmationCode: () => {
+      if (!cognitoUser) {
+        return false;
+      }
 
+      return new Promise((resolve, reject) => {
+        cognitoUser!.resendConfirmationCode(function (err, result) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(true);
+        });
+      });
+    },
+
+    changePassword: (__root, variables: { old_password: string, new_password: string }) => {
+      if (!cognitoUser) {
+        return false;
+      }
+
+      const { old_password, new_password } = variables;
+
+      return new Promise((resolve, reject) => {
+        cognitoUser!.changePassword(old_password, new_password, function (err, result) {
+          if (err) {
+            reject(err);
+            return;
+          }
+
+          resolve(true);
+          console.log('call result: ' + result);
+        });
+      });
+    }
   },
 }
 
