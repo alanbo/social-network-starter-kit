@@ -10,6 +10,7 @@ import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import root_reducer from './redux/reducers';
+import resolvers, { typeDefs } from './apollo/resolvers';
 
 const middleware = [
   thunk
@@ -23,7 +24,11 @@ const store = createStore(root_reducer, composeWithDevTools(
 console.log(process.env.REACT_APP_API_URI);
 
 export const client = new ApolloClient({
-  uri: process.env.REACT_APP_API_URI
+  uri: process.env.REACT_APP_API_URI,
+  clientState: {
+    resolvers,
+    typeDefs
+  }
 });
 
 
