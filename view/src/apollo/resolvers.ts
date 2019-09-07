@@ -1,4 +1,4 @@
-import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
+import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 // import * as AWS from 'aws-sdk/global';
 
 import { Resolvers, gql } from "apollo-boost";
@@ -10,43 +10,6 @@ var poolData = {
 
 var userPool = new CognitoUserPool(poolData);
 var cognitoUser = userPool.getCurrentUser();
-
-console.log(process.env);
-
-export const typeDefs = gql`
-  type UserAuth {
-    _id: ID!
-    email: String
-    given_name: String
-    family_name: String
-    nickname: String
-    phone_number: String
-    gender: String
-    birthdate: String
-  }
-
-  input UserAuthInput {
-    email: String!
-    password: String!
-    given_name: String
-    family_name: String
-    nickname: String
-    phone_number: String
-    gender: String
-    birthdate: String
-  }
-
-  extend type Mutation {
-    createAuthUser(data: UserAuthInput!): UserAuth
-    confirmUser(code: String!): Boolean
-  }
-`;
-
-// export const typeDefs = gql`
-//   extend type Query {
-//     isLoggedIn: Boolean!
-//   }
-// `;
 
 interface UserInput {
   email: string,
@@ -88,10 +51,69 @@ const resolvers: Resolvers = {
       return null;
     },
 
-    login: (_root, variables, { cache, getCacheKey }) => {
+    loginUser: (_root, variables: { email: string, password: string }, { cache, getCacheKey }) => {
+
+      const { email, password } = variables;
+
+      if (!cognitoUser) {
+        const userData = {
+          Username: email,
+          Pool: userPool
+        };
+
+        cognitoUser = new CognitoUser(userData);
+      }
+
+      var authenticationData = {
+        Username: email,
+        Password: password,
+      };
+      var authenticationDetails = new AuthenticationDetails(authenticationData);
+
+      return new Promise((resolve, reject) => {
+        cognitoUser!.authenticateUser(authenticationDetails, {
+          onSuccess: function (result) {
+            // var accessToken = result.getAccessToken().getJwtToken();
+
+            cognitoUser!.getUserAttributes((err, result) => {
+              if (err) {
+                reject(err);
+                return;
+              }
+
+              const user_data: { [ix: string]: any } = {};
+
+              result!.forEach(item => {
+                const name = item.getName()
+                const value = item.getValue();
+
+                // turn sub value into _id
+                const key = name === 'sub' ? '_id' : name;
+
+                user_data[key] = value;
+              });
+
+              resolve(user_data);
+            });
+
+            /* Use the idToken for Logins Map when Federating User Pools with identity pools or when passing through an Authorization Header to an API Gateway Authorizer*/
+            // var idToken = result.idToken.jwtToken;
+          },
+
+          onFailure: function (err) {
+            reject(err);
+          },
+        });
+      });
     },
 
-    logout: (_root, variables, { cache, getCacheKey }) => {
+    logoutUser: (_root, variables, { cache, getCacheKey }) => {
+      if (cognitoUser != null) {
+        cognitoUser.signOut();
+        return true;
+      }
+
+      return false;
     },
 
     confirmUser: (_root, variables: { code: string }, { cache, getCacheKey }) => {

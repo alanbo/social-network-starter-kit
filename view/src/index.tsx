@@ -10,7 +10,8 @@ import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import root_reducer from './redux/reducers';
-import resolvers, { typeDefs } from './apollo/resolvers';
+import resolvers from './apollo/resolvers';
+import typeDefs from './apollo/client-schema';
 
 const middleware = [
   thunk
