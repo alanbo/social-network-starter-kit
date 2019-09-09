@@ -11,7 +11,6 @@ import { AppState } from './redux/reducers';
 
 
 interface Props extends RouteComponentProps<any> {
-  is_logged_in: Boolean
 }
 
 class App extends Component<Props> {
@@ -37,9 +36,9 @@ class App extends Component<Props> {
   _redirect() {
     const is_login_route = this.props.location.pathname === '/login';
 
-    if (!this.props.is_logged_in && !is_login_route) {
-      this.props.history.push('/login');
-    }
+    // if (!this.props.is_logged_in && !is_login_route) {
+    //   this.props.history.push('/login');
+    // }
   }
 
   render() {
@@ -54,10 +53,4 @@ class App extends Component<Props> {
   }
 }
 
-function mapStateToProps(state: AppState) {
-  return {
-    is_logged_in: !!state.user
-  }
-}
-
-export default withRouter(connect(mapStateToProps)(App));
+export default withRouter(App);

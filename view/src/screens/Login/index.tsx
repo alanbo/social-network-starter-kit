@@ -2,16 +2,33 @@ import React from 'react';
 import useStyles from './styles';
 import LoginBox from '../../components/LoginBox';
 import { LoginVariables } from '../../graphql/operation-result-types';
+import { gql } from 'apollo-boost';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { GET_USER } from '../../apollo/resolvers';
+import { Redirect } from 'react-router';
+
+const LOGIN = gql`
+  mutation LoginUser($email: String!, $password: String!) {
+    loginUser(email: $email, password: $password) @client {
+      gender
+      given_name
+      _id
+    }
+  }
+`;
 
 export default function Login() {
-  // const { classes, is_logged_in } = props;
-  // if (is_logged_in) {
-  //   return <Redirect to='/' />
-  // }
   const classes = useStyles();
+  const [loginUser] = useMutation<any, LoginVariables>(LOGIN);
+  const user = useQuery(GET_USER);
 
-  function onLoginSubmit(variables: LoginVariables) {
-    console.log(variables);
+  if (user && user.data) {
+    return <Redirect to='/' />
+  }
+
+  async function onLoginSubmit(variables: LoginVariables) {
+    await loginUser({ variables })
+    user.refetch();
   }
 
   return (

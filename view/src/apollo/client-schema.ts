@@ -3,7 +3,7 @@ import { gql } from 'apollo-boost';
 export default gql`
   type UserAuth {
     _id: ID!
-    email: String
+    email: String!
     given_name: String
     family_name: String
     nickname: String

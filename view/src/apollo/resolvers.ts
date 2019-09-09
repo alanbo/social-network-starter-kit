@@ -23,8 +23,39 @@ interface UserInput {
   [ix: string]: string
 }
 
+export const GET_USER = gql`
+  query GetUser {
+    getUser @client(always: true) {
+      _id
+      email
+      given_name
+      family_name
+      nickname
+      phone_number
+      gender
+      birthdate
+      email_verified
+    }
+  }
+`;
+
 interface UserInputVariables {
   data: UserInput
+}
+
+function userScaffold() {
+  return {
+    _id: '',
+    email: '',
+    given_name: null,
+    family_name: null,
+    nickname: null,
+    phone_number: null,
+    gender: null,
+    birthdate: null,
+    email_verified: null,
+    __typename: 'UserAuth'
+  }
 }
 
 const resolvers: Resolvers = {
@@ -81,9 +112,7 @@ const resolvers: Resolvers = {
                 return;
               }
 
-              const user_data: { [ix: string]: any } = {
-                __typename: 'UserAuth'
-              };
+              const user_data: { [ix: string]: any } = userScaffold();
 
               result!.forEach(item => {
                 const name = item.getName()
@@ -94,6 +123,8 @@ const resolvers: Resolvers = {
 
                 user_data[key] = value;
               });
+
+              cache.writeQuery({ query: GET_USER, data: { getUser: user_data } });
 
               resolve(user_data);
             });
@@ -212,15 +243,10 @@ const resolvers: Resolvers = {
         cognitoUser!.getUserAttributes((err, result) => {
           if (err) {
             console.log(err);
-            reject(null);
             return;
           }
 
-          console.log(result);
-
-          const user_data: { [ix: string]: any } = {
-            __typename: 'UserAuth'
-          };
+          const user_data: { [ix: string]: any } = userScaffold();
 
           result!.forEach(item => {
             const name = item.getName()
@@ -232,13 +258,8 @@ const resolvers: Resolvers = {
             user_data[key] = value;
           });
 
-          console.log(user_data);
-
           resolve(user_data);
         });
-      }).then(result => {
-        console.log(result);
-        return result;
       });
     }
   }

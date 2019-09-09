@@ -12,6 +12,7 @@ import thunk from 'redux-thunk';
 import root_reducer from './redux/reducers';
 import resolvers from './apollo/resolvers';
 import typeDefs from './apollo/client-schema';
+import { ApolloProvider } from '@apollo/react-hooks';
 
 const middleware = [
   thunk
@@ -35,9 +36,11 @@ export const client = new ApolloClient({
 
 ReactDOM.render((
   <Router>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <ApolloProvider client={client}>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </ApolloProvider>
   </Router>
 ), document.getElementById('root'))
 
