@@ -1,14 +1,12 @@
-import React, { Component } from 'react';
-
+import React from 'react';
 import './App.css';
 import NavigationFrame from './redux-wrapped-components/NavigationFrame';
 import SnackbarNotification from './components/SnackbarNotification';
 import Main from './Main';
-import { client } from './index';
-import { connect } from 'react-redux';
-import { AppState } from './redux/reducers';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
+import { GET_USER } from './apollo/resolvers';
+import { navigate } from '@reach/router';
 
 
 const LOGOUT = gql`
@@ -18,32 +16,16 @@ const LOGOUT = gql`
 `;
 
 export default () => {
-  const [logoutUser] = useMutation(LOGOUT)
+  const [logoutUser] = useMutation(LOGOUT);
+  const user = useQuery(GET_USER);
 
-  function signOut() {
-    logoutUser();
-  }
-
-  // componentDidMount() {
-  //   this._redirect();
-  // }
-
-  // componentDidUpdate() {
-  //   this._redirect();
-  // }
-
-  // Redirect to the login page when user is not logged in.
-  // _redirect() {
-  // const is_login_route = this.props.location.pathname === '/login';
-
-  // if (!this.props.is_logged_in && !is_login_route) {
-  //   this.props.history.push('/login');
-  // }
-  // }
+  if (!user.loading && (!user.data || !user.data.getUser)) {
+    navigate('/login');
+  };
 
   return (
     <div className="App">
-      <NavigationFrame signOut={signOut}>
+      <NavigationFrame signOut={logoutUser}>
         <Main />
       </NavigationFrame>
       <SnackbarNotification />
