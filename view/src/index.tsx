@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ApolloClient from "apollo-boost";
-import { BrowserRouter as Router } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 import './index.css';
 import App from './App';
@@ -35,13 +34,11 @@ export const client = new ApolloClient({
 
 
 ReactDOM.render((
-  <Router>
-    <ApolloProvider client={client}>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </ApolloProvider>
-  </Router>
+  <ApolloProvider client={client}>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </ApolloProvider>
 ), document.getElementById('root'))
 
 // If you want your app to work offline and load faster, you can change

@@ -4,13 +4,14 @@ import { AppState } from '../../redux/reducers';
 import { $PropertyType } from 'utility-types';
 import { gqlUserPosts } from '../../redux/actions/gql-thunks';
 import PostCardList from '../../redux-wrapped-components/PostCardList';
+import { RouteComponentProps } from '@reach/router';
 
 interface Props {
   posts: $PropertyType<AppState, 'user_posts'>,
   gqlUserPosts: (variables: void) => void
 }
 
-class Profile extends Component<Props> {
+class Profile extends Component<Props & RouteComponentProps> {
   componentWillMount() {
     this.props.gqlUserPosts();
   }

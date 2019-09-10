@@ -5,13 +5,14 @@ import { $PropertyType } from 'utility-types';
 import { gqlPosts } from '../../redux/actions/gql-thunks';
 import { GetPostsVariables } from '../../graphql/operation-result-types';
 import PostCardList from '../../redux-wrapped-components/PostCardList';
+import { RouteComponentProps } from '@reach/router';
 
 interface Props {
   posts: $PropertyType<AppState, 'dashboard_posts'>;
   gqlPosts: (variables?: GetPostsVariables) => void
 }
 
-class Dashboard extends Component<Props> {
+class Dashboard extends Component<Props & RouteComponentProps> {
   componentWillMount() {
     this.props.gqlPosts();
   }

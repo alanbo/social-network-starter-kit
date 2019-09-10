@@ -5,7 +5,7 @@ import { LoginVariables } from '../../graphql/operation-result-types';
 import { gql } from 'apollo-boost';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { GET_USER } from '../../apollo/resolvers';
-import { Redirect } from 'react-router';
+import { RouteComponentProps, Redirect } from '@reach/router';
 
 const LOGIN = gql`
   mutation LoginUser($email: String!, $password: String!) {
@@ -17,7 +17,7 @@ const LOGIN = gql`
   }
 `;
 
-export default function Login() {
+export default (props: RouteComponentProps) => {
   const classes = useStyles();
   const [loginUser] = useMutation<any, LoginVariables>(LOGIN);
   const user = useQuery(GET_USER);

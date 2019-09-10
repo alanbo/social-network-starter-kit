@@ -4,7 +4,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
-import { Link } from 'react-router-dom'
+import { Link } from '@reach/router';
 import Divider from '@material-ui/core/Divider';
 
 interface MenuLinkProps {

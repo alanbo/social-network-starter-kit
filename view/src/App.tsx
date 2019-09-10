@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withRouter, RouteComponentProps } from 'react-router';
 
 import './App.css';
 import NavigationFrame from './redux-wrapped-components/NavigationFrame';

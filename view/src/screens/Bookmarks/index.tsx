@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import { RouteComponentProps } from '@reach/router';
 
-export default class Bookmarks extends Component {
-  render() {
-    return (
-      <div>Bookmarks</div>
-    );
-  }
+
+export default (props: RouteComponentProps) => {
+  return (
+    <div>Bookmarks</div>
+  );
 };
