@@ -22,13 +22,13 @@ export default function Login() {
   const [loginUser] = useMutation<any, LoginVariables>(LOGIN);
   const user = useQuery(GET_USER);
 
-  if (user && user.data) {
+
+  if (user && user.data && user.data.getUser) {
     return <Redirect to='/' />
   }
 
   async function onLoginSubmit(variables: LoginVariables) {
     await loginUser({ variables })
-    user.refetch();
   }
 
   return (

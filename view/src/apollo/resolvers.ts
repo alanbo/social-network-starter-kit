@@ -1,7 +1,7 @@
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 // import * as AWS from 'aws-sdk/global';
 
-import { Resolvers, gql } from "apollo-boost";
+import { Resolvers, gql, InMemoryCache, ApolloClient } from "apollo-boost";
 
 var poolData = {
   UserPoolId: process.env.REACT_APP_USER_POOL_ID as string,
@@ -25,7 +25,7 @@ interface UserInput {
 
 export const GET_USER = gql`
   query GetUser {
-    getUser @client(always: true) {
+    getUser @client {
       _id
       email
       given_name
@@ -58,9 +58,10 @@ function userScaffold() {
   }
 }
 
+// TO DO: add proper error handling.
 const resolvers: Resolvers = {
   Mutation: {
-    createAuthUser: (_root, variables: UserInputVariables, { cache, getCacheKey }) => {
+    createAuthUser: async (_root, variables: UserInputVariables, { cache, getCacheKey }) => {
       const { email, password } = variables.data;
 
       const attributeList = Object.keys(variables.data)
@@ -72,12 +73,10 @@ const resolvers: Resolvers = {
         if (err) {
           // TO DO: add user feedback
           console.log(err.message || JSON.stringify(err));
-          return;
+          return false;
         }
 
         cognitoUser = result!.user;
-        console.log(cognitoUser);
-        console.log('user name is ' + cognitoUser.getUsername());
       });
       return null;
     },
@@ -124,7 +123,7 @@ const resolvers: Resolvers = {
                 user_data[key] = value;
               });
 
-              cache.writeQuery({ query: GET_USER, data: { getUser: user_data } });
+              (cache as InMemoryCache).writeQuery({ query: GET_USER, data: { getUser: user_data } });
 
               resolve(user_data);
             });
@@ -140,9 +139,11 @@ const resolvers: Resolvers = {
       });
     },
 
-    logoutUser: (_root, variables, { cache, getCacheKey }) => {
+    logoutUser: (_root, variables, { client }) => {
       if (cognitoUser != null) {
         cognitoUser.signOut();
+        console.log(client);
+        (client as ApolloClient<any>).resetStore();
         return true;
       }
 
@@ -238,29 +239,49 @@ const resolvers: Resolvers = {
     },
   },
   Query: {
-    getUser: () => {
-      return new Promise((resolve, reject) => {
-        cognitoUser!.getUserAttributes((err, result) => {
+    getUser: async () => {
+      if (!cognitoUser) {
+        console.log('The user is not logged in');
+        return null;
+      }
+
+      try {
+        await new Promise((resolve, reject) => cognitoUser!.getSession((err: Error, result: any) => {
           if (err) {
-            console.log(err);
-            return;
+            reject(err);
+          } else {
+            resolve(result);
           }
+        }));
 
-          const user_data: { [ix: string]: any } = userScaffold();
+        const user = await new Promise((resolve, reject) => {
+          cognitoUser!.getUserAttributes((err, result) => {
+            if (err) {
+              reject(err);
+              return;
+            }
 
-          result!.forEach(item => {
-            const name = item.getName()
-            const value = item.getValue();
+            const user_data: { [ix: string]: any } = userScaffold();
 
-            // turn sub value into _id
-            const key = name === 'sub' ? '_id' : name;
+            result!.forEach(item => {
+              const name = item.getName()
+              const value = item.getValue();
 
-            user_data[key] = value;
+              // turn sub value into _id
+              const key = name === 'sub' ? '_id' : name;
+
+              user_data[key] = value;
+            });
+
+            resolve(user_data);
           });
-
-          resolve(user_data);
         });
-      });
+
+        return user
+      } catch (err) {
+        console.log(err);
+        return null;
+      }
     }
   }
 }
