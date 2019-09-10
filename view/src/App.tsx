@@ -8,49 +8,47 @@ import Main from './Main';
 import { client } from './index';
 import { connect } from 'react-redux';
 import { AppState } from './redux/reducers';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
 
 
-interface Props extends RouteComponentProps<any> {
-}
+const LOGOUT = gql`
+  mutation Logout {
+    logoutUser @client
+  }
+`;
 
-class App extends Component<Props> {
+export default () => {
+  const [logoutUser] = useMutation(LOGOUT)
 
-  async signOut() {
-
-    try {
-      await client.resetStore();
-    } catch (e) {
-      console.log(e);
-    }
+  function signOut() {
+    logoutUser();
   }
 
-  componentDidMount() {
-    this._redirect();
-  }
+  // componentDidMount() {
+  //   this._redirect();
+  // }
 
-  componentDidUpdate() {
-    this._redirect();
-  }
+  // componentDidUpdate() {
+  //   this._redirect();
+  // }
 
   // Redirect to the login page when user is not logged in.
-  _redirect() {
-    const is_login_route = this.props.location.pathname === '/login';
+  // _redirect() {
+  // const is_login_route = this.props.location.pathname === '/login';
 
-    // if (!this.props.is_logged_in && !is_login_route) {
-    //   this.props.history.push('/login');
-    // }
-  }
+  // if (!this.props.is_logged_in && !is_login_route) {
+  //   this.props.history.push('/login');
+  // }
+  // }
 
-  render() {
-    return (
-      <div className="App">
-        <NavigationFrame signOut={this.signOut}>
-          <Main />
-        </NavigationFrame>
-        <SnackbarNotification />
-      </div>
-    );
-  }
+  return (
+    <div className="App">
+      <NavigationFrame signOut={signOut}>
+        <Main />
+      </NavigationFrame>
+      <SnackbarNotification />
+    </div>
+  );
 }
 
-export default withRouter(App);
