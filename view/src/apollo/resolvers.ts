@@ -12,6 +12,24 @@ var poolData = {
 var userPool = new CognitoUserPool(poolData);
 var cognitoUser = userPool.getCurrentUser();
 
+export async function getUserToken() {
+  if (!cognitoUser) {
+    return Promise.reject();
+  }
+
+  return new Promise((resolve, reject) => {
+    cognitoUser!.getSession((err: Error, result: any) => {
+      if (err) {
+        reject(err);
+      }
+
+      const token = result.accessToken.jwtToken;
+
+      resolve(token);
+    });
+  })
+}
+
 interface UserInput {
   email: string,
   password: string,
