@@ -1,11 +1,12 @@
 import React from 'react';
 import './App.css';
-import NavigationFrame from './redux-wrapped-components/NavigationFrame';
+import NavigationFrame from './components/NavigationFrame';
 import SnackbarNotification from './components/SnackbarNotification';
 import Main from './Main';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
-import { GET_USER } from './apollo/resolvers';
+import { GET_USER, GetUser } from './apollo/resolvers';
+import { User } from './apollo/client-schema';
 import { navigate } from '@reach/router';
 
 
@@ -17,15 +18,16 @@ const LOGOUT = gql`
 
 export default () => {
   const [logoutUser] = useMutation(LOGOUT);
-  const user = useQuery(GET_USER);
+  const user_query = useQuery<GetUser>(GET_USER);
+  const user = user_query.data ? user_query.data.getUser : null;
 
-  if (!user.loading && (!user.data || !user.data.getUser)) {
+  if (!user_query.loading && (!user_query.data || !user_query.data.getUser)) {
     navigate('/login');
   };
 
   return (
     <div className="App">
-      <NavigationFrame signOut={logoutUser}>
+      <NavigationFrame signOut={logoutUser} user={user}>
         <Main />
       </NavigationFrame>
       <SnackbarNotification />

@@ -2,6 +2,7 @@ import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetai
 // import * as AWS from 'aws-sdk/global';
 
 import { Resolvers, gql, InMemoryCache, ApolloClient } from "apollo-boost";
+import { User } from './client-schema';
 
 var poolData = {
   UserPoolId: process.env.REACT_APP_USER_POOL_ID as string,
@@ -38,6 +39,10 @@ export const GET_USER = gql`
     }
   }
 `;
+
+export interface GetUser {
+  getUser: User
+}
 
 interface UserInputVariables {
   data: UserInput

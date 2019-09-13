@@ -5,7 +5,7 @@ import { LoginVariables } from '../../graphql/operation-result-types';
 import { gql } from 'apollo-boost';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { GET_USER } from '../../apollo/resolvers';
-import { RouteComponentProps, Redirect } from '@reach/router';
+import { RouteComponentProps, Redirect, navigate } from '@reach/router';
 
 const LOGIN = gql`
   mutation LoginUser($email: String!, $password: String!) {
@@ -24,7 +24,7 @@ export default (props: RouteComponentProps) => {
 
 
   if (user && user.data && user.data.getUser) {
-    return <Redirect to='/' />
+    navigate('/');
   }
 
   async function onLoginSubmit(variables: LoginVariables) {

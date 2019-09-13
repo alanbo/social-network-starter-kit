@@ -12,6 +12,12 @@ import root_reducer from './redux/reducers';
 import resolvers from './apollo/resolvers';
 import typeDefs from './apollo/client-schema';
 import { ApolloProvider } from '@apollo/react-hooks';
+import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
+
+export const theme = createMuiTheme({});
+
+export type AppTheme = typeof theme;
 
 const middleware = [
   thunk
@@ -35,9 +41,11 @@ export const client = new ApolloClient({
 
 ReactDOM.render((
   <ApolloProvider client={client}>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <ThemeProvider theme={theme} >
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </ThemeProvider>
   </ApolloProvider>
 ), document.getElementById('root'))
 

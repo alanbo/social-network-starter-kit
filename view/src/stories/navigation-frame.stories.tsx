@@ -7,13 +7,12 @@ import { user } from './data/navigation-frame.data';
 
 storiesOf('NavigationFrame', module)
   .addDecorator(withKnobs)
-  .add('standard', () => (
-    <NavigationFrame
-      user={object('User', user)}
-      signOut={action('Sign Out')}
-      gqlLogout={action('Gql Logout')}
-      loading={boolean('Is Loading', false)}
-    >
-      <div>NavigationFrame frame child</div>
-    </NavigationFrame>
+  .add('standard', () => (<div></div>
+    // <NavigationFrame
+    //   user={object('User', user)}
+    //   signOut={action('Sign Out')}
+    //   loading={boolean('Is Loading', false)}
+    // >
+    //   <div>NavigationFrame frame child</div>
+    // </NavigationFrame>
   ));

@@ -157,7 +157,7 @@ export class PostCard extends React.Component<Props, State> {
             ) : <Typography align="left" component="p">{text}</Typography>
           }
         </CardContent>
-        <CardActions className={classes.actions} disableActionSpacing>
+        <CardActions className={classes.actions} >
           <IconButton aria-label="Like" onClick={this.onLikeClick.bind(this)}>
             <FavoriteIcon color={liked ? 'secondary' : 'inherit'} />
           </IconButton>
