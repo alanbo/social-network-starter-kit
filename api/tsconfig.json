@@ -12,6 +12,10 @@
     "outDir": "./dist",
     "sourceMap": true,
     "noImplicitAny": true,
-    "allowJs": true
+    "allowJs": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./@types"
+    ]
   }
 }

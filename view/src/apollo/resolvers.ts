@@ -23,7 +23,7 @@ export async function getUserToken() {
         reject(err);
       }
 
-      const token = result.accessToken.jwtToken;
+      const token = result.idToken.jwtToken;
 
       resolve(token);
     });
