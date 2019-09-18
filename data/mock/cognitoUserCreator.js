@@ -6,9 +6,10 @@ const cognito = new AWS.CognitoIdentityServiceProvider();
 const adminCreateUser = util.promisify(cognito.adminCreateUser.bind(cognito));
 const adminInitiateAuth = util.promisify(cognito.adminInitiateAuth.bind(cognito));
 const respondToAuthChallenge = util.promisify(cognito.respondToAuthChallenge.bind(cognito));
+const adminGetUser = util.promisify(cognito.adminGetUser.bind(cognito));
 
 
-export default async function createUser(attributes, password) {
+module.exports = async function createUser(attributes, password) {
   var params = {
     UserPoolId: process.env.USER_POOL_ID,
     Username: attributes.email,
@@ -70,10 +71,3 @@ export default async function createUser(attributes, password) {
     throw e;
   }
 }
-
-// createUser({
-//   email: 'rrr8@whatever.com',
-//   gender: 'male',
-//   given_name: 'alan',
-//   family_name: 'bogusiewicz'
-// }, '44$$Ald88$dd').then(console.log);

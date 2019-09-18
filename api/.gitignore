@@ -1,3 +1,4 @@
 node_modules/
 jest/globalConfig.json
 **/*.snap
+.env

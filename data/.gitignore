@@ -1,3 +1,4 @@
 node_modules
 mock/mongo/*-social.js
 .env
+users-login-data.json
