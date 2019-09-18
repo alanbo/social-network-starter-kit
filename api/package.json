@@ -19,6 +19,7 @@
     "@types/jsonwebtoken": "^8.3.0",
     "@types/mongodb": "^3.1.19",
     "@types/node-fetch": "^2.5.0",
+    "@types/storybook__react": "^4.0.2",
     "apollo-client": "^2.5.1",
     "apollo-server": "^2.4.0",
     "apollo-server-express": "^2.4.6",

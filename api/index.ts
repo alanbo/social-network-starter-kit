@@ -138,16 +138,23 @@ async function bootstrap() {
   }
 
   app.use((req, res, next) => {
-    const bearer_token = req.header('authorization').replace('Bearer ', '');
+    const bearer_token = (req.header('authorization') || '').replace('Bearer ', '');
 
     // https://docs.aws.amazon.com/en_pv/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html
     if (!bearer_token.match(JWT_REGEX)) {
       next();
+      // res.sendStatus(400);
       return;
     }
 
     // TO DO: preperly verify claim as per documentation
     jwt.verify(bearer_token, pem, { algorithms: ['RS256'] }, function (err, decodedToken) {
+      if (err) {
+        next();
+        // res.sendStatus(400);
+        return;
+      }
+
       if (decodedToken) {
         res.locals.user = decodedToken;
       }
@@ -158,7 +165,7 @@ async function bootstrap() {
   });
 
 
-  app.use(session(sess));
+  // app.use(session(sess));
 
   server.applyMiddleware({ app, path: '/' });
 
