@@ -29,7 +29,7 @@ function CommentList(props: Props) {
   return (
     <List className={classes.root}>
       {comments.map(comment => {
-        const full_name = `${comment.user.first_name} ${comment.user.last_name}`;
+        const full_name = `${comment.user.given_name} ${comment.user.family_name}`;
         const is_editable = user_id === comment.user._id;
         const is_removable = is_editable || is_post_owner;
 

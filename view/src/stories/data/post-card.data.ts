@@ -9,8 +9,8 @@ export const comments = [
     "createdAt": "2018-06-06T17:50:31.731Z",
     "user": {
       "_id": "28397f52-2048-4646-a180-016e6415d91e",
-      "first_name": "Ryann",
-      "last_name": "Bahringer",
+      "given_name": "Ryann",
+      "family_name": "Bahringer",
       "email": "crystel_sawayn51@gmail.com"
     }
   },
@@ -20,8 +20,8 @@ export const comments = [
     "createdAt": "2019-03-15T22:57:47.201Z",
     "user": {
       "_id": "ff2517f0-f119-4d19-b483-7fd0e1ba8717",
-      "first_name": "Kiarra",
-      "last_name": "Mohr",
+      "given_name": "Kiarra",
+      "family_name": "Mohr",
       "email": "heath_gaylord53@hotmail.com"
     }
   },
@@ -31,8 +31,8 @@ export const comments = [
     "createdAt": "2019-04-14T13:07:06.945Z",
     "user": {
       "_id": "a6fa95e1-c358-4392-9f6f-38c1083e1b3b",
-      "first_name": "Emmy",
-      "last_name": "O'Connell",
+      "given_name": "Emmy",
+      "family_name": "O'Connell",
       "email": "issac_ondricka@hotmail.com"
     }
   }
@@ -40,8 +40,8 @@ export const comments = [
 
 export const user: UserQuery_user = {
   "_id": "28397f52-2048-4646-a180-016e6415d91e",
-  "first_name": "Ryann",
-  "last_name": "Bahringer",
+  "given_name": "Ryann",
+  "family_name": "Bahringer",
   "email": "crystel_sawayn51@gmail.com",
   gender: 'male',
   createdAt: new Date('2017-06-06T17:50:31.731Z'),

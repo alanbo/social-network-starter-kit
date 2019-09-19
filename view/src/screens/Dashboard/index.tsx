@@ -1,46 +1,28 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { AppState } from '../../redux/reducers';
-import { $PropertyType } from 'utility-types';
-import { gqlPosts } from '../../redux/actions/gql-thunks';
-import { GetPostsVariables } from '../../graphql/operation-result-types';
-import PostCardList from '../../redux-wrapped-components/PostCardList';
+import React from 'react';
+import { GetPosts } from '../../graphql/operation-result-types';
+import { POSTS } from '../../graphql/queries/post-queries';
+import { GET_USER, GetUser } from '../../apollo/resolvers';
+import PostCardList from '../../apollo-wrapped-components/PostCardList';
 import { RouteComponentProps } from '@reach/router';
+import { useQuery } from '@apollo/react-hooks';
 
-interface Props {
-  posts: $PropertyType<AppState, 'dashboard_posts'>;
-  gqlPosts: (variables?: GetPostsVariables) => void
-}
+interface Props extends RouteComponentProps { };
 
-class Dashboard extends Component<Props & RouteComponentProps> {
-  componentWillMount() {
-    this.props.gqlPosts();
-  }
+export default function (props: Props) {
+  const { data } = useQuery<GetPosts>(POSTS);
+  const { data: user_data } = useQuery<GetUser>(GET_USER);
+  const user = user_data && user_data.getUser ? user_data.getUser : null;
 
-  render() {
-    const { posts } = this.props;
+  const posts = data && data.posts ? data.posts : null;
 
-    return (
-      <div>
-        <h1>Dashboard</h1>
-
-        {
-          // there is an issue with connect typescript
-          // it doesn't correctly pass required props
-          //@ts-ignore
-          posts && <PostCardList posts={posts} is_owner={false} />
-        }
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      {
+        user && posts && (
+          <PostCardList posts={posts} is_owner={false} user={user} />
+        )
+      }
+    </div>
+  );
 };
-
-function mapStateToProps(state: AppState) {
-  return {
-    posts: state.dashboard_posts
-  }
-}
-
-
-
-export default connect(mapStateToProps, { gqlPosts })(Dashboard);

@@ -10,7 +10,11 @@ import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import useStyles from './styles';
-import { LoginVariables } from '../../graphql/operation-result-types';
+
+export interface LoginVariables {
+  email: string;
+  password: string;
+}
 
 interface Props {
   onSubmit: (variables: LoginVariables) => void,

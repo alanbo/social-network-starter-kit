@@ -7,7 +7,7 @@ import CommentItem from '../components/CommentItem';
 import { comments } from './data/comment-list.data';
 
 const comment = comments[0];
-const full_name = `${comment.user.first_name} ${comment.user.last_name}`;
+const full_name = `${comment.user.given_name} ${comment.user.family_name}`;
 
 
 storiesOf('CommentItem', module)

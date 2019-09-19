@@ -12,13 +12,13 @@ import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { AppState } from '../../redux/reducers';
 import CommentList from '../CommentList';
 import CommentInput from '../TextInput';
 import MoreButtonMenu from '../MoreButtonMenu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import TextInput from '../TextInput';
+import { User } from '../../apollo/client-schema';
 
 import {
   AddCommentVariables,
@@ -38,7 +38,7 @@ interface BaseProps extends PostCardStyles {
   author: string,
   date: Date,
   comments: DeepReadonly<CommentsFragment_comments[]>,
-  user: $PropertyType<AppState, 'user'>,
+  user: User,
   liked: boolean,
   onAddComment: (variables: AddCommentVariables) => void,
   onRemoveComment: (variables: RemoveCommentVariables) => void,

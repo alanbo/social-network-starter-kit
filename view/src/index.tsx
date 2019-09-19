@@ -4,11 +4,6 @@ import ApolloClient from "apollo-boost";
 import * as serviceWorker from './serviceWorker';
 import './index.css';
 import App from './App';
-import { Provider } from 'react-redux'
-import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import thunk from 'redux-thunk';
-import root_reducer from './redux/reducers';
 import resolvers from './apollo/resolvers';
 import typeDefs from './apollo/client-schema';
 import { ApolloProvider } from '@apollo/react-hooks';
@@ -17,17 +12,8 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import { getUserToken } from './apollo/resolvers';
 
 export const theme = createMuiTheme({});
-
 export type AppTheme = typeof theme;
 
-const middleware = [
-  thunk
-];
-
-const store = createStore(root_reducer, composeWithDevTools(
-  applyMiddleware(...middleware),
-  // other store enhancers if any
-));
 
 export const client = new ApolloClient({
   uri: process.env.REACT_APP_API_URI,
@@ -50,9 +36,7 @@ export const client = new ApolloClient({
 ReactDOM.render((
   <ApolloProvider client={client}>
     <ThemeProvider theme={theme} >
-      <Provider store={store}>
-        <App />
-      </Provider>
+      <App />
     </ThemeProvider>
   </ApolloProvider>
 ), document.getElementById('root'))

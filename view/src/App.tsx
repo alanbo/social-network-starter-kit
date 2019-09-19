@@ -30,7 +30,7 @@ export default () => {
       <NavigationFrame signOut={logoutUser} user={user}>
         <Main />
       </NavigationFrame>
-      <SnackbarNotification />
+      {/* <SnackbarNotification /> */}
     </div>
   );
 }

@@ -37,8 +37,8 @@ const tester = new ApolloMongoTester(USERS_DATA, [], USERS_DATA[0]);
 
 const NEW_USER_INPUT: UserInput = {
   email: 'sample@email.com',
-  first_name: 'Rowen',
-  last_name: 'Atkinson',
+  given_name: 'Rowen',
+  family_name: 'Atkinson',
   phone_number: '+16017778687',
   gender: 'male',
   password: 'SamplePass123%4'
@@ -56,7 +56,7 @@ afterAll(async () => {
 
 describe('"user" resolver: ', () => {
   it('It fetches basic user ', async () => {
-    const { email, first_name, last_name, _id, gender, createdAt, phone_number } = USERS_DATA[0];
+    const { email, given_name, family_name, _id, gender, createdAt, phone_number } = USERS_DATA[0];
     const res: ApolloQueryResult<UserQuery> = await tester
       .login()
       .query({
@@ -65,7 +65,7 @@ describe('"user" resolver: ', () => {
       });
 
     expect(res.data).toEqual({
-      user: { email, first_name, last_name, _id, gender, createdAt: +createdAt, phone_number }
+      user: { email, given_name, family_name, _id, gender, createdAt: +createdAt, phone_number }
     })
   });
 
@@ -102,8 +102,8 @@ describe('"user" resolver: ', () => {
 
     new_user_id = res.data.createUser._id;
 
-    expect(res.data.createUser.first_name).toBe(NEW_USER_INPUT.first_name);
-    expect(res.data.createUser.first_name).toBe(NEW_USER_INPUT.first_name);
+    expect(res.data.createUser.given_name).toBe(NEW_USER_INPUT.given_name);
+    expect(res.data.createUser.given_name).toBe(NEW_USER_INPUT.given_name);
     expect(validator.isUUID(new_user_id)).toBeTruthy();
 
     const user: UserMongo = await tester.db.collection('users').findOne({ _id: new_user_id });
@@ -127,8 +127,8 @@ describe('"user" resolver: ', () => {
   it('Updates user data', async () => {
     const variables: UpdateUserVariables = {
       data: {
-        first_name: 'Aldous',
-        last_name: 'Huxley',
+        given_name: 'Aldous',
+        family_name: 'Huxley',
         gender: 'other',
         email: 'new@email.com',
         phone_number: '+16017778687'
@@ -149,8 +149,8 @@ describe('"user" resolver: ', () => {
       { _id: new_user_id },
       {
         projection: {
-          first_name: 1,
-          last_name: 1,
+          given_name: 1,
+          family_name: 1,
           gender: 1,
           email: 1,
           phone_number: 1
