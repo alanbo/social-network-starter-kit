@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
+import { RouteComponentProps } from '@reach/router';
 
-export default class Settings extends Component {
-  render() {
-    return (
-      <div>Settings</div>
-    );
-  }
+export default (props: RouteComponentProps) => {
+  return (
+    <div>Settings</div>
+  );
 };

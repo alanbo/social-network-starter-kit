@@ -1,7 +1,7 @@
 db.users.createIndex({ email: 1 }, { unique: true });
 db.users.createIndex({
-  first_name: "text",
-  last_name: "text",
+  given_name: "text",
+  family_name: "text",
   email: "text"
 });
 

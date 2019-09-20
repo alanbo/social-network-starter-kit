@@ -7,6 +7,6 @@ interface UserMongoData extends Omit<UserMongo, 'createdAt'> {
   createdAt: number
 }
 
-export function pickUserBasic({ _id, email, first_name, last_name }: UserMongoData): UserBasic {
-  return { _id, email, first_name, last_name };
+export function pickUserBasic({ _id, email, given_name, family_name }: UserMongoData): UserBasic {
+  return { _id, email, given_name, family_name };
 };

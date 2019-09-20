@@ -9,7 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.522.0",
     "bcrypt": "^3.0.4",
+    "dot-env": "0.0.1",
+    "dotenv": "^8.0.0",
     "faker": "^4.1.0",
     "uuid": "^3.3.2"
   }

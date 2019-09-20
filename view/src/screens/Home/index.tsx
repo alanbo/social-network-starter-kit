@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
+import { RouteComponentProps } from '@reach/router';
 
-export default class Home extends Component {
-  render() {
-    return (
-      <div>Home</div>
-    );
-  }
+export default (props: RouteComponentProps) => {
+  return (
+    <div>Home</div>
+  );
 };

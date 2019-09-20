@@ -10,10 +10,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import IconButton from '@material-ui/core/IconButton';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import classNames from 'classnames';
-
-import { AppState } from '../../redux/reducers';
-import { clearNotification } from '../../redux/actions/actionCreators';
-import { Notification } from '../../redux/reducers/notificationsReducer';
+import { User } from '../../apollo/client-schema';
 
 import { withStyles } from '@material-ui/core/styles';
 import styles, { SnackbarNotificationStyles } from './styles';
@@ -36,6 +33,12 @@ const variantIcon: { [ix: string]: ComponentType<SvgIconProps> } = {
 interface Props extends SnackbarNotificationStyles {
   notification: Notification | null,
   clearNotification: (id: string) => void
+}
+
+export interface Notification {
+  type: 'error' | 'info' | 'success',
+  msg: string,
+  id: string
 }
 
 interface State {
@@ -116,28 +119,5 @@ class SnackbarNotification extends Component<Props, State> {
   }
 }
 
-function mapStateToProps(state: AppState) {
-  let notification: Notification | null;
-  let err_len = state.notifications.length;
 
-  // TO DO: add possible warning and info notifications if added to redux store
-  if (err_len) {
-    notification = {
-      type: 'error',
-      msg: state.notifications[err_len - 1].msg,
-      id: state.notifications[err_len - 1].id
-    }
-  } else {
-    notification = null;
-  }
-
-  return {
-    notification
-  }
-};
-
-
-export default connect(
-  mapStateToProps,
-  { clearNotification }
-)(withStyles(styles)(SnackbarNotification));
+export default withStyles(styles)(SnackbarNotification);

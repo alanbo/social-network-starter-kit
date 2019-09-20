@@ -1,43 +1,29 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { AppState } from '../../redux/reducers';
-import { $PropertyType } from 'utility-types';
-import { gqlUserPosts } from '../../redux/actions/gql-thunks';
-import PostCardList from '../../redux-wrapped-components/PostCardList';
+import React from 'react';
+import { GetUserPosts } from '../../graphql/operation-result-types';
+import { USER_POSTS } from '../../graphql/queries/user-queries';
+import { GET_USER, GetUser } from '../../apollo/resolvers';
+import PostCardList from '../../apollo-wrapped-components/PostCardList';
+import { RouteComponentProps } from '@reach/router';
+import { useQuery } from '@apollo/react-hooks';
 
-interface Props {
-  posts: $PropertyType<AppState, 'user_posts'>,
-  gqlUserPosts: (variables: void) => void
-}
+interface Props extends RouteComponentProps { };
 
-class Profile extends Component<Props> {
-  componentWillMount() {
-    this.props.gqlUserPosts();
-  }
+export default function (props: Props) {
+  const { data } = useQuery<GetUserPosts>(USER_POSTS);
+  const { data: user_data } = useQuery<GetUser>(GET_USER);
+  const user = user_data && user_data.getUser ? user_data.getUser : null;
 
-  render() {
-    const { posts } = this.props;
+  const posts = data && data.user && data.user.posts ? data.user.posts : null;
 
-    return (
-      <div>
-        <div>Profile</div>
-        {
-          // there is an issue with connect typescript
-          // it doesn't correctly pass required props
-          // TO DO: find more appropriate solution.
-          // @ts-ignore
-          posts && <PostCardList posts={posts} is_owner={true} />
-        }
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h1>Profile</h1>
+      {
+        user && posts && (
+          <PostCardList posts={posts} is_owner={false} user={user} />
+        )
+      }
+    </div>
+  );
 };
 
-function mapStateToProps(state: AppState) {
-  return {
-    posts: state.user_posts
-  }
-
-}
-
-export default connect(mapStateToProps, { gqlUserPosts })(Profile);

@@ -13,8 +13,8 @@ export const post_fragment = gql`
     user {
       _id
       email
-      first_name
-      last_name
+      given_name
+      family_name
     }
   }
 `;
@@ -26,8 +26,8 @@ export const comments_fragment = gql`
       _id
       createdAt
       user {
-        first_name
-        last_name
+        given_name
+        family_name
         _id
       }
     }
@@ -80,8 +80,8 @@ export const ADD_COMMENT = gql`
       createdAt
       user {
         _id
-        first_name
-        last_name
+        given_name
+        family_name
         email
       }
     }

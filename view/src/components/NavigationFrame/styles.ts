@@ -1,8 +1,9 @@
-import { createStyles, WithStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
+import { AppTheme } from '../../';
 
 const drawerWidth = 240;
 
-const styles = (theme: any) => createStyles({
+export default makeStyles<AppTheme>(theme => ({
   root: {
     flexGrow: 1,
     zIndex: 1,
@@ -48,9 +49,9 @@ const styles = (theme: any) => createStyles({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    width: theme.spacing.unit * 7,
+    width: theme.spacing(7),
     [theme.breakpoints.up('sm')]: {
-      width: theme.spacing.unit * 9,
+      width: theme.spacing(9),
     },
   },
   toolbar: {
@@ -63,8 +64,8 @@ const styles = (theme: any) => createStyles({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
-    paddingTop: theme.spacing.unit * 8,
+    padding: theme.spacing(3),
+    paddingTop: theme.spacing(8),
     overflow: 'auto'
   },
   flex: {
@@ -74,8 +75,5 @@ const styles = (theme: any) => createStyles({
     marginRight: '20px',
     marginLeft: '20px',
   }
-});
+}));
 
-export default styles;
-
-export interface NavigationFrameStyles extends WithStyles<typeof styles> { }

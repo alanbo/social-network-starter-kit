@@ -14,13 +14,13 @@ export interface GetPosts_posts_likes {
 export interface GetPosts_posts_user {
   _id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
 }
 
 export interface GetPosts_posts_comments_user {
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
   _id: string;
 }
 
@@ -65,8 +65,8 @@ export interface AddPost_addPost_likes {
 export interface AddPost_addPost_user {
   _id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
 }
 
 export interface AddPost_addPost {
@@ -101,8 +101,8 @@ export interface DeletePost_deletePost_likes {
 export interface DeletePost_deletePost_user {
   _id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
 }
 
 export interface DeletePost_deletePost {
@@ -137,8 +137,8 @@ export interface UpdatePost_updatePost_likes {
 export interface UpdatePost_updatePost_user {
   _id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
 }
 
 export interface UpdatePost_updatePost {
@@ -168,8 +168,8 @@ export interface UpdatePostVariables {
 
 export interface AddComment_addComment_user {
   _id: string;
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
   email: string;
 }
 
@@ -262,43 +262,16 @@ export interface UnlikePostVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: Login
-// ====================================================
-
-export interface Login_user {
-  _id: string;
-  last_name: string;
-  first_name: string;
-  email: string;
-  gender: string;
-  createdAt: any;
-  phone_number: string;
-}
-
-export interface Login {
-  user: Login_user;
-}
-
-export interface LoginVariables {
-  email: string;
-  password: string;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: UserQuery
 // ====================================================
 
 export interface UserQuery_user {
   _id: string;
-  last_name: string;
-  first_name: string;
+  family_name: string;
+  given_name: string;
   email: string;
   gender: string;
-  createdAt: any;
+  birthdate: string;
   phone_number: string;
 }
 
@@ -311,25 +284,13 @@ export interface UserQuery {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: Logout
-// ====================================================
-
-export interface Logout {
-  logout: boolean;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GetUserFriends
 // ====================================================
 
 export interface GetUserFriends_user_friends {
   _id: string;
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
   email: string;
 }
 
@@ -356,13 +317,13 @@ export interface GetUserPosts_user_posts_likes {
 export interface GetUserPosts_user_posts_user {
   _id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
 }
 
 export interface GetUserPosts_user_posts_comments_user {
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
   _id: string;
 }
 
@@ -396,80 +357,6 @@ export interface GetUserPosts {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: CreateUser
-// ====================================================
-
-export interface CreateUser_createUser {
-  _id: string;
-  last_name: string;
-  first_name: string;
-  email: string;
-  gender: string;
-  createdAt: any;
-  phone_number: string;
-}
-
-export interface CreateUser {
-  createUser: CreateUser_createUser;
-}
-
-export interface CreateUserVariables {
-  data: UserInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: UpdateUser
-// ====================================================
-
-export interface UpdateUser_updateUser {
-  _id: string;
-  last_name: string;
-  first_name: string;
-  email: string;
-  gender: string;
-  createdAt: any;
-  phone_number: string;
-}
-
-export interface UpdateUser {
-  updateUser: UpdateUser_updateUser;
-}
-
-export interface UpdateUserVariables {
-  data: UserInputOpt;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: DeleteUser
-// ====================================================
-
-export interface DeleteUser_deleteUser {
-  _id: string;
-  last_name: string;
-  first_name: string;
-  email: string;
-  gender: string;
-  createdAt: any;
-  phone_number: string;
-}
-
-export interface DeleteUser {
-  deleteUser: DeleteUser_deleteUser;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL fragment: PostFragment
 // ====================================================
 
@@ -480,8 +367,8 @@ export interface PostFragment_likes {
 export interface PostFragment_user {
   _id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
 }
 
 export interface PostFragment {
@@ -502,8 +389,8 @@ export interface PostFragment {
 // ====================================================
 
 export interface CommentsFragment_comments_user {
-  first_name: string;
-  last_name: string;
+  given_name: string | null;
+  family_name: string | null;
   _id: string;
 }
 
@@ -528,11 +415,11 @@ export interface CommentsFragment {
 
 export interface UserFragment {
   _id: string;
-  last_name: string;
-  first_name: string;
+  family_name: string;
+  given_name: string;
   email: string;
   gender: string;
-  createdAt: any;
+  birthdate: string;
   phone_number: string;
 }
 
@@ -560,25 +447,6 @@ export interface PostInputUpdate {
   visible_to_add?: string[] | null;
   visible_to_delete?: string[] | null;
   visible_to_replace?: string[] | null;
-}
-
-// null
-export interface UserInput {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone_number: string;
-  gender: string;
-  password: string;
-}
-
-// null
-export interface UserInputOpt {
-  first_name?: string | null;
-  last_name?: string | null;
-  email?: string | null;
-  phone_number?: string | null;
-  gender?: string | null;
 }
 
 //==============================================================

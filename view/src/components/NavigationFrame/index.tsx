@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -7,15 +7,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import styles, { NavigationFrameStyles } from './styles';
 import MenuList, { DataItem } from './MenuList';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
-import { connect } from 'react-redux';
-import { gqlLogout } from '../../redux/actions/gql-thunks';
-import { AppState } from '../../redux/reducers';
-import { UserState } from '../../redux/reducers/userReducer';
 import LoadingIndicator from '../LoadingIndicator';
+import { User } from '../../apollo/client-schema';
+import useStyles from './styles';
 
 const fg_list: Array<DataItem> = [
   {
@@ -40,88 +37,96 @@ const fg_list: Array<DataItem> = [
   }
 ];
 
-interface Props extends NavigationFrameStyles {
+interface Props {
   signOut: () => any,
   children: React.ReactNode,
-  gqlLogout: Function,
-  user: UserState,
-  loading: Boolean
+  user: User | null,
+  // loading: Boolean
 }
 
 interface State {
   open: boolean
 }
 
-class NavigationFrame extends React.Component<Props, State> {
-  state = {
-    open: false,
-  };
+export default (props: Props) => {
+  const [open, setOpen] = useState(false);
+  const classes = useStyles();
 
-  signOut() {
-    this.props.gqlLogout();
-    this.props.signOut();
+  function signOut() {
+    props.signOut();
   }
 
-  handleDrawerOpen = () => {
-    this.setState({ open: true });
+  const handleDrawerOpen = () => {
+    setOpen(true);
   };
 
-  handleDrawerClose = () => {
-    this.setState({ open: false });
+  const handleDrawerClose = () => {
+    setOpen(false);
   };
 
-  render() {
-    const { classes, user } = this.props;
+  const { user } = props;
+  let user_string = '';
 
-    return (
-      <div className={classes.root}>
-        <AppBar
-          position="absolute"
-          className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
-        >
-          <Toolbar disableGutters={!this.state.open}>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={this.handleDrawerOpen}
-              className={classNames(classes.menuButton, this.state.open && classes.hide)}
-            >
-              <MenuIcon />
-            </IconButton>
+  if (user) {
+    if (user.given_name) {
+      user_string = user.given_name;
 
-            {
-              user && (
-                <Grid container justify="flex-end" alignItems="center">
-                  {`${user.first_name} ${user.last_name}`}
-                  <Avatar alt={'Profile Photo'} src="https://picsum.photos/300/300" className={classes.avatar} />
-                </Grid>
-              )
-            }
-          </Toolbar>
-
-        </AppBar>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
-          }}
-          open={this.state.open}
-        >
-          <div className={classes.toolbar}>
-            <IconButton onClick={this.handleDrawerClose}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </div>
-          <MenuList signOut={this.signOut.bind(this)} fragments_list={fg_list} />
-        </Drawer>
-        <main className={classes.content}>
-          {this.props.children}
-          {this.props.loading && <LoadingIndicator />}
-        </main>
-      </div>
-    );
+      if (user.family_name) {
+        user_string += ` ${user.family_name}`;
+      }
+    } else if (user.nickname) {
+      user_string = user.nickname;
+    } else {
+      user_string = user.email;
+    }
   }
+
+  return (
+    <div className={classes.root}>
+      <AppBar
+        position="absolute"
+        className={classNames(classes.appBar, open && classes.appBarShift)}
+      >
+        <Toolbar disableGutters={!open}>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            className={classNames(classes.menuButton, open && classes.hide)}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          {
+            user && (
+              <Grid container justify="flex-end" alignItems="center">
+                {user_string}
+                <Avatar alt={'Profile Photo'} src="https://picsum.photos/300/300" className={classes.avatar} />
+              </Grid>
+            )
+          }
+        </Toolbar>
+
+      </AppBar>
+      <Drawer
+        variant="permanent"
+        classes={{
+          paper: classNames(classes.drawerPaper, !open && classes.drawerPaperClose),
+        }}
+        open={open}
+      >
+        <div className={classes.toolbar}>
+          <IconButton onClick={handleDrawerClose}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </div>
+        <MenuList signOut={signOut} fragments_list={fg_list} />
+      </Drawer>
+      <main className={classes.content}>
+        {props.children}
+        {/* {this.props.loading && <LoadingIndicator />} */}
+      </main>
+    </div>
+  );
 }
-
-export default withStyles(styles)(NavigationFrame);
 

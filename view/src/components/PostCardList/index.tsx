@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import styles, { PostCardListStyles } from './styles';
 import PostCard from '../PostCard';
 import { GetPosts_posts } from '../../graphql/operation-result-types';
+import { User } from '../../apollo/client-schema';
 import {
   AddCommentVariables,
   RemoveCommentVariables,
@@ -13,11 +14,11 @@ import {
   LikePostVariables
 } from '../../graphql/operation-result-types'
 
-import { DeepReadonly, $PropertyType } from 'utility-types';
-import { AppState } from '../../redux/reducers';
 
 interface Props extends PostCardListStyles {
   posts: GetPosts_posts[],
+  user: User,
+  is_owner: boolean
   onAddComment: (variables: AddCommentVariables) => void,
   onRemoveComment: (variables: RemoveCommentVariables) => void,
   onUpdateComment: (variables: UpdateCommentVariables) => void
@@ -25,8 +26,6 @@ interface Props extends PostCardListStyles {
   onDeletePost?: (variables: DeletePostVariables) => void,
   onLikePost: (variables: LikePostVariables) => void,
   onUnlikePost: (variables: UnlikePostVariables) => void,
-  user: $PropertyType<AppState, 'user'>,
-  is_owner: boolean
 }
 
 function PostCardList(props: Props) {
@@ -51,7 +50,7 @@ function PostCardList(props: Props) {
           const post_card_props = {
             text: post.message,
             date: new Date(post.createdAt),
-            author: `${post.user.first_name} ${post.user.last_name}`,
+            author: `${post.user.given_name} ${post.user.family_name}`,
             key: post._id,
             comments: post.comments || [],
             post_id: post._id,

@@ -5,8 +5,8 @@ query GetUser($email: String!) {
 
     friends {
       _id
-      first_name
-      last_name
+      given_name
+      family_name
       email
     }
   }

@@ -4,7 +4,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
-import { Link } from 'react-router-dom'
+import { Link } from '@reach/router';
 import Divider from '@material-ui/core/Divider';
 
 interface MenuLinkProps {
@@ -39,7 +39,7 @@ type MenuListProps = {
 export default ({ signOut, fragments_list }: MenuListProps) => {
   return (
     <div>
-      <List component="nav">
+      <List>
         {
           fragments_list.map(({ path, icon, type }) => (
             <MenuLink to={path} icon={icon} text={type} key={type} />
@@ -47,7 +47,7 @@ export default ({ signOut, fragments_list }: MenuListProps) => {
         }
       </List>
       <Divider />
-      <List component="nav">
+      <List>
         <ListItem button onClick={signOut}>
           <ListItemIcon>
             <Icon>power_settings_new</Icon>

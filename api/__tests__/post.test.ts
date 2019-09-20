@@ -51,9 +51,9 @@ const USERS_LOGIN_DATA = JSON.parse(fs.readFileSync(`${__dirname}/mongo-data/use
 const tester = new ApolloMongoTester(USERS_DATA, POSTS_DATA, USERS_DATA[0]);
 
 function getUserBasic(user: UserMongo) {
-  const { _id, email, first_name, last_name } = user;
+  const { _id, email, given_name, family_name } = user;
 
-  return { _id, email, first_name, last_name };
+  return { _id, email, given_name, family_name };
 }
 
 const NEW_POST_INPUT: PostInput = {

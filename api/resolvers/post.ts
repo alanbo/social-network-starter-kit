@@ -45,12 +45,7 @@ export class PostResolver {
     @Arg('search', type => String, { nullable: true }) search?: string,
   ): Promise<PostMongo[] | Error> {
 
-    // User must be logged in to search posts.
-    if (!context.session.user) {
-      return new Error('The user must be logged in');
-    }
-
-    const { _id } = context.session.user;
+    const { sub: _id } = context.user;
 
     const query: PostsQuery = { visible_to: _id };
 
@@ -79,15 +74,11 @@ export class PostResolver {
     @Arg('id', type => ID) id: string,
   ): Promise<PostMongo | Error> {
 
-    const { session, posts_col } = context;
-
-    if (!session.user) {
-      return new Error('User must be logged in');
-    }
+    const { user, posts_col } = context;
 
     try {
       const post = await posts_col.findOneAndDelete(
-        { _id: id, user: session.user._id },
+        { _id: id, user: user.sub },
         // TO DO: simple projection returns null here
         // find a fix or replacement
         // { projection: simpleProjection(info) }
@@ -109,18 +100,14 @@ export class PostResolver {
     @Info() info: GraphQLResolveInfo,
     @Arg('data', type => PostInput) data: PostInput,
   ): Promise<PostMongo | Error> {
-    const { session, posts_col, users_col } = context;
+    const { user, posts_col, users_col } = context;
 
-    if (!session.user) {
-      return new Error('User must be logged in');
-    }
-
-    const to_insert = { ...data, createdAt: new Date(), _id: uuid(), user: session.user._id };
+    const to_insert = { ...data, createdAt: new Date(), _id: uuid(), user: user.sub };
 
     // if visible_to is not specified add all friends. 
     if (!to_insert.visible_to) {
       const { friends } = await users_col.findOne(
-        { _id: session.user._id },
+        { _id: user.sub },
         { projection: { friends: 1, _id: 0 } }
       );
 
@@ -141,13 +128,13 @@ export class PostResolver {
     @Ctx() context: Context,
     @Arg('post_id') post_id: string,
   ): Promise<Boolean | Error> {
-    const { session, posts_col, users_col } = context;
+    const { user, posts_col, users_col } = context;
 
-    if (!session.user) {
-      return new Error('User must be logged in');
-    }
 
-    const user_basic: UserBasic = R.pick(['_id', 'email', 'first_name', 'last_name'], session.user);
+    const user_basic: UserBasic = R.merge(
+      { _id: user.sub },
+      R.pick(['email', 'given_name', 'family_name'], user)
+    );
 
     try {
       await posts_col.updateOne(
@@ -170,13 +157,12 @@ export class PostResolver {
     @Ctx() context: Context,
     @Arg('post_id') post_id: string,
   ): Promise<Boolean | Error> {
-    const { session, posts_col, users_col } = context;
+    const { user, posts_col, users_col } = context;
 
-    if (!session.user) {
-      return new Error('User must be logged in');
-    }
-
-    const user_basic: UserBasic = R.pick(['_id', 'email', 'first_name', 'last_name'], session.user);
+    const user_basic: UserBasic = R.merge(
+      { _id: user.sub },
+      R.pick(['email', 'given_name', 'family_name'], user)
+    );
 
     try {
       await posts_col.updateOne(
@@ -200,11 +186,7 @@ export class PostResolver {
     @Info() info: GraphQLResolveInfo,
     @Arg('data', type => PostInputUpdate) data: PostInputUpdate,
   ): Promise<PostMongo | Error> {
-    const { session, posts_col } = context;
-
-    if (!session.user) {
-      return new Error('User must be logged in');
-    }
+    const { posts_col } = context;
 
     const update_expr: UpdateQuery<PostMongo> = {};
 
@@ -242,7 +224,7 @@ export class PostResolver {
 
     try {
       return posts_col.findOneAndUpdate(
-        { _id: data._id, user: session.user._id },
+        { _id: data._id, user: context.user.sub },
         update_expr,
         { returnOriginal: false }
       ).then(result => result.value);
@@ -264,7 +246,7 @@ export class PostResolver {
       return new Error('User must be logged in');
     }
 
-    const { _id, first_name, last_name, email } = session.user;
+    const { sub: _id, given_name, family_name, email } = context.user;
 
     const comment: Comment = {
       _id: uuid(),
@@ -272,8 +254,8 @@ export class PostResolver {
       message,
       user: {
         _id,
-        first_name,
-        last_name,
+        given_name,
+        family_name,
         email
       }
     }
@@ -300,13 +282,9 @@ export class PostResolver {
     @Arg('comment_id', type => ID) comment_id: string,
     @Arg('message', type => String) message: string,
   ): Promise<Boolean | Error> {
-    const { session, posts_col } = context;
+    const { user, posts_col } = context;
 
-    if (!session.user) {
-      return new Error('User must be logged in');
-    }
-
-    const { _id } = session.user;
+    const { sub: _id } = user;
 
     try {
       const query: FilterQuery<PostMongo> = {
@@ -343,13 +321,9 @@ export class PostResolver {
     @Arg('comment_id', type => ID) comment_id: string,
     @Arg('post_owner', type => Boolean, { nullable: true }) post_owner = false
   ): Promise<string | Error> {
-    const { session, posts_col } = context;
+    const { user, posts_col } = context;
 
-    if (!session.user) {
-      return new Error('User must be logged in');
-    }
-
-    const { _id } = session.user;
+    const { sub: _id } = user;
 
     // Post owner can delete any comment.
     let update_expr: UpdateQuery<PostMongo> = { $pull: { comments: { _id: comment_id } } };

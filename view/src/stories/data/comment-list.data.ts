@@ -5,8 +5,8 @@ export const comments = [
     "createdAt": "2018-06-06T17:50:31.731Z",
     "user": {
       "_id": "6039d177-8f5d-4883-83e0-3f82c1b4f392",
-      "first_name": "Ryann",
-      "last_name": "Bahringer",
+      "given_name": "Ryann",
+      "family_name": "Bahringer",
       "email": "crystel_sawayn51@gmail.com"
     }
   },
@@ -16,8 +16,8 @@ export const comments = [
     "createdAt": "2019-03-15T22:57:47.201Z",
     "user": {
       "_id": "6039d177-8f5d-4883-83e0-3f82c1b4f392",
-      "first_name": "Ryann",
-      "last_name": "Bahringer",
+      "given_name": "Ryann",
+      "family_name": "Bahringer",
       "email": "crystel_sawayn51@gmail.com"
     }
   },
@@ -27,8 +27,8 @@ export const comments = [
     "createdAt": "2019-04-14T13:07:06.945Z",
     "user": {
       "_id": "6039d177-8f5d-4883-83e0-3f82c1b4f392",
-      "first_name": "Ryann",
-      "last_name": "Bahringer",
+      "given_name": "Ryann",
+      "family_name": "Bahringer",
       "email": "crystel_sawayn51@gmail.com"
     }
   }

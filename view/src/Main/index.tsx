@@ -1,22 +1,21 @@
-import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom'
-import { connect } from 'react-redux';
+import React from 'react';
 
 import Settings from '../screens/Settings';
 import Dashboard from '../screens/Dashboard';
 import Profile from '../screens/Profile';
 import Bookmarks from '../screens/Bookmarks';
 import Login from '../screens/Login';
+import { Router } from "@reach/router"
 
 
 const main = () => (
-  <Switch>
-    <Route exact path='/' component={Dashboard} />
-    <Route path='/profile' component={Profile} />
-    <Route path='/bookmarks' component={Bookmarks} />
-    <Route path='/settings' component={Settings} />
-    <Route path='/login' component={Login} />
-  </Switch>
+  <Router>
+    <Dashboard path='/' />
+    <Profile path='/profile' />
+    <Bookmarks path='/bookmarks' />
+    <Settings path='/settings' />
+    <Login path='/login' />
+  </Router>
 );
 
 export default main;
