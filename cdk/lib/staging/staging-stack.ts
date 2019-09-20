@@ -23,6 +23,18 @@ export default class StagingStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: Props) {
     super(scope, id, props);
 
+    const user_pool = new cognito.UserPool(this, 'StagingUserPool', {
+      signInType: cognito.SignInType.EMAIL,
+      autoVerifiedAttributes: [cognito.UserPoolAttribute.EMAIL]
+    });
+
+    this.user_pool_id = user_pool.userPoolId;
+
+    const cognito_client = new cognito.UserPoolClient(this, 'StagingUserPoolClient', {
+      userPool: user_pool
+    });
+
+    this.client_id = cognito_client.userPoolClientId;
     this.deploy_bucket = new s3.Bucket(this, 'DeployBucket', {
       websiteIndexDocument: 'index.html'
     });
@@ -31,6 +43,14 @@ export default class StagingStack extends cdk.Stack {
 
     this.distribution = new cloudfront.CloudFrontWebDistribution(this, 'Distribution', {
       defaultRootObject: 'index.html',
+      errorConfigurations: [
+        // we want react app to do the routing, redirect invalid s3 routes to index.html
+        {
+          errorCode: 403,
+          responseCode: 200,
+          responsePagePath: '/index.html'
+        }
+      ],
       originConfigs: [
         {
           s3OriginSource: {
@@ -43,7 +63,8 @@ export default class StagingStack extends cdk.Stack {
           }]
         }
       ],
-      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.ALLOW_ALL
+      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.ALLOW_ALL,
+
     });
 
     const vpc = new ec2.Vpc(this, "StagingVpc", {
@@ -100,7 +121,9 @@ export default class StagingStack extends cdk.Stack {
       }),
       environment: {
         MONGO_URI: props.staging_secret.secretValueFromJson('MongoURI').toString(),
-        AUTH_SECRET: props.staging_secret.secretValueFromJson('RandomString').toString()
+        AUTH_SECRET: props.staging_secret.secretValueFromJson('RandomString').toString(),
+        USER_POOL_ID: this.user_pool_id,
+        AWS_REGION: this.region
       }
     });
 
@@ -115,18 +138,5 @@ export default class StagingStack extends cdk.Stack {
       maxHealthyPercent: 100,
       minHealthyPercent: 0
     });
-
-    const user_pool = new cognito.UserPool(this, 'StagingUserPool', {
-      signInType: cognito.SignInType.EMAIL,
-      autoVerifiedAttributes: [cognito.UserPoolAttribute.EMAIL]
-    });
-
-    this.user_pool_id = user_pool.userPoolId;
-
-    const cognito_client = new cognito.UserPoolClient(this, 'StagingUserPoolClient', {
-      userPool: user_pool
-    });
-
-    this.client_id = cognito_client.userPoolClientId;
   }
 }

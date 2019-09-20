@@ -81,10 +81,10 @@ export default class PipelineStack extends cdk.Stack {
           'REACT_APP_API_URI': {
             value: props.api_url
           },
-          'REACT_USER_POOL_ID': {
+          'REACT_APP_USER_POOL_ID': {
             value: props.user_pool_id
           },
-          'REACT_CLIENT_ID': {
+          'REACT_APP_CLIENT_ID': {
             value: props.client_id
           },
           'SECRET_ARN': {
