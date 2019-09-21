@@ -18,7 +18,7 @@ import MoreButtonMenu from '../MoreButtonMenu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import TextInput from '../TextInput';
-import { User } from '../../apollo/client-schema';
+import { User } from '../../apollo/types/user';
 
 import {
   AddCommentVariables,

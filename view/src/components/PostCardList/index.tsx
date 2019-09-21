@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import styles, { PostCardListStyles } from './styles';
 import PostCard from '../PostCard';
 import { GetPosts_posts } from '../../graphql/operation-result-types';
-import { User } from '../../apollo/client-schema';
+import { User } from '../../apollo/types/user';
 import {
   AddCommentVariables,
   RemoveCommentVariables,

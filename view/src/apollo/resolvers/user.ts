@@ -1,8 +1,8 @@
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 // import * as AWS from 'aws-sdk/global';
 
-import { Resolvers, gql, InMemoryCache, ApolloClient } from "apollo-boost";
-import { User } from './client-schema';
+import { Resolvers, gql, InMemoryCache, ApolloClient } from 'apollo-boost';
+import { User } from '../types/user';
 
 var poolData = {
   UserPoolId: process.env.REACT_APP_USER_POOL_ID as string,

@@ -1,7 +1,7 @@
 import React from 'react';
 import PostCardList from '../components/PostCardList';
 import { GetPosts_posts } from '../graphql/operation-result-types';
-import { User } from '../apollo/client-schema';
+import { User } from '../apollo/types/user';
 
 interface Props {
   posts: GetPosts_posts[],

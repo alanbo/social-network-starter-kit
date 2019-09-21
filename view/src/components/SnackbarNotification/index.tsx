@@ -10,7 +10,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import IconButton from '@material-ui/core/IconButton';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import classNames from 'classnames';
-import { User } from '../../apollo/client-schema';
+import { User } from '../../apollo/types/user';
 
 import { withStyles } from '@material-ui/core/styles';
 import styles, { SnackbarNotificationStyles } from './styles';

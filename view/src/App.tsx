@@ -5,8 +5,8 @@ import SnackbarNotification from './components/SnackbarNotification';
 import Main from './Main';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
-import { GET_USER, GetUser } from './apollo/resolvers';
-import { User } from './apollo/client-schema';
+import { GET_USER, GetUser } from './apollo/resolvers/user';
+import { User } from './apollo/types/user';
 import { navigate } from '@reach/router';
 
 

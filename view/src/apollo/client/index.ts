@@ -1,15 +1,15 @@
 import ApolloClient from 'apollo-boost';
-import resolvers from '../resolvers';
-import typeDefs from '../client-schema';
-import { getUserToken } from '../resolvers';
+import user_resolvers from '../resolvers/user';
+import user_schema from '../schema/user';
+import { getUserToken } from '../resolvers/user';
 
 
 export default function createApolloClient() {
   return new ApolloClient({
     uri: process.env.REACT_APP_API_URI,
     clientState: {
-      resolvers,
-      typeDefs
+      resolvers: [user_resolvers],
+      typeDefs: [user_schema]
     },
     request: async (operation) => {
       const token = await getUserToken();
