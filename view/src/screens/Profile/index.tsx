@@ -1,7 +1,8 @@
 import React from 'react';
-import { GetUserPosts } from '../../graphql/operation-result-types';
-import { USER_POSTS } from '../../graphql/queries/user-queries';
-import { GET_USER, GetUser } from '../../apollo/resolvers/user';
+import { GetUserPosts } from '../../apollo/queries/api/__generated__/GetUserPosts';
+import { USER_POSTS } from '../../apollo/queries/api/user';
+import { GetUser } from '../../apollo/resolvers/user';
+import { GET_USER } from '../../apollo/queries/client/user';
 import PostCardList from '../../apollo-wrapped-components/PostCardList';
 import { RouteComponentProps } from '@reach/router';
 import { useQuery } from '@apollo/react-hooks';

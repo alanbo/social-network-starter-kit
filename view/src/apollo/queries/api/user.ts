@@ -1,6 +1,6 @@
 
 import gql from 'graphql-tag';
-import { post_fragment, comments_fragment } from './post-queries';
+import { post_fragment, comments_fragment } from './post';
 
 export const user_fragment = gql`
   fragment UserFragment on User {

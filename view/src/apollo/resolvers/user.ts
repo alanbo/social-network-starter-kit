@@ -3,6 +3,7 @@ import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetai
 
 import { Resolvers, gql, InMemoryCache, ApolloClient } from 'apollo-boost';
 import { User } from '../types/user';
+import { GET_USER } from '../queries/client/user';
 
 var poolData = {
   UserPoolId: process.env.REACT_APP_USER_POOL_ID as string,
@@ -42,21 +43,6 @@ interface UserInput {
   [ix: string]: string
 }
 
-export const GET_USER = gql`
-  query GetUser {
-    getUser @client {
-      _id
-      email
-      given_name
-      family_name
-      nickname
-      phone_number
-      gender
-      birthdate
-      email_verified
-    }
-  }
-`;
 
 export interface GetUser {
   getUser: User

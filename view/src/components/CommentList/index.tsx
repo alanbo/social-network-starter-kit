@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import styles, { CommentListStyles } from './styles';
 import { DeepReadonly } from 'utility-types';
-import { CommentsFragment_comments } from '../../graphql/operation-result-types';
+import { CommentsFragment_comments } from '../../apollo/queries/api/__generated__/CommentsFragment';
 
 import CommentItem from '../CommentItem';
 

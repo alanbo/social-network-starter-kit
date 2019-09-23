@@ -1,6 +1,6 @@
 import React from 'react';
 import PostCardList from '../components/PostCardList';
-import { GetPosts_posts } from '../graphql/operation-result-types';
+import { GetPosts_posts } from '../apollo/queries/api/__generated__/GetPosts';
 import { User } from '../apollo/types/user';
 
 interface Props {

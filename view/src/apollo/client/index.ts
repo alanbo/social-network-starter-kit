@@ -1,7 +1,9 @@
 import ApolloClient from 'apollo-boost';
 import user_resolvers from '../resolvers/user';
-import user_schema from '../schema/user';
 import { getUserToken } from '../resolvers/user';
+import { loader } from 'graphql.macro';
+
+const user_schema = loader('../schema/user.graphql');
 
 
 export default function createApolloClient() {

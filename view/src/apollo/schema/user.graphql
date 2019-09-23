@@ -1,6 +1,4 @@
-import { gql } from 'apollo-boost';
 
-export default gql`
   type UserAuth {
     _id: ID!
     email: String!
@@ -38,5 +36,4 @@ export default gql`
   extend type Query {
     getUser: UserAuth
   }
-`;
 
