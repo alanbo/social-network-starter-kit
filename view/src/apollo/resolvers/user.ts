@@ -1,48 +1,9 @@
-import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
-// import * as AWS from 'aws-sdk/global';
-
-import { Resolvers, gql, InMemoryCache, ApolloClient } from 'apollo-boost';
+import { Resolvers, InMemoryCache, ApolloClient } from 'apollo-boost';
 import { User } from '../types/user';
 import { GET_USER } from '../queries/client/user';
+import UserAuth, { UserInput } from '../../utils/userAuth';
 
-var poolData = {
-  UserPoolId: process.env.REACT_APP_USER_POOL_ID as string,
-  ClientId: process.env.REACT_APP_CLIENT_ID as string
-};
-
-var userPool = new CognitoUserPool(poolData);
-var cognitoUser = userPool.getCurrentUser();
-
-export async function getUserToken() {
-  if (!cognitoUser) {
-    return Promise.reject();
-  }
-
-  return new Promise((resolve, reject) => {
-    cognitoUser!.getSession((err: Error, result: any) => {
-      if (err) {
-        reject(err);
-      }
-
-      const token = result.idToken.jwtToken;
-
-      resolve(token);
-    });
-  })
-}
-
-interface UserInput {
-  email: string,
-  password: string,
-  given_name: string,
-  family_name: string,
-  nickname: string,
-  phone_number: string,
-  gender: string,
-  birthdate: string
-  [ix: string]: string
-}
-
+export const user_auth = new UserAuth();
 
 export interface GetUser {
   getUser: User
@@ -52,243 +13,101 @@ interface UserInputVariables {
   data: UserInput
 }
 
-function userScaffold() {
-  return {
-    _id: '',
-    email: '',
-    given_name: null,
-    family_name: null,
-    nickname: null,
-    phone_number: null,
-    gender: null,
-    birthdate: null,
-    email_verified: null,
-    __typename: 'UserAuth'
-  }
-}
-
 // TO DO: add proper error handling.
 const resolvers: Resolvers = {
   Mutation: {
-    createAuthUser: async (_root, variables: UserInputVariables, { cache, getCacheKey }) => {
-      const { email, password } = variables.data;
+    createAuthUser: async (_root, variables: UserInputVariables) => {
 
-      const attributeList = Object.keys(variables.data)
-        .filter(key => key !== 'password')
-        .map(Name =>
-          new CognitoUserAttribute({ Name, Value: variables.data[Name] }));
+      try {
+        await user_auth.createUser(variables.data);
+        return true;
 
-      userPool.signUp(email, password, attributeList, [], function (err, result) {
-        if (err) {
-          // TO DO: add user feedback
-          console.log(err.message || JSON.stringify(err));
-          return false;
-        }
-
-        cognitoUser = result!.user;
-      });
-      return null;
+      } catch (e) {
+        return false;
+      }
     },
 
-    loginUser: (_root, variables: { email: string, password: string }, { cache, getCacheKey }) => {
-
+    loginUser: async (_root, variables: { email: string, password: string }, { cache }) => {
       const { email, password } = variables;
 
-      if (!cognitoUser) {
-        const userData = {
-          Username: email,
-          Pool: userPool
-        };
+      try {
+        await user_auth.loginUser(email, password);
 
-        cognitoUser = new CognitoUser(userData);
+        const user_data = await user_auth.getUserData();
+        (cache as InMemoryCache).writeQuery({ query: GET_USER, data: { getUser: user_data } });
+
+        return user_data;
+      } catch (e) {
+        return null;
       }
-
-      var authenticationData = {
-        Username: email,
-        Password: password,
-      };
-      var authenticationDetails = new AuthenticationDetails(authenticationData);
-
-      return new Promise((resolve, reject) => {
-        cognitoUser!.authenticateUser(authenticationDetails, {
-          onSuccess: function (result) {
-            // var accessToken = result.getAccessToken().getJwtToken();
-
-            cognitoUser!.getUserAttributes((err, result) => {
-              if (err) {
-                reject(err);
-                return;
-              }
-
-              const user_data: { [ix: string]: any } = userScaffold();
-
-              result!.forEach(item => {
-                const name = item.getName()
-                const value = item.getValue();
-
-                // turn sub value into _id
-                const key = name === 'sub' ? '_id' : name;
-
-                user_data[key] = value;
-              });
-
-              (cache as InMemoryCache).writeQuery({ query: GET_USER, data: { getUser: user_data } });
-
-              resolve(user_data);
-            });
-
-            /* Use the idToken for Logins Map when Federating User Pools with identity pools or when passing through an Authorization Header to an API Gateway Authorizer*/
-            // var idToken = result.idToken.jwtToken;
-          },
-
-          onFailure: function (err) {
-            reject(err);
-          },
-        });
-      });
     },
 
-    logoutUser: (_root, variables, { client }) => {
-      if (cognitoUser != null) {
-        cognitoUser.signOut();
-        console.log(client);
+    logoutUser: async (_, __, { client }) => {
+      try {
+        await user_auth.logoutUser();
         (client as ApolloClient<any>).resetStore();
+
+        return false;
+
+      } catch (e) {
         return true;
       }
-
-      return false;
     },
 
-    confirmUser: (_root, variables: { code: string }, { cache, getCacheKey }) => {
-      return new Promise((resolve, reject) => {
-        if (cognitoUser) {
-          cognitoUser.confirmRegistration(variables.code, true, function (err, result) {
-            if (err) {
-              reject(err);
-            }
-
-            resolve(true);
-          });
-
-        } else {
-          reject(new Error('No user to confirm'));
-        }
-      });
-    },
-
-    resendConfirmationCode: () => {
-      if (!cognitoUser) {
+    confirmUser: async (_, variables: { code: string }) => {
+      try {
+        await user_auth.confirmUser(variables.code);
+        return true;
+      } catch (e) {
         return false;
       }
-
-      return new Promise((resolve, reject) => {
-        cognitoUser!.resendConfirmationCode(function (err, result) {
-          if (err) {
-            reject(err);
-            return;
-          }
-          resolve(true);
-        });
-      });
     },
 
-    changePassword: (__root, variables: { old_password: string, new_password: string }) => {
-      if (!cognitoUser) {
+    resendConfirmationCode: async () => {
+      try {
+        await user_auth.resendConfirmationCode();
+        return true;
+      } catch (e) {
         return false;
       }
+    },
 
+    changePassword: async (_, variables: { old_password: string, new_password: string }) => {
       const { old_password, new_password } = variables;
+      try {
+        await user_auth.changePassword(old_password, new_password);
+        return true;
 
-      return new Promise((resolve, reject) => {
-        cognitoUser!.changePassword(old_password, new_password, function (err, result) {
-          if (err) {
-            reject(err);
-            return;
-          }
-
-          resolve(true);
-          console.log('call result: ' + result);
-        });
-      });
-    },
-
-    forgotPasswordInit: (__root, variables: { email: string }) => {
-      const { email } = variables;
-
-      if (!cognitoUser) {
-        const userData = {
-          Username: email,
-          Pool: userPool
-        };
-
-        cognitoUser = new CognitoUser(userData);
-      }
-
-      return new Promise((resolve, reject) => {
-        cognitoUser!.forgotPassword({
-          onFailure: () => resolve(false),
-          onSuccess: () => resolve(true)
-        });
-      });
-    },
-
-    forgotPasswordConfirm: (__root, variables: { new_password: string, code: string }) => {
-      const { new_password, code } = variables;
-
-      if (!cognitoUser) {
+      } catch (e) {
         return false;
       }
+    },
 
-      return new Promise((resolve, reject) => {
-        cognitoUser!.confirmPassword(code, new_password, {
-          onFailure: () => resolve(false),
-          onSuccess: () => resolve(true)
-        });
-      });
+    forgotPasswordInit: async (_, variables: { email: string }) => {
+      try {
+        await user_auth.forgotPasswordInit(variables.email);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
+
+    forgotPasswordConfirm: async (_, variables: { new_password: string, code: string }) => {
+      const { new_password, code } = variables;
+      try {
+        await user_auth.forgotPasswordConfirm(new_password, code);
+        return true;
+      } catch (e) {
+        return false;
+      }
     },
   },
   Query: {
     getUser: async () => {
-      if (!cognitoUser) {
-        console.log('The user is not logged in');
-        return null;
-      }
-
       try {
-        await new Promise((resolve, reject) => cognitoUser!.getSession((err: Error, result: any) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(result);
-          }
-        }));
-
-        const user = await new Promise((resolve, reject) => {
-          cognitoUser!.getUserAttributes((err, result) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-
-            const user_data: { [ix: string]: any } = userScaffold();
-
-            result!.forEach(item => {
-              const name = item.getName()
-              const value = item.getValue();
-
-              // turn sub value into _id
-              const key = name === 'sub' ? '_id' : name;
-
-              user_data[key] = value;
-            });
-
-            resolve(user_data);
-          });
-        });
-
-        return user
-      } catch (err) {
-        console.log(err);
+        const user_data = await user_auth.getUserData();
+        return user_data;
+      } catch (e) {
         return null;
       }
     }
