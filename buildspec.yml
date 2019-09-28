@@ -9,6 +9,10 @@ phases:
   install:
     runtime-versions:
       docker: 18
+    commands:
+      - npm config -g set prefer-offline true
+      - npm config -g set cache /root/.npm
+      - npm config get cache
   pre_build:
     commands:
       # view
@@ -94,3 +98,7 @@ artifacts:
   files:
     - 'view/build/**/*'
     - imagedefinitions.json 
+
+cache:
+  paths:
+    - /root/.npm/
