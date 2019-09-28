@@ -68,7 +68,13 @@ export default class StagingStack extends cdk.Stack {
     });
 
     const vpc = new ec2.Vpc(this, "StagingVpc", {
-      maxAzs: 2 // Default is all AZs in region
+      maxAzs: 3,
+      // nat gateways are too costly for dev environment
+      natGateways: 0,
+      subnetConfiguration: [{
+        subnetType: ec2.SubnetType.PUBLIC,
+        name: 'application',
+      }]
     });
 
     const cluster = new ecs.Cluster(this, "StagingCluster", {
@@ -81,7 +87,9 @@ export default class StagingStack extends cdk.Stack {
         ec2.InstanceSize.MICRO
       ),
       vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE
+        // it should be private in production
+        // keep public for staging to avoid nat gateway costs
+        subnetType: ec2.SubnetType.PUBLIC
       }
     });
 

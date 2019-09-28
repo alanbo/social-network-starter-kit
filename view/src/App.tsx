@@ -4,17 +4,12 @@ import NavigationFrame from './components/NavigationFrame';
 import SnackbarNotification from './components/SnackbarNotification';
 import Main from './Main';
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
-import { GET_USER, GetUser } from './apollo/resolvers';
-import { User } from './apollo/client-schema';
+import { GetUser } from './apollo/resolvers/user';
+import { LOGOUT, GET_USER } from './apollo/queries/client/user';
+import { User } from './apollo/types/user';
 import { navigate } from '@reach/router';
 
 
-const LOGOUT = gql`
-  mutation Logout {
-    logoutUser @client
-  }
-`;
 
 export default () => {
   const [logoutUser] = useMutation(LOGOUT);

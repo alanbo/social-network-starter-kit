@@ -18,16 +18,31 @@ import MoreButtonMenu from '../MoreButtonMenu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import TextInput from '../TextInput';
-import { User } from '../../apollo/client-schema';
+import { User } from '../../apollo/types/user';
 
 import {
   AddCommentVariables,
-  CommentsFragment_comments,
-  RemoveCommentVariables,
-  UpdateCommentVariables,
-  LikePostVariables,
+} from '../../apollo/queries/api/__generated__/AddComment';
+
+import {
+  CommentsFragment_comments
+} from '../../apollo/queries/api/__generated__/CommentsFragment';
+
+import {
+  RemoveCommentVariables
+} from '../../apollo/queries/api/__generated__/RemoveComment';
+
+import {
+  UpdateCommentVariables
+} from '../../apollo/queries/api/__generated__/UpdateComment';
+
+import {
+  LikePostVariables
+} from '../../apollo/queries/api/__generated__/LikePost';
+
+import {
   UnlikePostVariables
-} from '../../graphql/operation-result-types'
+} from '../../apollo/queries/api/__generated__/UnlikePost';
 
 import styles, { PostCardStyles } from './styles';
 import { DeepReadonly, $PropertyType } from 'utility-types';

@@ -1,4 +1,4 @@
-import { User } from '../../apollo/client-schema';
+import { User } from '../../apollo/types/user';
 
 export const user: User = {
   _id: '61dbb80e-a681-49e2-89c2-e01ae7c96439',

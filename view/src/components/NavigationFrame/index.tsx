@@ -11,7 +11,7 @@ import MenuList, { DataItem } from './MenuList';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import LoadingIndicator from '../LoadingIndicator';
-import { User } from '../../apollo/client-schema';
+import { User } from '../../apollo/types/user';
 import useStyles from './styles';
 
 const fg_list: Array<DataItem> = [

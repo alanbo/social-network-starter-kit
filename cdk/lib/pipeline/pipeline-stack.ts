@@ -61,6 +61,11 @@ export default class PipelineStack extends cdk.Stack {
 
     const pipeline_project = new codebuild.PipelineProject(this, 'CodeBuildProject', {
       role: code_build_role,
+      cache: codebuild.Cache.local(
+        codebuild.LocalCacheMode.CUSTOM,
+        codebuild.LocalCacheMode.DOCKER_LAYER,
+        codebuild.LocalCacheMode.SOURCE
+      ),
       environment: {
         buildImage: codebuild.LinuxBuildImage.STANDARD_2_0,
         privileged: true,

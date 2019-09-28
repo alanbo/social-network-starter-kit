@@ -2,17 +2,37 @@ import React, { FunctionComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import styles, { PostCardListStyles } from './styles';
 import PostCard from '../PostCard';
-import { GetPosts_posts } from '../../graphql/operation-result-types';
-import { User } from '../../apollo/client-schema';
+import { GetPosts_posts } from '../../apollo/queries/api/__generated__/GetPosts';
+
+import { User } from '../../apollo/types/user';
+
 import {
   AddCommentVariables,
-  RemoveCommentVariables,
-  UpdatePostVariables,
-  DeletePostVariables,
-  UpdateCommentVariables,
-  UnlikePostVariables,
+} from '../../apollo/queries/api/__generated__/AddComment';
+
+import {
+  UpdatePostVariables
+} from '../../apollo/queries/api/__generated__/UpdatePost';
+
+import {
+  DeletePostVariables
+} from '../../apollo/queries/api/__generated__/DeletePost';
+
+import {
+  RemoveCommentVariables
+} from '../../apollo/queries/api/__generated__/RemoveComment';
+
+import {
+  UpdateCommentVariables
+} from '../../apollo/queries/api/__generated__/UpdateComment';
+
+import {
   LikePostVariables
-} from '../../graphql/operation-result-types'
+} from '../../apollo/queries/api/__generated__/LikePost';
+
+import {
+  UnlikePostVariables
+} from '../../apollo/queries/api/__generated__/UnlikePost';
 
 
 interface Props extends PostCardListStyles {

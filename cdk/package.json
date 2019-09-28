@@ -7,28 +7,29 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "deploy": "tsc; cdk deploy PipelineStack"
   },
   "devDependencies": {
-    "@types/node": "^8.10.49",
-    "aws-cdk": "^1.6.1",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.6.2"
+    "@types/node": "^8.10.54",
+    "aws-cdk": "^1.9.0",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@aws-cdk/aws-cloudfront": "^1.6.1",
-    "@aws-cdk/aws-codebuild": "^1.6.1",
-    "@aws-cdk/aws-codepipeline": "^1.6.1",
-    "@aws-cdk/aws-codepipeline-actions": "^1.6.1",
-    "@aws-cdk/aws-cognito": "^1.6.1",
-    "@aws-cdk/aws-ec2": "^1.6.1",
-    "@aws-cdk/aws-ecs": "^1.6.1",
-    "@aws-cdk/aws-ecs-patterns": "^1.6.1",
-    "@aws-cdk/aws-elasticloadbalancingv2": "^1.6.1",
-    "@aws-cdk/aws-iam": "^1.6.1",
-    "@aws-cdk/aws-s3": "^1.6.1",
-    "@aws-cdk/aws-secretsmanager": "^1.6.1",
-    "@aws-cdk/core": "^1.6.1",
+    "@aws-cdk/aws-cloudfront": "^1.9.0",
+    "@aws-cdk/aws-codebuild": "^1.9.0",
+    "@aws-cdk/aws-codepipeline": "^1.9.0",
+    "@aws-cdk/aws-codepipeline-actions": "^1.9.0",
+    "@aws-cdk/aws-cognito": "^1.9.0",
+    "@aws-cdk/aws-ec2": "^1.9.0",
+    "@aws-cdk/aws-ecs": "^1.9.0",
+    "@aws-cdk/aws-ecs-patterns": "^1.9.0",
+    "@aws-cdk/aws-elasticloadbalancingv2": "^1.9.0",
+    "@aws-cdk/aws-iam": "^1.9.0",
+    "@aws-cdk/aws-s3": "^1.9.0",
+    "@aws-cdk/aws-secretsmanager": "^1.9.0",
+    "@aws-cdk/core": "^1.9.0",
     "source-map-support": "^0.5.9"
   }
 }

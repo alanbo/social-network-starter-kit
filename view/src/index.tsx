@@ -1,40 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ApolloClient from "apollo-boost";
 import * as serviceWorker from './serviceWorker';
 import './index.css';
 import App from './App';
-import resolvers from './apollo/resolvers';
-import typeDefs from './apollo/client-schema';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
-import { getUserToken } from './apollo/resolvers';
+import createApolloClient from './apollo/client';
 
 export const theme = createMuiTheme({});
 export type AppTheme = typeof theme;
 
 
-export const client = new ApolloClient({
-  uri: process.env.REACT_APP_API_URI,
-  clientState: {
-    resolvers,
-    typeDefs
-  },
-  request: async (operation) => {
-    const token = await getUserToken();
-
-    operation.setContext({
-      headers: {
-        authorization: token ? `Bearer ${token}` : ''
-      }
-    })
-  }
-});
-
-
 ReactDOM.render((
-  <ApolloProvider client={client}>
+  <ApolloProvider client={createApolloClient()}>
     <ThemeProvider theme={theme} >
       <App />
     </ThemeProvider>
