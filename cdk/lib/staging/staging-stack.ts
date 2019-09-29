@@ -31,7 +31,10 @@ export default class StagingStack extends cdk.Stack {
     this.user_pool_id = user_pool.userPoolId;
 
     const cognito_client = new cognito.UserPoolClient(this, 'StagingUserPoolClient', {
-      userPool: user_pool
+      userPool: user_pool,
+      enabledAuthFlows: [
+        cognito.AuthFlow.ADMIN_NO_SRP
+      ]
     });
 
     this.client_id = cognito_client.userPoolClientId;
