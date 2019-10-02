@@ -12,12 +12,99 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import useStyles from './styles';
 
 interface Props {
+  // TO DO: add proper type for variables
+  onSubmit: (variables: any) => void,
 }
 
-export default function LoginBox(props: Props) {
+export default function SignUpBox(props: Props) {
   const classes = useStyles();
+  const [error, setError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState('');
+  const [password_confirmation, setPasswordConfirmation] = useState('');
+  const [email, setEmail] = useState('');
+
+
+  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+    setError(false);
+  };
+
+  const handleChangePasswordConfirmation = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+    setError(false);
+  };
+  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+    setError(false);
+  };
 
   return (
-    <div className={classes.wrapper}>Sign Up</div>
+    <div className={classes.wrapper}>
+      {error && <FormHelperText error={true}>Invalid Password Or Email</FormHelperText>}
+      <FormControl classes={{ root: classes.input }}>
+        <InputLabel htmlFor="input-with-icon-adornment" error={error}>Email</InputLabel>
+        <Input
+          error={error}
+          id="input-with-icon-adornment"
+          startAdornment={
+            <InputAdornment position="start">
+              <AccountCircle />
+            </InputAdornment>
+          }
+          onChange={handleChangeEmail}
+        />
+      </FormControl>
+
+      <FormControl classes={{ root: classes.input }}>
+        <InputLabel htmlFor="adornment-password" error={error}>Password</InputLabel>
+        <Input
+          error={error}
+          className={classes.input}
+          id="adornment-password"
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={handleChangePassword}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="Toggle password visibility"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+      </FormControl>
+      <FormControl classes={{ root: classes.input }}>
+        <InputLabel htmlFor="adornment-password" error={error}>Password</InputLabel>
+        <Input
+          error={error}
+          className={classes.input}
+          id="adornment-password"
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={handleChangePassword}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="Toggle password visibility"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+      </FormControl>
+      <Button
+        variant="contained"
+        className={classes.button}
+        onClick={() => props.onSubmit({ email, password })}
+      >
+        Sign Up
+        </Button>
+    </div>
   )
 }
