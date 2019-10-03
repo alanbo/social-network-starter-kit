@@ -1,12 +1,4 @@
 import React, { useState } from 'react';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormControl from '@material-ui/core/FormControl';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import useStyles from './styles';
@@ -15,52 +7,37 @@ import { DatePicker } from "@material-ui/pickers";
 import EmailInput from '../inputs/Email';
 import PasswordInput from '../inputs/Password';
 import Gender, { TGender } from '../inputs/Gender';
+import TextInput from '../inputs/Text';
 
 export interface UserInput {
   email: string,
   password: string,
-  given_name: string,
-  family_name: string,
-  nickname: string,
-  phone_number: string,
-  gender: string,
-  birthdate: string
-  [ix: string]: string
+  given_name: string | null,
+  family_name: string | null,
+  nickname: string | null,
+  phone_number: string | null,
+  gender: string | null,
+  birthdate: string | null
+  [ix: string]: string | null
 }
 
 interface Props {
   // TO DO: add proper type for variables
-  onSubmit: (variables: any) => void,
+  onSubmit: (variables: UserInput) => void,
 }
-
-interface StateCont {
-  [ix: string]: string | number | Date;
-}
-
-// function stateContainer<T extends StateCont>(state: T) {
-//   const internal: StateCont = {};
-
-//   Object.keys(state).forEach(key => {
-//     internal[key] = useState(state[key]);
-
-//   });
-
-// }
 
 export default function SignUpBox(props: Props) {
   const classes = useStyles();
   const [error, setError] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [password_confirmation, setPasswordConfirmation] = useState('');
-  const [given_name, setGivenName] = useState('');
-  const [family_name, setFamilyName] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [phone_number, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [password_confirmation, setPasswordConfirmation] = useState<string | null>(null);
+  const [given_name, setGivenName] = useState<string | null>(null);
+  const [family_name, setFamilyName] = useState<string | null>(null);
+  const [nickname, setNickname] = useState<string | null>(null);
+  const [phone, setPhone] = useState<string | null>(null);
   const [gender, setGender] = useState<TGender>('other');
-  const [birthdate, setBirthdate] = useState<Date | null>(null);
-
-
+  const [birthdate, setBirthdate] = useState<string | null>(null);
 
 
   const handleChangePassword = (pass: string) => {
@@ -69,7 +46,7 @@ export default function SignUpBox(props: Props) {
   };
 
   const handleChangePasswordConfirmation = (pass: string) => {
-    setPassword(pass);
+    setPasswordConfirmation(pass);
     setError(false);
   };
 
@@ -78,14 +55,31 @@ export default function SignUpBox(props: Props) {
     setError(false);
   };
 
+  const handleChangeGivenName = (pass: string) => {
+    setGivenName(pass);
+    setError(false);
+  };
+
+  const handleChangeFamilyName = (pass: string) => {
+    setFamilyName(pass);
+    setError(false);
+  };
+
+  const handleChangeNickname = (pass: string) => {
+    setNickname(pass);
+    setError(false);
+  };
+
+  const handleChangePhone = (pass: string) => {
+    setPhone(pass);
+    setError(false);
+  };
+
   const handleChangeGender = (pass: TGender) => {
     setGender(pass);
     setError(false);
   };
 
-  const handleBirthdateChange = (date: Date) => {
-    setBirthdate(date);
-  };
 
   return (
     <div className={classes.wrapper}>
@@ -108,6 +102,34 @@ export default function SignUpBox(props: Props) {
         error={error}
       />
 
+      <TextInput
+        onChange={handleChangeGivenName}
+        value={given_name}
+        error={error}
+        label='Given Name'
+      />
+
+      <TextInput
+        onChange={handleChangeFamilyName}
+        value={family_name}
+        error={error}
+        label='Family Name'
+      />
+
+      <TextInput
+        onChange={handleChangeNickname}
+        value={nickname}
+        error={error}
+        label='Nickname'
+      />
+
+      <TextInput
+        onChange={handleChangePhone}
+        value={phone}
+        error={error}
+        label='Phone Number'
+      />
+
       <Gender
         onChange={handleChangeGender}
         value={gender}
@@ -121,14 +143,23 @@ export default function SignUpBox(props: Props) {
         label="Date of birth"
         views={["year", "month", "date"]}
         value={birthdate}
-        onChange={date => setBirthdate(date ? date.toDate() : null)}
+        onChange={date => setBirthdate(date ? date.format('YYYY-MM-DD') : null)}
         className={classes.input}
       />
 
       <Button
         variant="contained"
         className={classes.button}
-        onClick={() => props.onSubmit({ email, password })}
+        onClick={() => props.onSubmit({
+          email,
+          password,
+          birthdate,
+          nickname,
+          given_name,
+          family_name,
+          phone_number: phone,
+          gender
+        })}
       >
         Sign Up
         </Button>

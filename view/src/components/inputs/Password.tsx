@@ -12,7 +12,7 @@ import useStyles from './styles';
 interface Props {
   onChange: (value: string) => void
   error?: boolean,
-  value?: string,
+  value?: string | null,
 }
 
 export default (props: Props) => {

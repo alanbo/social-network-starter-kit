@@ -4,6 +4,7 @@ import { action } from '@storybook/addon-actions';
 import Email from '../../components/inputs/Email';
 import Password from '../../components/inputs/Password';
 import Gender from '../../components/inputs/Gender';
+import Text from '../../components/inputs/Text';
 
 interface InputStringElemProps {
   onChange: (value: string) => void
@@ -39,7 +40,12 @@ storiesOf('inputs/Password', module)
   // @ts-ignore
   .add('standard', () => <Password />);
 
-storiesOf('inputs/Radio', module)
+storiesOf('inputs/Gender', module)
   .addDecorator(getInput => (<InputStringDecorator>{getInput() as any}</InputStringDecorator>))
   // @ts-ignore
   .add('standard', () => <Gender />);
+
+storiesOf('inputs/Text', module)
+  .addDecorator(getInput => (<InputStringDecorator>{getInput() as any}</InputStringDecorator>))
+  // @ts-ignore
+  .add('standard', () => <Text label='Text' />);
