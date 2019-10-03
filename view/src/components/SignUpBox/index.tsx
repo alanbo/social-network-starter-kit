@@ -14,6 +14,7 @@ import { DatePicker } from "@material-ui/pickers";
 
 import EmailInput from '../inputs/Email';
 import PasswordInput from '../inputs/Password';
+import Gender, { TGender } from '../inputs/Gender';
 
 export interface UserInput {
   email: string,
@@ -56,7 +57,7 @@ export default function SignUpBox(props: Props) {
   const [family_name, setFamilyName] = useState('');
   const [nickname, setNickname] = useState('');
   const [phone_number, setPhoneNumber] = useState('');
-  const [gender, setGender] = useState('');
+  const [gender, setGender] = useState<TGender>('other');
   const [birthdate, setBirthdate] = useState<Date | null>(null);
 
 
@@ -74,6 +75,11 @@ export default function SignUpBox(props: Props) {
 
   const handleChangeEmail = (pass: string) => {
     setEmail(pass);
+    setError(false);
+  };
+
+  const handleChangeGender = (pass: TGender) => {
+    setGender(pass);
     setError(false);
   };
 
@@ -99,6 +105,12 @@ export default function SignUpBox(props: Props) {
       <PasswordInput
         onChange={handleChangePasswordConfirmation}
         value={password_confirmation}
+        error={error}
+      />
+
+      <Gender
+        onChange={handleChangeGender}
+        value={gender}
         error={error}
       />
 
