@@ -10,94 +10,109 @@ import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import useStyles from './styles';
+import { DatePicker } from "@material-ui/pickers";
+
+import EmailInput from '../inputs/Email';
+import PasswordInput from '../inputs/Password';
+
+export interface UserInput {
+  email: string,
+  password: string,
+  given_name: string,
+  family_name: string,
+  nickname: string,
+  phone_number: string,
+  gender: string,
+  birthdate: string
+  [ix: string]: string
+}
 
 interface Props {
   // TO DO: add proper type for variables
   onSubmit: (variables: any) => void,
 }
 
+interface StateCont {
+  [ix: string]: string | number | Date;
+}
+
+// function stateContainer<T extends StateCont>(state: T) {
+//   const internal: StateCont = {};
+
+//   Object.keys(state).forEach(key => {
+//     internal[key] = useState(state[key]);
+
+//   });
+
+// }
+
 export default function SignUpBox(props: Props) {
   const classes = useStyles();
   const [error, setError] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [password_confirmation, setPasswordConfirmation] = useState('');
-  const [email, setEmail] = useState('');
+  const [given_name, setGivenName] = useState('');
+  const [family_name, setFamilyName] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [phone_number, setPhoneNumber] = useState('');
+  const [gender, setGender] = useState('');
+  const [birthdate, setBirthdate] = useState<Date | null>(null);
 
 
-  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
+
+
+  const handleChangePassword = (pass: string) => {
+    setPassword(pass);
     setError(false);
   };
 
-  const handleChangePasswordConfirmation = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
+  const handleChangePasswordConfirmation = (pass: string) => {
+    setPassword(pass);
     setError(false);
   };
-  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
+
+  const handleChangeEmail = (pass: string) => {
+    setEmail(pass);
     setError(false);
+  };
+
+  const handleBirthdateChange = (date: Date) => {
+    setBirthdate(date);
   };
 
   return (
     <div className={classes.wrapper}>
       {error && <FormHelperText error={true}>Invalid Password Or Email</FormHelperText>}
-      <FormControl classes={{ root: classes.input }}>
-        <InputLabel htmlFor="input-with-icon-adornment" error={error}>Email</InputLabel>
-        <Input
-          error={error}
-          id="input-with-icon-adornment"
-          startAdornment={
-            <InputAdornment position="start">
-              <AccountCircle />
-            </InputAdornment>
-          }
-          onChange={handleChangeEmail}
-        />
-      </FormControl>
+      <EmailInput
+        onChange={handleChangeEmail}
+        value={email}
+        error={error}
+      />
 
-      <FormControl classes={{ root: classes.input }}>
-        <InputLabel htmlFor="adornment-password" error={error}>Password</InputLabel>
-        <Input
-          error={error}
-          className={classes.input}
-          id="adornment-password"
-          type={showPassword ? 'text' : 'password'}
-          value={password}
-          onChange={handleChangePassword}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="Toggle password visibility"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-      </FormControl>
-      <FormControl classes={{ root: classes.input }}>
-        <InputLabel htmlFor="adornment-password" error={error}>Password</InputLabel>
-        <Input
-          error={error}
-          className={classes.input}
-          id="adornment-password"
-          type={showPassword ? 'text' : 'password'}
-          value={password}
-          onChange={handleChangePassword}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="Toggle password visibility"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-      </FormControl>
+      <PasswordInput
+        onChange={handleChangePassword}
+        value={password}
+        error={error}
+      />
+
+      <PasswordInput
+        onChange={handleChangePasswordConfirmation}
+        value={password_confirmation}
+        error={error}
+      />
+
+      <DatePicker
+        disableFuture
+        openTo="year"
+        format="DD/MM/YYYY"
+        label="Date of birth"
+        views={["year", "month", "date"]}
+        value={birthdate}
+        onChange={date => setBirthdate(date ? date.toDate() : null)}
+        className={classes.input}
+      />
+
       <Button
         variant="contained"
         className={classes.button}

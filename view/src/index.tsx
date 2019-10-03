@@ -7,17 +7,21 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import createApolloClient from './apollo/client';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 
 export const theme = createMuiTheme({});
 export type AppTheme = typeof theme;
 
 
 ReactDOM.render((
-  <ApolloProvider client={createApolloClient()}>
-    <ThemeProvider theme={theme} >
-      <App />
-    </ThemeProvider>
-  </ApolloProvider>
+  <MuiPickersUtilsProvider utils={MomentUtils}>
+    <ApolloProvider client={createApolloClient()}>
+      <ThemeProvider theme={theme} >
+        <App />
+      </ThemeProvider>
+    </ApolloProvider>
+  </MuiPickersUtilsProvider>
 ), document.getElementById('root'))
 
 // If you want your app to work offline and load faster, you can change

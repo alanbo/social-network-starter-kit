@@ -1,7 +1,19 @@
 import { makeStyles } from '@material-ui/styles';
 
 export default makeStyles({
+  input: {
+    marginTop: 20,
+    marginBottom: 20,
+    width: '100%'
+  },
+
   wrapper: {
-    minWidth: '500px'
-  }
+    maxWidth: '500px',
+    width: '300px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end'
+  },
+
+  button: {}
 });
