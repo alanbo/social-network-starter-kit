@@ -23,6 +23,17 @@ export interface PostInputUpdate {
   visible_to_replace?: string[] | null;
 }
 
+export interface UserAuthInput {
+  email: string;
+  password: string;
+  given_name?: string | null;
+  family_name?: string | null;
+  nickname?: string | null;
+  phone_number?: string | null;
+  gender?: string | null;
+  birthdate?: string | null;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================

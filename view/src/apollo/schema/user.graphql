@@ -23,7 +23,7 @@
   }
 
   extend type Mutation {
-    createAuthUser(data: UserAuthInput!): UserAuth
+    createAuthUser(data: UserAuthInput!): Boolean!
     confirmUser(code: String!): Boolean
     loginUser(email: String!, password: String!): UserAuth
     logoutUser: Boolean

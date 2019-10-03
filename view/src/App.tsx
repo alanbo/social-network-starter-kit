@@ -16,7 +16,11 @@ export default () => {
   const user_query = useQuery<GetUser>(GET_USER);
   const user = user_query.data ? user_query.data.getUser : null;
 
-  if (!user_query.loading && (!user_query.data || !user_query.data.getUser)) {
+  if (
+    !user_query.loading
+    && (!user_query.data || !user_query.data.getUser)
+    && window.location.pathname !== '/signup'
+  ) {
     navigate('/login');
   };
 

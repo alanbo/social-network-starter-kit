@@ -12,13 +12,13 @@ import TextInput from '../inputs/Text';
 export interface UserInput {
   email: string,
   password: string,
-  given_name: string | null,
-  family_name: string | null,
-  nickname: string | null,
-  phone_number: string | null,
-  gender: string | null,
-  birthdate: string | null
-  [ix: string]: string | null
+  given_name?: string,
+  family_name?: string,
+  nickname?: string,
+  phone_number?: string,
+  gender?: string,
+  birthdate?: string
+  [ix: string]: string | undefined
 }
 
 interface Props {
@@ -31,13 +31,13 @@ export default function SignUpBox(props: Props) {
   const [error, setError] = useState(false);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [password_confirmation, setPasswordConfirmation] = useState<string | null>(null);
-  const [given_name, setGivenName] = useState<string | null>(null);
-  const [family_name, setFamilyName] = useState<string | null>(null);
-  const [nickname, setNickname] = useState<string | null>(null);
-  const [phone, setPhone] = useState<string | null>(null);
+  const [password_confirmation, setPasswordConfirmation] = useState<string>('');
+  const [given_name, setGivenName] = useState<string>('');
+  const [family_name, setFamilyName] = useState<string>('');
+  const [nickname, setNickname] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
   const [gender, setGender] = useState<TGender>('other');
-  const [birthdate, setBirthdate] = useState<string | null>(null);
+  const [birthdate, setBirthdate] = useState<string>('');
 
 
   const handleChangePassword = (pass: string) => {
@@ -143,7 +143,7 @@ export default function SignUpBox(props: Props) {
         label="Date of birth"
         views={["year", "month", "date"]}
         value={birthdate}
-        onChange={date => setBirthdate(date ? date.format('YYYY-MM-DD') : null)}
+        onChange={date => setBirthdate(date ? date.format('YYYY-MM-DD') : '')}
         className={classes.input}
       />
 
