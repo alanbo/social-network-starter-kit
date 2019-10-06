@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import useForm from 'react-hook-form';
+import { email_regex, pass_regex } from '../../constants/regex';
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import useStyles from './styles';
@@ -16,7 +18,7 @@ export interface UserInput {
   family_name?: string,
   nickname?: string,
   phone_number?: string,
-  gender?: string,
+  gender?: TGender,
   birthdate?: string
   [ix: string]: string | undefined
 }
@@ -28,63 +30,33 @@ interface Props {
 
 export default function SignUpBox(props: Props) {
   const classes = useStyles();
+  const { register, handleSubmit, watch, errors, getValues, setValue } = useForm<UserInput>();
+  const gender_ref = useRef(null);
+  const onSubmit = (data: UserInput) => {
+    console.log(data)
+    console.log(gender_ref);
+  }
+
   const [error, setError] = useState(false);
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [password_confirmation, setPasswordConfirmation] = useState<string>('');
-  const [given_name, setGivenName] = useState<string>('');
-  const [family_name, setFamilyName] = useState<string>('');
-  const [nickname, setNickname] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
   const [gender, setGender] = useState<TGender>('other');
-  const [birthdate, setBirthdate] = useState<string>('');
 
+  React.useEffect(() => {
+    register({ name: "gender" })
+  }, [register]);
 
-  const handleChangePassword = (pass: string) => {
-    setPassword(pass);
-    setError(false);
-  };
+  function onGenderChange(val: TGender) {
+    setValue('gender', val);
+    setGender(val);
+    console.log('val', val);
 
-  const handleChangePasswordConfirmation = (pass: string) => {
-    setPasswordConfirmation(pass);
-    setError(false);
-  };
-
-  const handleChangeEmail = (pass: string) => {
-    setEmail(pass);
-    setError(false);
-  };
-
-  const handleChangeGivenName = (pass: string) => {
-    setGivenName(pass);
-    setError(false);
-  };
-
-  const handleChangeFamilyName = (pass: string) => {
-    setFamilyName(pass);
-    setError(false);
-  };
-
-  const handleChangeNickname = (pass: string) => {
-    setNickname(pass);
-    setError(false);
-  };
-
-  const handleChangePhone = (pass: string) => {
-    setPhone(pass);
-    setError(false);
-  };
-
-  const handleChangeGender = (pass: TGender) => {
-    setGender(pass);
-    setError(false);
-  };
+  }
 
 
   return (
     <div className={classes.wrapper}>
-      {error && <FormHelperText error={true}>Invalid Password Or Email</FormHelperText>}
-      {/* <EmailInput
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {error && <FormHelperText error={true}>Invalid Password Or Email</FormHelperText>}
+        {/* <EmailInput
         onChange={handleChangeEmail}
         value={email}
         error={error}
@@ -102,41 +74,42 @@ export default function SignUpBox(props: Props) {
         error={error}
       /> */}
 
-      <TextInput
-        onChange={handleChangeGivenName}
-        value={given_name}
-        error={error}
-        label='Given Name'
-      />
+        <TextInput
+          error={error}
+          ref={register}
+          label='Given Name'
+          name='given_name'
+        />
 
-      <TextInput
-        onChange={handleChangeFamilyName}
-        value={family_name}
-        error={error}
-        label='Family Name'
-      />
+        <TextInput
+          ref={register}
+          error={error}
+          label='Family Name'
+          name='family_name'
+        />
 
-      <TextInput
-        onChange={handleChangeNickname}
-        value={nickname}
-        error={error}
-        label='Nickname'
-      />
+        <TextInput
+          ref={register}
+          error={error}
+          label='Nickname'
+          name='nickname'
+        />
 
-      <TextInput
-        onChange={handleChangePhone}
-        value={phone}
-        error={error}
-        label='Phone Number'
-      />
+        <TextInput
+          ref={register}
+          error={error}
+          label='Phone Number'
+          name='phone_number'
+        />
 
-      <Gender
-        onChange={handleChangeGender}
-        value={gender}
-        error={error}
-      />
+        <Gender
+          onChange={onGenderChange}
+          value={gender}
+          ref={gender_ref}
+          error={error}
+        />
 
-      <DatePicker
+        {/* <DatePicker
         disableFuture
         openTo="year"
         format="DD/MM/YYYY"
@@ -145,24 +118,26 @@ export default function SignUpBox(props: Props) {
         value={birthdate}
         onChange={date => setBirthdate(date ? date.format('YYYY-MM-DD') : '')}
         className={classes.input}
-      />
+      /> */}
 
-      <Button
-        variant="contained"
-        className={classes.button}
-        onClick={() => props.onSubmit({
-          email,
-          password,
-          birthdate,
-          nickname,
-          given_name,
-          family_name,
-          phone_number: phone,
-          gender
-        })}
-      >
-        Sign Up
+        <Button
+          variant="contained"
+          className={classes.button}
+          type='submit'
+        // onClick={() => props.onSubmit({
+        //   email,
+        //   password,
+        //   birthdate,
+        //   nickname,
+        //   given_name,
+        //   family_name,
+        //   phone_number: phone,
+        //   gender
+        // })}
+        >
+          Sign Up
         </Button>
+      </ form>
     </div>
   )
 }

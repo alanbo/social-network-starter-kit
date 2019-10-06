@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -29,18 +29,20 @@ export type TGender = 'male' | 'female' | 'other';
 export interface Props {
   onChange: (value: TGender) => void
   error?: boolean,
-  value?: TGender
+  value?: TGender,
+  // name: string
 }
 
-export default function Gender(props: Props) {
+export default forwardRef<HTMLInputElement, Props>((props, ref) => {
   const classes = useStyles({});
 
   return (
     <FormControl className={classes.formControl}>
       <FormLabel component="legend">Gender</FormLabel>
       <RadioGroup
-        // name="gender2"
+        // name={props.name}
         value={props.value}
+        innerRef={ref}
         onChange={(_, value) => props.onChange(value as TGender)}
         classes={{
           root: classes.radioGroup
@@ -70,4 +72,4 @@ export default function Gender(props: Props) {
       </RadioGroup>
     </FormControl>
   );
-}
+});
