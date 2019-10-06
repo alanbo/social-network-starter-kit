@@ -84,7 +84,7 @@ export default function SignUpBox(props: Props) {
   return (
     <div className={classes.wrapper}>
       {error && <FormHelperText error={true}>Invalid Password Or Email</FormHelperText>}
-      <EmailInput
+      {/* <EmailInput
         onChange={handleChangeEmail}
         value={email}
         error={error}
@@ -100,7 +100,7 @@ export default function SignUpBox(props: Props) {
         onChange={handleChangePasswordConfirmation}
         value={password_confirmation}
         error={error}
-      />
+      /> */}
 
       <TextInput
         onChange={handleChangeGivenName}

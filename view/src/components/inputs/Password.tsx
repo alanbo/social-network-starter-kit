@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -10,30 +10,24 @@ import IconButton from '@material-ui/core/IconButton'
 import useStyles from './styles';
 
 interface Props {
-  onChange: (value: string) => void
   error?: boolean,
-  value?: string | null,
+  name: string
 }
 
-export default (props: Props) => {
+export default forwardRef<HTMLInputElement, Props>((props, ref) => {
   const classes = useStyles();
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.onChange(event.target.value);
-  };
-
 
   return (
     <FormControl classes={{ root: classes.input }}>
       <InputLabel htmlFor='adornment-password' error={props.error}>Password</InputLabel>
       <Input
         error={props.error}
+        name={props.name}
         className={classes.input}
         id='adornment-password'
         type={showPassword ? 'text' : 'password'}
-        value={props.value}
-        onChange={handleChangePassword}
+        inputRef={ref}
         endAdornment={
           <InputAdornment position='end'>
             <IconButton
@@ -47,4 +41,4 @@ export default (props: Props) => {
       />
     </FormControl>
   )
-}
+});
