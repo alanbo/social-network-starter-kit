@@ -12,6 +12,7 @@ import Gender, { TGender } from '../inputs/Gender';
 import TextInput from '../inputs/Text';
 import MomentUtils from '@date-io/moment';
 import { birthdate_format } from '../../constants';
+import * as R from 'ramda';
 
 const moment = new MomentUtils();
 
@@ -37,10 +38,7 @@ export default function SignUpBox(props: Props) {
   const { register, handleSubmit, watch, errors, getValues, setValue } = useForm<UserInput>();
   const gender_ref = useRef(null);
   const onSubmit = (data: UserInput) => {
-    props.onSubmit(data);
-
-    // console.log(data)
-    // console.log(gender_ref);
+    props.onSubmit(R.dissoc('password_confirm', data));
   }
 
   const [error, setError] = useState(false);
@@ -74,17 +72,21 @@ export default function SignUpBox(props: Props) {
           error={error}
         />
 
-        {/* <PasswordInput
-        onChange={handleChangePassword}
-        value={password}
-        error={error}
-      />
+        <PasswordInput
+          name='password'
+          ref={register}
+          error={error}
+        />
 
-      <PasswordInput
-        onChange={handleChangePasswordConfirmation}
-        value={password_confirmation}
-        error={error}
-      /> */}
+        <PasswordInput
+          name='password_confirm'
+          ref={register({
+            validate: (value) => {
+              return value === watch('password');
+            }
+          })}
+          error={error}
+        />
 
         <TextInput
           error={error}
@@ -137,16 +139,6 @@ export default function SignUpBox(props: Props) {
           variant="contained"
           className={classes.button}
           type='submit'
-        // onClick={() => props.onSubmit({
-        //   email,
-        //   password,
-        //   birthdate,
-        //   nickname,
-        //   given_name,
-        //   family_name,
-        //   phone_number: phone,
-        //   gender
-        // })}
         >
           Sign Up
         </Button>
