@@ -1,0 +1,1 @@
+export const birthdate_format = 'YYYY-MM-DD';

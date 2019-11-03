@@ -10,6 +10,10 @@ import EmailInput from '../inputs/Email';
 import PasswordInput from '../inputs/Password';
 import Gender, { TGender } from '../inputs/Gender';
 import TextInput from '../inputs/Text';
+import MomentUtils from '@date-io/moment';
+import { birthdate_format } from '../../constants';
+
+const moment = new MomentUtils();
 
 export interface UserInput {
   email: string,
@@ -33,15 +37,23 @@ export default function SignUpBox(props: Props) {
   const { register, handleSubmit, watch, errors, getValues, setValue } = useForm<UserInput>();
   const gender_ref = useRef(null);
   const onSubmit = (data: UserInput) => {
-    console.log(data)
-    console.log(gender_ref);
+    props.onSubmit(data);
+
+    // console.log(data)
+    // console.log(gender_ref);
   }
 
   const [error, setError] = useState(false);
   const [gender, setGender] = useState<TGender>('other');
 
   React.useEffect(() => {
-    register({ name: "gender" })
+    register({ name: 'gender' })
+  }, [register]);
+
+  const [birthdate, setBirthdate] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    register({ name: 'birthdate' })
   }, [register]);
 
   function onGenderChange(val: TGender) {
@@ -109,16 +121,17 @@ export default function SignUpBox(props: Props) {
           error={error}
         />
 
-        {/* <DatePicker
-        disableFuture
-        openTo="year"
-        format="DD/MM/YYYY"
-        label="Date of birth"
-        views={["year", "month", "date"]}
-        value={birthdate}
-        onChange={date => setBirthdate(date ? date.format('YYYY-MM-DD') : '')}
-        className={classes.input}
-      /> */}
+        <DatePicker
+          disableFuture
+          openTo="year"
+          format={birthdate_format}
+          label="Date of birth"
+          views={["year", "month", "date"]}
+          value={birthdate ? moment.parse(birthdate, birthdate_format).toDate() : null}
+          onChange={date => setBirthdate(date ? date.format(birthdate_format) : '')}
+          className={classes.input}
+          emptyLabel={birthdate_format}
+        />
 
         <Button
           variant="contained"

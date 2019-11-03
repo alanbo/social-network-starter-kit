@@ -16,7 +16,7 @@ export interface LoginVariables {
 
 interface Props {
   onSubmit: (variables: LoginVariables) => void,
-  error: boolean
+  error?: boolean
 }
 
 export default function LoginBox(props: Props) {
