@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import useForm from 'react-hook-form';
-import { email_regex, pass_regex } from '../../constants/regex';
+import { email_regex, pass_regex, name_regex } from '../../constants/regex';
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import useStyles from './styles';
@@ -57,10 +57,7 @@ export default function SignUpBox(props: Props) {
   function onGenderChange(val: TGender) {
     setValue('gender', val);
     setGender(val);
-    console.log('val', val);
-
   }
-
 
   return (
     <div className={classes.wrapper}>
@@ -68,59 +65,82 @@ export default function SignUpBox(props: Props) {
         {error && <FormHelperText error={true}>Invalid Password Or Email</FormHelperText>}
         <EmailInput
           name='email'
-          ref={register}
-          error={error}
+          label='*Email'
+          ref={register({
+            required: 'The email field is required',
+            pattern: {
+              value: email_regex,
+              message: 'It is not a valid email'
+            }
+          })}
+          error={errors.email}
         />
 
         <PasswordInput
           name='password'
-          ref={register}
-          error={error}
+          label='*Password'
+          ref={register({
+            required: 'The password field is required',
+            pattern: {
+              value: pass_regex,
+              message: 'It is not a valid password'
+            }
+          })}
+          error={errors.password}
         />
 
         <PasswordInput
           name='password_confirm'
+          label='*Confirm password'
           ref={register({
             validate: (value) => {
-              return value === watch('password');
-            }
+              return value === watch('password') || 'The passwords do not match';
+            },
+            required: 'You need to confirm the password'
           })}
-          error={error}
+          error={errors.password_confirm}
         />
 
         <TextInput
-          error={error}
-          ref={register}
+          error={errors.given_name}
+          ref={register({
+            pattern: {
+              value: name_regex,
+              message: 'Invalid name'
+            }
+          })}
           label='Given Name'
           name='given_name'
         />
 
         <TextInput
-          ref={register}
-          error={error}
+          ref={register({
+            pattern: {
+              value: name_regex,
+              message: 'Invalid name'
+            }
+          })}
+          error={errors.family_name}
           label='Family Name'
           name='family_name'
         />
 
         <TextInput
-          ref={register}
-          error={error}
+          ref={register({
+            pattern: {
+              value: name_regex,
+              message: 'Invalid nickname'
+            }
+          })}
+          error={errors.nickname}
           label='Nickname'
           name='nickname'
-        />
-
-        <TextInput
-          ref={register}
-          error={error}
-          label='Phone Number'
-          name='phone_number'
         />
 
         <Gender
           onChange={onGenderChange}
           value={gender}
           ref={gender_ref}
-          error={error}
         />
 
         <DatePicker

@@ -6,12 +6,16 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import IconButton from '@material-ui/core/IconButton'
+import IconButton from '@material-ui/core/IconButton';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import useStyles from './styles';
 
 interface Props {
-  error?: boolean,
-  name: string
+  error?: {
+    message?: string
+  },
+  name: string,
+  label: string
 }
 
 export default forwardRef<HTMLInputElement, Props>((props, ref) => {
@@ -20,9 +24,9 @@ export default forwardRef<HTMLInputElement, Props>((props, ref) => {
 
   return (
     <FormControl classes={{ root: classes.input }}>
-      <InputLabel htmlFor='adornment-password' error={props.error}>Password</InputLabel>
+      <InputLabel htmlFor='adornment-password' error={!!props.error}>{props.label}</InputLabel>
       <Input
-        error={props.error}
+        error={!!props.error}
         name={props.name}
         className={classes.input}
         id='adornment-password'
@@ -39,6 +43,10 @@ export default forwardRef<HTMLInputElement, Props>((props, ref) => {
           </InputAdornment>
         }
       />
+      {
+        props.error && props.error.message &&
+        <FormHelperText error={true}>{props.error.message}</FormHelperText>
+      }
     </FormControl>
   )
 });
