@@ -33,13 +33,15 @@ export default function LoginBox(props: Props) {
         <EmailInput
           ref={register({ required: true, pattern: email_regex })}
           name='email'
-          error={!!errors.email}
+          error={errors.email}
+          label='Email'
         />
 
         <PasswordInput
           ref={register({ required: true, pattern: pass_regex })}
           name='password'
-          error={!!errors.password}
+          error={errors.password}
+          label='Password'
         />
 
         <Button
