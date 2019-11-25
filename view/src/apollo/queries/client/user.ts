@@ -26,9 +26,18 @@ export const SIGN_UP_USER = gql`
 export const LOGIN = gql`
   mutation LoginUser($email: String!, $password: String!) {
     loginUser(email: $email, password: $password) @client {
-      gender
-      given_name
-      _id
+      ... on Error {
+        __typename
+        code
+        message
+      }
+
+      ... on UserAuth {
+        __typename
+        gender
+        given_name
+        _id
+      }
     }
   }
 `;

@@ -6,6 +6,7 @@ import Profile from '../screens/Profile';
 import Bookmarks from '../screens/Bookmarks';
 import Login from '../screens/Login';
 import SignUp from '../screens/SignUp';
+import Confirm from '../screens/Confirm';
 import { Router } from "@reach/router"
 
 
@@ -17,6 +18,7 @@ const main = () => (
     <Settings path='/settings' />
     <Login path='/login' />
     <SignUp path='/signup' />
+    <Confirm path='/confirm' />
   </Router>
 );
 

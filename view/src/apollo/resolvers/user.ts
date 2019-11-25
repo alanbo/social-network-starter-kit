@@ -36,9 +36,15 @@ const resolvers: Resolvers = {
         const user_data = await user_auth.getUserData();
         (cache as InMemoryCache).writeQuery({ query: GET_USER, data: { getUser: user_data } });
 
-        return user_data;
+        return { __typename: 'UserAuth', ...user_data };
       } catch (e) {
-        return null;
+        const { message, code } = e;
+
+        return {
+          __typename: 'Error',
+          message,
+          code
+        };
       }
     },
 

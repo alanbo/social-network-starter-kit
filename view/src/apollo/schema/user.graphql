@@ -22,10 +22,17 @@
     birthdate: String
   }
 
+  type Error {
+    message: String!
+    code: String!
+  }
+
+  union LoginUserResult = UserAuth | Error
+
   extend type Mutation {
     createAuthUser(data: UserAuthInput!): Boolean!
     confirmUser(code: String!): Boolean
-    loginUser(email: String!, password: String!): UserAuth
+    loginUser(email: String!, password: String!): LoginUserResult 
     logoutUser: Boolean
     resendConfirmationCode: Boolean
     changePassword(old_password: String!, new_password: String!): Boolean
