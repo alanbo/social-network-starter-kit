@@ -62,9 +62,17 @@ const resolvers: Resolvers = {
 
     confirmUser: async (_, variables: { code: string }) => {
       try {
-        await user_auth.confirmUser(variables.code);
+        const result = await user_auth.confirmUser(variables.code);
         return true;
       } catch (e) {
+        const { code, message } = e;
+
+        const err = {
+          __typename: 'Error',
+          code,
+          message
+        };
+
         return false;
       }
     },
@@ -74,7 +82,13 @@ const resolvers: Resolvers = {
         await user_auth.resendConfirmationCode();
         return true;
       } catch (e) {
-        return false;
+        const { code, message } = e;
+
+        return {
+          __typename: 'Error',
+          code,
+          message
+        };
       }
     },
 

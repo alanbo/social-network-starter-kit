@@ -42,6 +42,12 @@ export const LOGIN = gql`
   }
 `;
 
+export const CONFIRM_USER = gql`
+  mutation ConfirmUser($code: String!) {
+    confirmUser(code: $code) @client
+  }
+`;
+
 export const LOGOUT = gql`
   mutation Logout {
     logoutUser @client
