@@ -7,18 +7,20 @@ import Bookmarks from '../screens/Bookmarks';
 import Login from '../screens/Login';
 import SignUp from '../screens/SignUp';
 import Confirm from '../screens/Confirm';
-import { Router } from "@reach/router"
+import { Router } from "@reach/router";
+
+import routes from '../constants/routes';
 
 
 const main = () => (
   <Router>
-    <Dashboard path='/' />
-    <Profile path='/profile' />
-    <Bookmarks path='/bookmarks' />
-    <Settings path='/settings' />
-    <Login path='/login' />
-    <SignUp path='/signup' />
-    <Confirm path='/confirm' />
+    <Dashboard path={routes.HOME} />
+    <Profile path={routes.PROFILE} />
+    <Bookmarks path={routes.BOOKMARKS} />
+    <Settings path={routes.SETTINGS} />
+    <Login path={routes.LOGIN} />
+    <SignUp path={routes.SIGNUP} />
+    <Confirm path={routes.CONFIRM} />
   </Router>
 );
 

@@ -5,6 +5,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks';
 import { GET_USER, LOGIN } from '../../apollo/queries/client/user';
 import { RouteComponentProps, Redirect, navigate } from '@reach/router';
 import { LoginUser, LoginUserVariables } from '../../apollo/queries/client/__generated__/LoginUser';
+import routes from '../../constants/routes';
 
 
 
@@ -15,7 +16,7 @@ export default (props: RouteComponentProps) => {
   const user = useQuery(GET_USER);
 
   if (user && user.data && user.data.getUser) {
-    navigate('/');
+    navigate(routes.HOME);
   }
 
   async function onLoginSubmit(variables: LoginVariables) {
@@ -31,7 +32,7 @@ export default (props: RouteComponentProps) => {
       }
 
       if (error.code === "UserNotConfirmedException") {
-        navigate('/confirm');
+        navigate(routes.CONFIRM);
       }
     }
   }

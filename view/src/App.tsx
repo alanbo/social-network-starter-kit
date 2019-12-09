@@ -8,6 +8,7 @@ import { GetUser } from './apollo/resolvers/user';
 import { LOGOUT, GET_USER } from './apollo/queries/client/user';
 import { User } from './apollo/types/user';
 import { navigate } from '@reach/router';
+import routes from './constants/routes';
 
 
 
@@ -19,9 +20,9 @@ export default () => {
   if (
     !user_query.loading
     && (!user_query.data || !user_query.data.getUser)
-    && window.location.pathname !== '/signup'
+    && window.location.pathname !== routes.SIGNUP
   ) {
-    navigate('/login');
+    navigate(routes.LOGIN);
   };
 
   return (

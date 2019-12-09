@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { RouteComponentProps } from '@reach/router';
+import { RouteComponentProps, Redirect, navigate } from '@reach/router';
 import ConfirmBox, { ConfirmVariables } from '../../components/ConfirmBox';
 import { useMutation } from '@apollo/react-hooks';
 import { ConfirmUser, ConfirmUserVariables } from '../../apollo/queries/client/__generated__/ConfirmUser';
@@ -9,7 +9,11 @@ export default (props: RouteComponentProps) => {
   const [confirmUser] = useMutation<ConfirmUser, ConfirmUserVariables>(CONFIRM_USER);
 
   function onSubmit(variables: ConfirmUserVariables) {
-    confirmUser({ variables }).then(console.log);
+    confirmUser({ variables }).then(result => {
+      if (result.data && result.data.confirmUser === true) {
+        navigate('/login');
+      }
+    });
   };
 
   // CodeMismatchException
