@@ -38,7 +38,7 @@
     "nodemon": "^1.18.10",
     "ramda": "^0.26.1",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^0.16.0"
+    "type-graphql": "^0.17.6"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",
